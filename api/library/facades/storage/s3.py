@@ -14,11 +14,11 @@ class Storage:
     def __init__(self, bucket: str) -> None:
         """Construct."""
         self.bucket = bucket
-        self.client = boto3.client("S3")
+        self.client = boto3.client("s3")
 
     def _list_generator(self, prefix: str) -> typing.Generator[str, None, None]:
         """Create key generator."""
-        paginator = self.client.paginator("list_objects_v2")
+        paginator = self.client.get_paginator("list_objects_v2")
         for page in paginator.paginate(Bucket=self.bucket, Prefix=prefix):
             try:
                 contents = page["Contents"]

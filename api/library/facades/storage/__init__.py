@@ -2,6 +2,7 @@
 
 from . import exceptions
 from . import memory
+from . import s3
 from . import types
 
 
