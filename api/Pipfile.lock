@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "5db3e2edb9acd9fc0e045718f2ef08fea68e997173f521feda826819fcab68de"
+            "sha256": "93f516e606b8836a48f3b229866a444ef98a0da8f19976363b8d6de2cbeaee4c"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -237,6 +237,14 @@
                 "sha256:921a37e2aefc64145e7b73d50c71bb4f26f46e4c9f414dc648c6245ff92cf7db"
             ],
             "version": "==0.3.3"
+        },
+        "serverless-wsgi": {
+            "hashes": [
+                "sha256:7c77f2c8a3e96e2adeb00903c36f01524e0db171d8f7e138a10abd1817b4b87d",
+                "sha256:fcc3aaa33f4665e4dc77c7aa61c54566dca9c1277890386ae1f189799163c2c6"
+            ],
+            "index": "pypi",
+            "version": "==1.7.6"
         },
         "six": {
             "hashes": [

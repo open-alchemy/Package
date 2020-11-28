@@ -8,6 +8,7 @@ connexion = {extras = ["swagger-ui"], version = "*"}
 flask-cors = "*"
 boto3 = "*"
 botocore = "*"
+serverless-wsgi = "*"
 
 [dev-packages]
 black = "*"
