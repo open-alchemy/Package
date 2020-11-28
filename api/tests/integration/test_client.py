@@ -32,10 +32,24 @@ def test_endpoint_options(client, path, method):
     )
 
 
+def test_specs_put_unauthorized(client):
+    """
+    GIVEN spec id and data
+    WHEN PUT /v1/specs/{spec-id} is called without the Authorization header
+    THEN 401 is returned.
+    """
+    data = "spec 1"
+    spec_id = "id 1"
+
+    respose = client.put(f"/v1/specs/{spec_id}", data=data)
+
+    assert respose.status_code == 401
+
+
 def test_specs_put(client):
     """
     GIVEN spec id and data
-    WHEN PUT /v1/specs/{spec-id} is called
+    WHEN PUT /v1/specs/{spec-id} is called with the Authorization header
     THEN the value is stored against the spec id.
     """
     data = "spec 1"
