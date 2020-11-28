@@ -96,15 +96,15 @@ export class ApiStack extends cdk.Stack {
     });
 
     // Add Cognito authorizer
-    // const authorizer = new apigateway.CfnAuthorizer(this, 'Authorizer', {
-    //   restApiId: api.restApiId,
-    //   type: apigateway.AuthorizationType.COGNITO,
-    //   identitySource: apigateway.IdentitySource.header('Authorization'),
-    //   providerArns: [ENVIRONMENT.AWS_IDENTITY_PROVIDER_ARN],
-    //   name: 'PackageAuth',
-    // });
+    const authorizer = new apigateway.CfnAuthorizer(this, 'Authorizer', {
+      restApiId: api.restApiId,
+      type: apigateway.AuthorizationType.COGNITO,
+      identitySource: apigateway.IdentitySource.header('Authorization'),
+      providerArns: [ENVIRONMENT.AWS_IDENTITY_PROVIDER_ARN],
+      name: 'PackageAuth',
+    });
 
-    // // Protect resources with cognito
+    // Protect resources with cognito
     // const versionResource = api.root.addResource(CONFIG.api.resources.version);
     // const specsResource = versionResource.addResource(
     //   CONFIG.api.resources.specs.pathPart
@@ -114,7 +114,7 @@ export class ApiStack extends cdk.Stack {
     //   authorizationScopes:
     //     CONFIG.api.resources.specs.methods.put.authorizationScopes,
     //   authorizer: {
-    //     authorizerId: authorizer.logicalId,
+    //     authorizerId: cdk.Fn.ref(authorizer.logicalId),
     //   },
     // });
 
