@@ -100,34 +100,33 @@ export class ApiStack extends cdk.Stack {
       restApiId: api.restApiId,
       type: apigateway.AuthorizationType.COGNITO,
       identitySource: apigateway.IdentitySource.header('Authorization'),
-      identityValidationExpression: 'Bearer (.*)',
       providerArns: [ENVIRONMENT.AWS_IDENTITY_PROVIDER_ARN],
       name: 'PackageAuth',
     });
 
     // Protect resources with cognito
-    const versionResource = api.root.addResource(CONFIG.api.resources.version);
-    const uiResource = versionResource.addResource(CONFIG.api.resources.ui);
+    const versionResource = api.root.addResource('v1');
+    const uiResource = versionResource.addResource('ui');
     uiResource.addMethod('GET', integration);
-    const openapiResource = versionResource.addResource(
-      CONFIG.api.resources.openapi
-    );
+    const openapiResource = versionResource.addResource('openapi.json');
     openapiResource.addMethod('GET', integration);
     // Add UI resources
-    CONFIG.api.resources.uiSubResources.forEach((uiSubResourcePath) => {
+    const uiSubResources = [
+      'swagger-ui-standalone-preset.js',
+      'swagger-ui-bundle.js',
+      'swagger-ui.css',
+      'favicon-32x32.png',
+      'favicon-16x16.png',
+    ];
+    uiSubResources.forEach((uiSubResourcePath) => {
       const uiSubResource = uiResource.addResource(uiSubResourcePath);
       uiSubResource.addMethod('GET', integration);
     });
-    const specsResource = versionResource.addResource(
-      CONFIG.api.resources.specs.pathPart
-    );
-    const specsIdResource = specsResource.addResource(
-      CONFIG.api.resources.specs.specsId.pathPart
-    );
+    const specsResource = versionResource.addResource('specs');
+    const specsIdResource = specsResource.addResource('{spec_id}');
     specsIdResource.addMethod('PUT', integration, {
-      authorizationScopes:
-        CONFIG.api.resources.specs.specsId.methods.put.authorizationScopes,
-      authorizationType: apigateway.AuthorizationType.COGNITO,
+      // authorizationScopes: ['https://package.api.openalchemy.io/spec.write'],
+      // authorizationType: apigateway.AuthorizationType.COGNITO,
       authorizer: {
         authorizerId: cdk.Fn.ref(authorizer.logicalId),
       },
