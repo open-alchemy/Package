@@ -19,5 +19,7 @@ def put(body: bytearray, spec_id: str) -> server.Response:
 
     except storage.exceptions.StorageError:
         return server.Response(
-            "something went wrong whilst storing the spec", status=500
+            "something went wrong whilst storing the spec",
+            status=500,
+            mimetype="text/plain",
         )

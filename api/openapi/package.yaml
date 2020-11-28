@@ -30,6 +30,12 @@ paths:
       responses:
         204:
           description: The spec has been stored
+        500:
+          description: Something went wrong whilst saving the spec
+          content:
+            text/plain:
+              schema:
+                type: string
 
 components:
   schemas:

@@ -36,3 +36,4 @@ def test_put_error(monkeypatch):
     response = specs.put(body=body.encode(), spec_id=spec_id)
 
     assert response.status_code == 500
+    assert response.mimetype == "text/plain"
