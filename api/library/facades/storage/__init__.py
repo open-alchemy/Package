@@ -15,7 +15,7 @@ def _construct_storage() -> types.TStorage:
         return memory.Storage()
 
     if environment.stage == config.Stage.PROD:
-        return s3.Storage(environment.specs_bucket)
+        return s3.Storage(environment.specs_bucket_name)
 
     raise AssertionError(f"unsupported stage {environment.stage}")
 
