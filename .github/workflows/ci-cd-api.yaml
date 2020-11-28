@@ -8,8 +8,8 @@ on:
       - ".github/workflows/ci-cd-api.yaml"
       - "api/**"
       - "infrastructure/**"
-      - "infrastructure/lib/api-stack.ts"
       - "!infrastructure/lib/*-stack.ts"
+      - "infrastructure/lib/api-stack.ts"
       - "!infrastructure/test/**"
       - "!**.md"
 
