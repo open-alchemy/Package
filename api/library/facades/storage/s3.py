@@ -43,7 +43,10 @@ class Storage:
             return list(
                 self._list_generator(prefix=prefix if prefix is not None else "")
             )
-        except botocore_exceptions.BotoCoreError as exc:
+        except (
+            botocore_exceptions.BotoCoreError,
+            botocore_exceptions.ClientError,
+        ) as exc:
             raise exceptions.StorageError from exc
 
     def get(self, *, key: types.TKey) -> types.TValue:
