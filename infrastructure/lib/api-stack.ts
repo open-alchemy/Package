@@ -100,6 +100,7 @@ export class ApiStack extends cdk.Stack {
       restApiId: api.restApiId,
       type: apigateway.AuthorizationType.COGNITO,
       identitySource: apigateway.IdentitySource.header('Authorization'),
+      identityValidationExpression: 'Bearer (.*)',
       providerArns: [ENVIRONMENT.AWS_IDENTITY_PROVIDER_ARN],
       name: 'PackageAuth',
     });
@@ -107,21 +108,15 @@ export class ApiStack extends cdk.Stack {
     // Protect resources with cognito
     const versionResource = api.root.addResource(CONFIG.api.resources.version);
     const uiResource = versionResource.addResource(CONFIG.api.resources.ui);
-    uiResource.addMethod('GET', integration, {
-      authorizationType: apigateway.AuthorizationType.NONE,
-    });
+    uiResource.addMethod('GET', integration);
     const openapiResource = versionResource.addResource(
       CONFIG.api.resources.openapi
     );
-    openapiResource.addMethod('GET', integration, {
-      authorizationType: apigateway.AuthorizationType.NONE,
-    });
+    openapiResource.addMethod('GET', integration);
     // Add UI resources
     CONFIG.api.resources.uiSubResources.forEach((uiSubResourcePath) => {
       const uiSubResource = uiResource.addResource(uiSubResourcePath);
-      uiSubResource.addMethod('GET', integration, {
-        authorizationType: apigateway.AuthorizationType.NONE,
-      });
+      uiSubResource.addMethod('GET', integration);
     });
     const specsResource = versionResource.addResource(
       CONFIG.api.resources.specs.pathPart
