@@ -20,11 +20,14 @@ export const CONFIG = {
       ],
       specs: {
         pathPart: 'specs',
-        methods: {
-          put: {
-            authorizationScopes: [
-              'https://package.api.openalchemy.io/spec.write',
-            ],
+        specsId: {
+          pathPart: '{spec_id}',
+          methods: {
+            put: {
+              authorizationScopes: [
+                'https://package.api.openalchemy.io/spec.write',
+              ],
+            },
           },
         },
       },

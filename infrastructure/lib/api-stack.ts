@@ -121,8 +121,13 @@ export class ApiStack extends cdk.Stack {
     const specsResource = versionResource.addResource(
       CONFIG.api.resources.specs.pathPart
     );
-    specsResource.addMethod('PUT', integration, {
-      authorizationType: apigateway.AuthorizationType.NONE,
+    const specsIdResource = specsResource.addResource(
+      CONFIG.api.resources.specs.specsId.pathPart
+    );
+    specsIdResource.addMethod('PUT', integration, {
+      authorizationScopes:
+        CONFIG.api.resources.specs.specsId.methods.put.authorizationScopes,
+      authorizationType: apigateway.AuthorizationType.COGNITO,
       authorizer: {
         authorizerId: cdk.Fn.ref(authorizer.logicalId),
       },
