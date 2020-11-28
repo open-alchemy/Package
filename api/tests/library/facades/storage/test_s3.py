@@ -141,7 +141,7 @@ def test_get_error_client():
     """
     GIVEN stubbed s3 client that raises an error
     WHEN get is called
-    THEN StorageError is raised.
+    THEN the client is called with the expected parameters.
     """
     bucket = "bucket1"
     key = "key 1"
@@ -179,3 +179,59 @@ def test_get():
 
     stubber.assert_no_pending_responses()
     assert returned_value == value
+
+
+def test_set_error_core():
+    """
+    GIVEN request that raises a core error
+    WHEN set is called
+    THEN StorageError is raised.
+    """
+    bucket = "bucket 1"
+    s3_instance = storage.s3.Storage(bucket)
+    stubber = stub.Stubber(s3_instance.client)
+    stubber.activate()
+
+    with pytest.raises(storage.exceptions.StorageError):
+        s3_instance.set(key="key 1", value="value 1")
+
+    stubber.assert_no_pending_responses()
+
+
+def test_set_error_client():
+    """
+    GIVEN stubbed s3 client that raises an error
+    WHEN set is called
+    THEN StorageError is raised.
+    """
+    bucket = "bucket1"
+    s3_instance = storage.s3.Storage(bucket)
+    stubber = stub.Stubber(s3_instance.client)
+    stubber.add_client_error("put_object")
+    stubber.activate()
+
+    with pytest.raises(storage.exceptions.StorageError):
+        s3_instance.set(key="key 1", value="value1 ")
+
+    stubber.assert_no_pending_responses()
+
+
+def test_set():
+    """
+    GIVEN stubbed s3 client that returns an object
+    WHEN set is called
+    THEN the client is called with the expected parameters.
+    """
+    bucket = "bucket1"
+    key = "key 1"
+    value = "spec 1"
+    s3_instance = storage.s3.Storage(bucket)
+    stubber = stub.Stubber(s3_instance.client)
+    expected_params = {"Bucket": bucket, "Key": key, "Body": value.encode()}
+    response = {}
+    stubber.add_response("put_object", response, expected_params)
+    stubber.activate()
+
+    s3_instance.set(key=key, value=value)
+
+    stubber.assert_no_pending_responses()

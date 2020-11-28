@@ -85,7 +85,10 @@ class Storage:
         """
         try:
             self.client.put_object(Bucket=self.bucket, Key=key, Body=value.encode())
-        except botocore_exceptions.BotoCoreError as exc:
+        except (
+            botocore_exceptions.BotoCoreError,
+            botocore_exceptions.ClientError,
+        ) as exc:
             raise exceptions.StorageError from exc
 
     def delete(self, *, key: types.TKey) -> None:
