@@ -15,7 +15,6 @@ export const CONFIG = {
         'swagger-ui-standalone-preset.js',
         'swagger-ui-bundle.js',
         'swagger-ui.css',
-        'swagger-ui-standalone-preset.js',
         'favicon-32x32.png',
         'favicon-16x16.png',
       ],
