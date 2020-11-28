@@ -1,5 +1,7 @@
 """tests for s3 torage facade."""
 
+from unittest import mock
+
 import pytest
 from botocore import stub
 
@@ -83,9 +85,9 @@ def test_list_multi_page():
     assert returned_keys == [key1, key2]
 
 
-def test_list_error_invalid_bucket():
+def test_list_error_core():
     """
-    GIVEN stubbed s3 client that raises an error
+    GIVEN request that raises a core error
     WHEN list is called
     THEN StorageError is raised.
     """
@@ -116,3 +118,64 @@ def test_list_error_client():
         s3_instance.list()
 
     stubber.assert_no_pending_responses()
+
+
+def test_get_error_core():
+    """
+    GIVEN request that raises a core error
+    WHEN get is called
+    THEN StorageError is raised.
+    """
+    bucket = "bucket 1"
+    s3_instance = storage.s3.Storage(bucket)
+    stubber = stub.Stubber(s3_instance.client)
+    stubber.activate()
+
+    with pytest.raises(storage.exceptions.StorageError):
+        s3_instance.get(key="key 1")
+
+    stubber.assert_no_pending_responses()
+
+
+def test_get_error_client():
+    """
+    GIVEN stubbed s3 client that raises an error
+    WHEN get is called
+    THEN StorageError is raised.
+    """
+    bucket = "bucket1"
+    key = "key 1"
+    s3_instance = storage.s3.Storage(bucket)
+    stubber = stub.Stubber(s3_instance.client)
+    stubber.add_client_error("get_object")
+    stubber.activate()
+
+    with pytest.raises(storage.exceptions.StorageError) as exc:
+        s3_instance.get(key=key)
+
+    stubber.assert_no_pending_responses()
+    assert key in str(exc)
+
+
+def test_get():
+    """
+    GIVEN stubbed s3 client that returns an object
+    WHEN get is called
+    THEN StorageError is raised.
+    """
+    bucket = "bucket1"
+    key = "key 1"
+    value = "spec 1"
+    body = mock.MagicMock()
+    body.read.return_value = value.encode()
+    s3_instance = storage.s3.Storage(bucket)
+    stubber = stub.Stubber(s3_instance.client)
+    expected_params = {"Bucket": bucket, "Key": key}
+    response = {"Body": body}
+    stubber.add_response("get_object", response, expected_params)
+    stubber.activate()
+
+    returned_value = s3_instance.get(key=key)
+
+    stubber.assert_no_pending_responses()
+    assert returned_value == value

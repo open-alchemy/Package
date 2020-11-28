@@ -64,8 +64,12 @@ class Storage:
         """
         try:
             response = self.client.get_object(Bucket=self.bucket, Key=key)
-            return response.Body.read().decode()
+            return response["Body"].read().decode()
         except botocore_exceptions.BotoCoreError as exc:
+            raise exceptions.StorageError(
+                f"something went wrong when retriving key {key}"
+            ) from exc
+        except botocore_exceptions.ClientError as exc:
             raise exceptions.ObjectNotFoundError(
                 f"could not find object at key {key}"
             ) from exc
