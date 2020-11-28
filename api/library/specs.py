@@ -12,6 +12,12 @@ def put(body: bytearray, spec_id: str) -> server.Response:
         spec_id: The id of the spec.
 
     """
-    storage.get_storage().set(key=spec_id, value=body.decode())
+    try:
+        storage.get_storage().set(key=spec_id, value=body.decode())
 
-    return server.Response(status=204)
+        return server.Response(status=204)
+
+    except storage.exceptions.StorageError:
+        return server.Response(
+            "something went wrong whilst storing the spec", status=500
+        )

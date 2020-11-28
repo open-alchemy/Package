@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 connexion = {extras = ["swagger-ui"], version = "*"}
 flask-cors = "*"
+boto3 = "*"
+botocore = "*"
 
 [dev-packages]
 black = "*"
