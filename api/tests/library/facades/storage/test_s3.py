@@ -127,21 +127,23 @@ def test_get_error_core():
     THEN StorageError is raised.
     """
     bucket = "bucket 1"
+    key = "key 1"
     s3_instance = storage.s3.Storage(bucket)
     stubber = stub.Stubber(s3_instance.client)
     stubber.activate()
 
-    with pytest.raises(storage.exceptions.StorageError):
-        s3_instance.get(key="key 1")
+    with pytest.raises(storage.exceptions.StorageError) as exc:
+        s3_instance.get(key=key)
 
     stubber.assert_no_pending_responses()
+    assert key in str(exc)
 
 
 def test_get_error_client():
     """
     GIVEN stubbed s3 client that raises an error
     WHEN get is called
-    THEN the client is called with the expected parameters.
+    THEN StorageError is raised.
     """
     bucket = "bucket1"
     key = "key 1"
@@ -150,7 +152,7 @@ def test_get_error_client():
     stubber.add_client_error("get_object")
     stubber.activate()
 
-    with pytest.raises(storage.exceptions.StorageError) as exc:
+    with pytest.raises(storage.exceptions.ObjectNotFoundError) as exc:
         s3_instance.get(key=key)
 
     stubber.assert_no_pending_responses()
@@ -161,7 +163,7 @@ def test_get():
     """
     GIVEN stubbed s3 client that returns an object
     WHEN get is called
-    THEN StorageError is raised.
+    THEN the client is called with the expected parameters.
     """
     bucket = "bucket1"
     key = "key 1"
@@ -233,5 +235,64 @@ def test_set():
     stubber.activate()
 
     s3_instance.set(key=key, value=value)
+
+    stubber.assert_no_pending_responses()
+
+
+def test_delete_error_core():
+    """
+    GIVEN request that raises a core error
+    WHEN delete is called
+    THEN StorageError is raised.
+    """
+    bucket = "bucket 1"
+    key = "key 1"
+    s3_instance = storage.s3.Storage(bucket)
+    stubber = stub.Stubber(s3_instance.client)
+    stubber.activate()
+
+    with pytest.raises(storage.exceptions.StorageError) as exc:
+        s3_instance.delete(key=key)
+
+    stubber.assert_no_pending_responses()
+    assert key in str(exc)
+
+
+def test_delete_error_client():
+    """
+    GIVEN stubbed s3 client that raises an error
+    WHEN delete is called
+    THEN StorageError is raised.
+    """
+    bucket = "bucket1"
+    key = "key 1"
+    s3_instance = storage.s3.Storage(bucket)
+    stubber = stub.Stubber(s3_instance.client)
+    stubber.add_client_error("delete_object")
+    stubber.activate()
+
+    with pytest.raises(storage.exceptions.ObjectNotFoundError) as exc:
+        s3_instance.delete(key=key)
+
+    stubber.assert_no_pending_responses()
+    assert key in str(exc)
+
+
+def test_delete():
+    """
+    GIVEN stubbed s3 client that returns an object
+    WHEN delete is called
+    THEN the client is called with the expected parameters.
+    """
+    bucket = "bucket1"
+    key = "key 1"
+    s3_instance = storage.s3.Storage(bucket)
+    stubber = stub.Stubber(s3_instance.client)
+    expected_params = {"Bucket": bucket, "Key": key}
+    response = {}
+    stubber.add_response("delete_object", response, expected_params)
+    stubber.activate()
+
+    s3_instance.delete(key=key)
 
     stubber.assert_no_pending_responses()

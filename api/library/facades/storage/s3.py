@@ -104,6 +104,10 @@ class Storage:
         try:
             self.client.delete_object(Bucket=self.bucket, Key=key)
         except botocore_exceptions.BotoCoreError as exc:
+            raise exceptions.StorageError(
+                f"something went wrong when deleting key {key}"
+            ) from exc
+        except botocore_exceptions.ClientError as exc:
             raise exceptions.ObjectNotFoundError(
                 f"could not find object at key {key}"
             ) from exc
