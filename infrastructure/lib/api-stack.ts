@@ -105,18 +105,18 @@ export class ApiStack extends cdk.Stack {
     });
 
     // Protect resources with cognito
-    // const versionResource = api.root.addResource(CONFIG.api.resources.version);
-    // const specsResource = versionResource.addResource(
-    //   CONFIG.api.resources.specs.pathPart
-    // );
-    // specsResource.addMethod('PUT', integration, {
-    //   authorizationType: apigateway.AuthorizationType.COGNITO,
-    //   authorizationScopes:
-    //     CONFIG.api.resources.specs.methods.put.authorizationScopes,
-    //   authorizer: {
-    //     authorizerId: cdk.Fn.ref(authorizer.logicalId),
-    //   },
-    // });
+    const versionResource = api.root.addResource(CONFIG.api.resources.version);
+    const specsResource = versionResource.addResource(
+      CONFIG.api.resources.specs.pathPart
+    );
+    specsResource.addMethod('PUT', integration, {
+      authorizationType: apigateway.AuthorizationType.COGNITO,
+      authorizationScopes:
+        CONFIG.api.resources.specs.methods.put.authorizationScopes,
+      authorizer: {
+        authorizerId: cdk.Fn.ref(authorizer.logicalId),
+      },
+    });
 
     // DNS listing
     const zone = route53.PublicHostedZone.fromLookup(this, 'PublicHostedZone', {
