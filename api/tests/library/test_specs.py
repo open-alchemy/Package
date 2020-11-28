@@ -13,6 +13,7 @@ def test_put():
     body = "body 1"
     spec_id = "id 1"
 
-    specs.put(body=body, spec_id=spec_id)
+    response = specs.put(body=body.encode(), spec_id=spec_id)
 
     assert storage.get_storage().get(key=spec_id) == body
+    assert response.status_code == 204

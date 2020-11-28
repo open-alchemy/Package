@@ -3,7 +3,7 @@
 from .facades import server, storage
 
 
-def put(body: str, spec_id: str) -> server.Response:
+def put(body: bytearray, spec_id: str) -> server.Response:
     """
     Accept a spec and store it.
 
@@ -12,4 +12,6 @@ def put(body: str, spec_id: str) -> server.Response:
         spec_id: The id of the spec.
 
     """
-    storage.get_storage().set(key=spec_id, value=body)
+    storage.get_storage().set(key=spec_id, value=body.decode())
+
+    return server.Response(status=204)
