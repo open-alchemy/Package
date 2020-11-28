@@ -8,11 +8,12 @@ info:
 servers:
   - url: https://package.api.openalchemy.io/v1
 
+security:
+  - bearerAuth: []
+
 paths:
   /specs/{spec_id}:
     put:
-      security:
-        - bearerAuth: []
       summary: Create or update a new spec
       operationId: library.specs.put
       parameters:

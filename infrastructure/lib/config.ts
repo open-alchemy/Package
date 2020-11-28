@@ -9,8 +9,16 @@ export const CONFIG = {
     additionalAllowHeaders: ['x-language'],
     resources: {
       version: 'v1',
-      ui: 'ui',
-      openapi: 'openapi.json',
+      uiRsources: [
+        'ui',
+        'openapi.json',
+        'swagger-ui-standalone-preset.js',
+        'swagger-ui-bundle.js',
+        'swagger-ui.css',
+        'swagger-ui-standalone-preset.js',
+        'favicon-32x32.png',
+        'favicon-16x16.png',
+      ],
       specs: {
         pathPart: 'specs',
         methods: {
