@@ -106,6 +106,12 @@ export class ApiStack extends cdk.Stack {
 
     // Protect resources with cognito
     const versionResource = api.root.addResource(CONFIG.api.resources.version);
+    const uiResource = versionResource.addResource(CONFIG.api.resources.ui);
+    uiResource.addMethod('GET', integration);
+    const openapiResource = versionResource.addResource(
+      CONFIG.api.resources.openapi
+    );
+    openapiResource.addMethod('GET', integration);
     const specsResource = versionResource.addResource(
       CONFIG.api.resources.specs.pathPart
     );

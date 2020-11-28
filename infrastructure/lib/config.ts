@@ -9,6 +9,8 @@ export const CONFIG = {
     additionalAllowHeaders: ['x-language'],
     resources: {
       version: 'v1',
+      ui: 'ui',
+      openapi: 'openapi.json',
       specs: {
         pathPart: 'specs',
         methods: {
