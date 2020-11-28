@@ -4,11 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pytest = "*"
+connexion = {extras = ["swagger-ui"], version = "*"}
 
 [dev-packages]
 black = "*"
-autopep8 = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.9"

@@ -9,79 +9,33 @@ servers:
   - url: https://package.api.openalchemy.io/v1
 
 paths:
-  /specs:
-    post:
-      summary: Create a new spec
-      operationId: library.specs.post
+  /specs/{spec_id}:
+    put:
+      summary: Create or update a new spec
+      operationId: library.specs.put
+      parameters:
+        - in: path
+          name: spec_id
+          schema:
+            $ref: "#/components/schemas/SpecId"
+          required: true
+          description: The id of the spec
+      requestBody:
+        description: The spec to store or update
+        required: true
+        content:
+          text/plain:
+            schema:
+              $ref: "#/components/schemas/SpecValue"
       responses:
         204:
           description: The spec has been stored
-        400:
-          description: The spec is not valid
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ValidationResponse"
 
 components:
-  parameters:
-    Language:
-      in: header
-      name: X-LANGUAGE
-      description: The language of the spec
-      required: true
-      schema:
-        type: string
-        enum:
-          - JSON
-          - YAML
   schemas:
+    SpecId:
+      description: The id of an OpenAPI specification
+      type: string
     SpecValue:
       description: The value of an OpenAPI specification
       type: string
-    ValidationResponseResult:
-      description: Whether the spec is valid at the global, model or property level
-      type: object
-      properties:
-        valid:
-          description: Whether the spec is valid
-          type: boolean
-        reason:
-          description: If the spec is not valid, the reason that it is not
-          type: string
-      required:
-        - valid
-    ValidationResponseProperty:
-      description: The validation results for a property
-      type: object
-      properties:
-        result:
-          $ref: "#/components/schemas/ValidationResponseResult"
-      required:
-        - result
-    ValidationResponseModel:
-      description: The validation results for a model
-      type: object
-      properties:
-        result:
-          $ref: "#/components/schemas/ValidationResponseResult"
-        properties:
-          description: The results for all properties, included if the model is valid at the model level
-          type: object
-          additionalProperties:
-            $ref: "#/components/schemas/ValidationResponseProperty"
-      required:
-        - result
-    ValidationResponse:
-      description: The validation results for the spec
-      type: object
-      properties:
-        result:
-          $ref: "#/components/schemas/ValidationResponseResult"
-        models:
-          description: The results for all models, included if the spec is valid at the global level
-          type: object
-          additionalProperties:
-            $ref: "#/components/schemas/ValidationResponseModel"
-      required:
-        - result
