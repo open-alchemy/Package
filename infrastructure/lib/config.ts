@@ -1,9 +1,14 @@
+const domainName = 'openalchemy.io';
+
 export const CONFIG = {
-  domainName: 'openalchemy.io',
+  domainName,
   api: {
     recordName: 'package.api',
     throttlingBurstLimit: 200,
     throttlingRateLimit: 100,
     additionalAllowHeaders: ['x-language'],
+  },
+  storage: {
+    bucketName: `package-storage.${domainName}`,
   },
 };

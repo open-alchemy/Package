@@ -9,6 +9,7 @@ import * as route53 from '@aws-cdk/aws-route53';
 import * as route53Targets from '@aws-cdk/aws-route53-targets';
 import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
 import * as iam from '@aws-cdk/aws-iam';
+import * as s3 from '@aws-cdk/aws-s3';
 
 import { ENVIRONMENT } from './environment';
 import { CONFIG } from './config';
@@ -16,6 +17,11 @@ import { CONFIG } from './config';
 export class ApiStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    // Storage for the packages
+    const bucket = new s3.Bucket(this, 'PackageBucket', {
+      bucketName: CONFIG.storage.bucketName,
+    });
 
     // Lambda function
     const deploymentPackage = 'resources/api/deployment-package.zip';
@@ -33,8 +39,10 @@ export class ApiStack extends cdk.Stack {
         STAGE: 'PROD',
         ACCESS_CONTROL_ALLOW_ORIGIN: '*',
         ACCESS_CONTROL_ALLOW_HEADERS: 'x-language',
+        SPECS_BUCKET_NAME: CONFIG.storage.bucketName,
       },
     });
+    bucket.grantReadWrite(func);
     const version = new lambda.Version(
       this,
       `LambdaVersion-${deploymentPackageHash}`,
