@@ -13,7 +13,7 @@ def put(body: bytearray, spec_id: str) -> server.Response:
 
     """
     try:
-        storage.get_storage().set(key=spec_id, value=body.decode())
+        storage.get_storage().set(key=f"{spec_id}/spec.json", value=body.decode())
 
         return server.Response(status=204)
 

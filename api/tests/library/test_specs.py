@@ -17,7 +17,7 @@ def test_put():
 
     response = specs.put(body=body.encode(), spec_id=spec_id)
 
-    assert storage.get_storage().get(key=spec_id) == body
+    assert storage.get_storage().get(key=f"{spec_id}/spec.json") == body
     assert response.status_code == 204
 
 

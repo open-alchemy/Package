@@ -50,4 +50,4 @@ def test_specs_put(client):
         == config.get_env().access_control_allow_origin
     )
 
-    assert storage.get_storage().get(key=spec_id) == data
+    assert storage.get_storage().get(key=f"{spec_id}/spec.json") == data
