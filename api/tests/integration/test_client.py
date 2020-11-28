@@ -41,7 +41,9 @@ def test_specs_put(client):
     data = "spec 1"
     spec_id = "id 1"
 
-    respose = client.put(f"/v1/specs/{spec_id}", data=data)
+    respose = client.put(
+        f"/v1/specs/{spec_id}", data=data, headers={"Authorization": "Bearer token 1"}
+    )
 
     assert respose.status_code == 204
     assert "Access-Control-Allow-Origin" in respose.headers
