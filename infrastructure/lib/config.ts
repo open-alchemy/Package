@@ -9,7 +9,7 @@ export const CONFIG = {
     additionalAllowHeaders: ['x-language'],
     resources: {
       version: 'v1',
-      uiRsources: [
+      uiResources: [
         'ui',
         'openapi.json',
         'swagger-ui-standalone-preset.js',
