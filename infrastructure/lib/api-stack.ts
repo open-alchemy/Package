@@ -59,6 +59,7 @@ export class ApiStack extends cdk.Stack {
       alias,
       deploymentConfig: codedeploy.LambdaDeploymentConfig.ALL_AT_ONCE,
     });
+    const integration = new apigateway.LambdaIntegration(alias);
 
     // Certificate
     const certificateArn = ENVIRONMENT.AWS_OPEN_ALCHEMY_API_CERTIFICATE_ARN;
@@ -69,10 +70,9 @@ export class ApiStack extends cdk.Stack {
     );
 
     // API gateway
-    const api = new apigateway.LambdaRestApi(this, 'LambdaRestApi', {
+    const api = new apigateway.RestApi(this, 'RestApi', {
       restApiName: 'Package Service',
       description: 'Micro service supporting the OpenAlchemy package service',
-      handler: alias,
       deployOptions: {
         throttlingBurstLimit: CONFIG.api.throttlingBurstLimit,
         throttlingRateLimit: CONFIG.api.throttlingRateLimit,
@@ -93,6 +93,29 @@ export class ApiStack extends cdk.Stack {
     alias.addPermission('RestApiLambdaPermission', {
       principal: new iam.ServicePrincipal('apigateway.amazonaws.com'),
       sourceArn: api.arnForExecuteApi(),
+    });
+
+    // Add Cognito authorizer
+    const authorizer = new apigateway.CfnAuthorizer(this, 'Authorizer', {
+      restApiId: api.restApiId,
+      type: apigateway.AuthorizationType.COGNITO,
+      identitySource: apigateway.IdentitySource.header('Authorization'),
+      providerArns: [ENVIRONMENT.AWS_IDENTITY_PROVIDER_ARN],
+      name: 'PackageAuth',
+    });
+
+    // Protect resources with cognito
+    const versionResource = api.root.addResource(CONFIG.api.resources.version);
+    const specsResource = versionResource.addResource(
+      CONFIG.api.resources.specs.pathPart
+    );
+    specsResource.addMethod('PUT', integration, {
+      authorizationType: apigateway.AuthorizationType.COGNITO,
+      authorizationScopes:
+        CONFIG.api.resources.specs.methods.put.authorizationScopes,
+      authorizer: {
+        authorizerId: authorizer.logicalId,
+      },
     });
 
     // DNS listing

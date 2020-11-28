@@ -7,6 +7,19 @@ export const CONFIG = {
     throttlingBurstLimit: 200,
     throttlingRateLimit: 100,
     additionalAllowHeaders: ['x-language'],
+    resources: {
+      version: 'v1',
+      specs: {
+        pathPart: 'specs',
+        methods: {
+          put: {
+            authorizationScopes: [
+              'https://package.api.openalchemy.io/spec.write',
+            ],
+          },
+        },
+      },
+    },
   },
   storage: {
     bucketName: `package-storage.${domainName}`,

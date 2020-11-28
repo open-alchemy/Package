@@ -6,6 +6,7 @@ const AWS_DEFAULT_REGION_KEY = 'AWS_DEFAULT_REGION';
 const AWS_OPEN_ALCHEMY_API_CERTIFICATE_ARN_KEY =
   'AWS_OPEN_ALCHEMY_API_CERTIFICATE_ARN';
 const AWS_OPEN_ALCHEMY_CERTIFICATE_ARN_KEY = 'AWS_OPEN_ALCHEMY_CERTIFICATE_ARN';
+const AWS_IDENTITY_PROVIDER_ARN_KEY = 'AWS_IDENTITY_PROVIDER_ARN';
 
 interface IEnvironment {
   [STACK_KEY]: string;
@@ -13,6 +14,7 @@ interface IEnvironment {
   [AWS_DEFAULT_REGION_KEY]: string;
   [AWS_OPEN_ALCHEMY_API_CERTIFICATE_ARN_KEY]: string;
   [AWS_OPEN_ALCHEMY_CERTIFICATE_ARN_KEY]: string;
+  [AWS_IDENTITY_PROVIDER_ARN_KEY]: string;
 }
 
 function getEnvironment(): IEnvironment {
@@ -45,12 +47,19 @@ function getEnvironment(): IEnvironment {
     `${AWS_OPEN_ALCHEMY_CERTIFICATE_ARN_KEY} missing or not a string`
   );
 
+  const awsIdentityProviderArn = process.env[AWS_IDENTITY_PROVIDER_ARN_KEY];
+  assert.ok(
+    typeof awsIdentityProviderArn === 'string',
+    `${AWS_IDENTITY_PROVIDER_ARN_KEY} missing or not a string`
+  );
+
   return {
     [STACK_KEY]: stack,
     [AWS_ACCOUNT_KEY]: awsAccount,
     [AWS_DEFAULT_REGION_KEY]: awsDefaultRegion,
     [AWS_OPEN_ALCHEMY_API_CERTIFICATE_ARN_KEY]: awsOpenAlchemyApiCertificateArn,
     [AWS_OPEN_ALCHEMY_CERTIFICATE_ARN_KEY]: awsOpenAlchemyCertificateArn,
+    [AWS_IDENTITY_PROVIDER_ARN_KEY]: awsIdentityProviderArn,
   };
 }
 
