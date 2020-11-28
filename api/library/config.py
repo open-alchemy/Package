@@ -3,7 +3,6 @@
 import dataclasses
 import enum
 import os
-import pathlib
 
 
 class Stage(str, enum.Enum):
@@ -22,6 +21,8 @@ class TEnvironment:
 
     # The stage the application is running in
     stage: Stage
+    # The name of the bucket with the specs
+    specs_bucket_name: str
     # The CORS origin response
     access_control_allow_origin: str
     # The CORS headers response
@@ -35,6 +36,9 @@ def _get_env() -> TEnvironment:
     assert stage_str in _STAGES
     stage = Stage[stage_str]
 
+    specs_bucket_name = os.getenv("SPECS_BUCKET_NAME", "")
+    assert isinstance(specs_bucket_name, str)
+
     access_control_allow_origin = os.getenv("ACCESS_CONTROL_ALLOW_ORIGIN", "*")
     assert isinstance(access_control_allow_origin, str)
 
@@ -45,6 +49,7 @@ def _get_env() -> TEnvironment:
 
     return TEnvironment(
         stage=stage,
+        specs_bucket_name=specs_bucket_name,
         access_control_allow_origin=access_control_allow_origin,
         access_control_allow_headers=access_control_allow_headers,
     )
