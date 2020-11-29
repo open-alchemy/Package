@@ -14,10 +14,11 @@ def test_put():
     """
     body = "body 1"
     spec_id = "id 1"
+    user = "user 1"
 
-    response = specs.put(body=body.encode(), spec_id=spec_id)
+    response = specs.put(body=body.encode(), spec_id=spec_id, user=user)
 
-    assert storage.get_storage().get(key=f"{spec_id}/spec.json") == body
+    assert storage.get_storage().get(key=f"{user}/{spec_id}/spec.json") == body
     assert response.status_code == 204
 
 
@@ -29,11 +30,12 @@ def test_put_error(monkeypatch):
     """
     body = "body 1"
     spec_id = "id 1"
+    user = "user 1"
     mock_storage_set = mock.MagicMock()
     mock_storage_set.side_effect = storage.exceptions.StorageError
     monkeypatch.setattr(storage.get_storage(), "set", mock_storage_set)
 
-    response = specs.put(body=body.encode(), spec_id=spec_id)
+    response = specs.put(body=body.encode(), spec_id=spec_id, user=user)
 
     assert response.status_code == 500
     assert response.mimetype == "text/plain"

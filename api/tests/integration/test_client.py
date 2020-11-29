@@ -1,6 +1,6 @@
 """Tests for spec controller."""
 
-
+import jwt
 import pytest
 from library import config
 from library.facades import storage
@@ -48,15 +48,17 @@ def test_specs_put_unauthorized(client):
 
 def test_specs_put(client):
     """
-    GIVEN spec id and data
+    GIVEN spec id, data and token
     WHEN PUT /v1/specs/{spec-id} is called with the Authorization header
     THEN the value is stored against the spec id.
     """
     data = "spec 1"
     spec_id = "id 1"
+    sub = "sub 1"
+    token = jwt.encode({"sub": sub}, "secret 1").decode()
 
     respose = client.put(
-        f"/v1/specs/{spec_id}", data=data, headers={"Authorization": "Bearer token 1"}
+        f"/v1/specs/{spec_id}", data=data, headers={"Authorization": f"Bearer {token}"}
     )
 
     assert respose.status_code == 204
@@ -66,4 +68,4 @@ def test_specs_put(client):
         == config.get_env().access_control_allow_origin
     )
 
-    assert storage.get_storage().get(key=f"{spec_id}/spec.json") == data
+    assert storage.get_storage().get(key=f"{sub}/{spec_id}/spec.json") == data
