@@ -9,6 +9,8 @@ flask-cors = "*"
 boto3 = "*"
 botocore = "*"
 serverless-wsgi = "*"
+pyjwt = "*"
+cryptography = "*"
 
 [dev-packages]
 black = "*"

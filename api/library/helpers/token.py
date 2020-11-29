@@ -1,12 +1,22 @@
 """Token helpers."""
 
+import typing
 
-def decode(token: str):
+import jwt
+
+
+def decode(token: str) -> typing.Dict[str, typing.Any]:
     """
     Decode a token.
 
-    Mockimplementation for now.
+    Assume the token has already been verified elsewhere.
+
+    Args:
+        token: The token to decode.
+
+    Returns:
+        The decoded token.
 
     """
-    print(token)
-    return {"sub": "sub 1"}
+    # Assume that the token has already been verified
+    jwt.decode(token, verify=False)
