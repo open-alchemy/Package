@@ -125,8 +125,8 @@ export class ApiStack extends cdk.Stack {
     const specsResource = versionResource.addResource('specs');
     const specsIdResource = specsResource.addResource('{spec_id}');
     specsIdResource.addMethod('PUT', integration, {
-      // authorizationScopes: ['https://package.api.openalchemy.io/spec.write'],
-      // authorizationType: apigateway.AuthorizationType.COGNITO,
+      authorizationScopes: ['https://package.api.openalchemy.io/spec.write'],
+      authorizationType: apigateway.AuthorizationType.COGNITO,
       authorizer: {
         authorizerId: cdk.Fn.ref(authorizer.logicalId),
       },
