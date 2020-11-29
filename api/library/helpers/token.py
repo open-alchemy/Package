@@ -8,4 +8,5 @@ def decode(token: str):
     Mockimplementation for now.
 
     """
+    print(token)
     return {"sub": "sub 1"}
