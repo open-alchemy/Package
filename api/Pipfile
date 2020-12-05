@@ -12,6 +12,7 @@ serverless-wsgi = "*"
 pyjwt = "*"
 cryptography = "*"
 pynamodb = "*"
+pyyaml = "*"
 
 [dev-packages]
 black = "*"
