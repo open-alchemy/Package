@@ -11,6 +11,7 @@ botocore = "*"
 serverless-wsgi = "*"
 pyjwt = "*"
 cryptography = "*"
+pynamodb = "*"
 
 [dev-packages]
 black = "*"

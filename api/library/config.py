@@ -27,6 +27,8 @@ class TEnvironment:
     access_control_allow_origin: str
     # The CORS headers response
     access_control_allow_headers: str
+    # The name of the package storage table
+    package_storage_table_name: str
 
 
 def _get_env() -> TEnvironment:
@@ -47,11 +49,17 @@ def _get_env() -> TEnvironment:
     )
     assert isinstance(access_control_allow_headers, str)
 
+    package_storage_table_name = os.getenv(
+        "PACKAGE_STORAGE_TABLE_NAME", "package-storage"
+    )
+    assert isinstance(package_storage_table_name, str)
+
     return TEnvironment(
         stage=stage,
         specs_bucket_name=specs_bucket_name,
         access_control_allow_origin=access_control_allow_origin,
         access_control_allow_headers=access_control_allow_headers,
+        package_storage_table_name=package_storage_table_name,
     )
 
 
