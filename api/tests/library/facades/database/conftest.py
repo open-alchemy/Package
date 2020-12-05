@@ -1,6 +1,7 @@
 """Fixtures for database tests."""
 
 import subprocess
+import time
 
 from pynamodb import connection, exceptions
 import pytest
@@ -18,13 +19,14 @@ def _database():
 
     # Wait for the server to be available
     started = False
-    for _ in range(20):
+    for _ in range(100):
         try:
             conn = connection.Connection(host=host)
             conn.list_tables()
             started = True
             break
         except exceptions.PynamoDBConnectionError:
+            time.sleep(0.001)
             pass
     if not started:
         process.terminate()
@@ -37,8 +39,8 @@ def _database():
                 f"pid: {process.pid}"
             )
         raise AssertionError(
-            f"could not start the database server, stdout: {process.stdout}, "
-            f"stderr: {process.stderr}"
+            f"could not start the database server, stdout: {process.stdout.read()}, "
+            f"stderr: {process.stderr.read()}"
         )
 
     yield host
