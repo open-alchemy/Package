@@ -57,8 +57,8 @@ def _package_storage_table(_database):
     models.PackageStorage.create_table(read_capacity_units=1, write_capacity_units=1)
 
 
-@pytest.fixture()
-def _clean_package_storage_table(_package_storage_table):
+@pytest.fixture(autouse=True)
+def clean_package_storage_table(_package_storage_table):
     """Create the package-storage table and empty it after every test."""
     yield
 

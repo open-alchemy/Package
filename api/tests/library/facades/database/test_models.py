@@ -105,9 +105,7 @@ PACKAGE_STORAGE_COUNT_CUSTOMER_MODELS_TESTS = [
 @pytest.mark.parametrize(
     "items, sub, expected_count", PACKAGE_STORAGE_COUNT_CUSTOMER_MODELS_TESTS
 )
-def test_package_storage_count_customer_models(
-    items, sub, expected_count, _clean_package_storage_table
-):
+def test_package_storage_count_customer_models(items, sub, expected_count):
     """
     GIVEN items in the database and sub
     WHEN count_customer_models on PackageStorage is called with the sub
@@ -121,7 +119,7 @@ def test_package_storage_count_customer_models(
     assert returned_count == expected_count
 
 
-def test_package_storage_create_update_item_empty(_clean_package_storage_table):
+def test_package_storage_create_update_item_empty():
     """
     GIVEN empty database, sub, spec id, version and model count
     WHEN create_update_item is called on PackageStorage with the sub, spec id, version
@@ -178,7 +176,7 @@ def test_package_storage_create_update_item_empty(_clean_package_storage_table):
     assert len(items) == 2
 
 
-def test_package_storage_create_update_item_single(_clean_package_storage_table):
+def test_package_storage_create_update_item_single():
     """
     GIVEN database that has a different record and sub and spec id
     WHEN create_update_item is called on PackageStorage with the sub, spec id
@@ -227,9 +225,7 @@ def test_package_storage_create_update_item_single(_clean_package_storage_table)
     assert len(items) == 3
 
 
-def test_package_storage_create_update_item_update(
-    _clean_package_storage_table, monkeypatch
-):
+def test_package_storage_create_update_item_update(monkeypatch):
     """
     GIVEN empty database a sub and spec id and multiple model count and versions
     WHEN create_update_item is called on PackageStorage multiple times with the same
@@ -308,7 +304,7 @@ def test_package_storage_create_update_item_update(
     assert len(items) == 3
 
 
-PACKAGE_STORAGE_GET_LATEST_VERSION_NOT_FOUND_TESTS = [
+PACKAGE_STORAGE_get_latest_spec_version_NOT_FOUND_TESTS = [
     pytest.param([], "sub 1", "spec id 1", id="empty"),
     pytest.param(
         [
@@ -350,27 +346,25 @@ PACKAGE_STORAGE_GET_LATEST_VERSION_NOT_FOUND_TESTS = [
 
 
 @pytest.mark.parametrize(
-    "items, sub, spec_id", PACKAGE_STORAGE_GET_LATEST_VERSION_NOT_FOUND_TESTS
+    "items, sub, spec_id", PACKAGE_STORAGE_get_latest_spec_version_NOT_FOUND_TESTS
 )
-def test_package_storage_get_latest_version_not_found(
-    items, sub, spec_id, _clean_package_storage_table
-):
+def test_package_storage_get_latest_spec_version_not_found(items, sub, spec_id):
     """
     GIVEN items in the database and sub and spec id
-    WHEN get_latest_version is called on PackageStorage with the sub and spec id
+    WHEN get_latest_spec_version is called on PackageStorage with the sub and spec id
     THEN NotFoundError is raised.
     """
     for item in items:
         item.save()
 
     with pytest.raises(exceptions.NotFoundError) as exc:
-        models.PackageStorage.get_latest_version(sub=sub, spec_id=spec_id)
+        models.PackageStorage.get_latest_spec_version(sub=sub, spec_id=spec_id)
 
     assert sub in str(exc)
     assert spec_id in str(exc)
 
 
-PACKAGE_STORAGE_GET_LATEST_VERSION_TESTS = [
+PACKAGE_STORAGE_get_latest_spec_version_TESTS = [
     pytest.param(
         [
             factory.PackageStorageFactory(
@@ -429,20 +423,19 @@ PACKAGE_STORAGE_GET_LATEST_VERSION_TESTS = [
 
 
 @pytest.mark.parametrize(
-    "items, sub, spec_id, expected_version", PACKAGE_STORAGE_GET_LATEST_VERSION_TESTS
+    "items, sub, spec_id, expected_version",
+    PACKAGE_STORAGE_get_latest_spec_version_TESTS,
 )
-def test_package_storage_get_latest_version(
-    items, sub, spec_id, expected_version, _clean_package_storage_table
-):
+def test_package_storage_get_latest_spec_version(items, sub, spec_id, expected_version):
     """
     GIVEN items in the database and sub and spec id
-    WHEN get_latest_version is called on PackageStorage with the sub and spec id
+    WHEN get_latest_spec_version is called on PackageStorage with the sub and spec id
     THEN the expected version is returned.
     """
     for item in items:
         item.save()
 
-    returned_version = models.PackageStorage.get_latest_version(
+    returned_version = models.PackageStorage.get_latest_spec_version(
         sub=sub, spec_id=spec_id
     )
 
@@ -548,9 +541,7 @@ PACKAGE_STORAGE_LIST_SPECS_TESTS = [
 @pytest.mark.parametrize(
     "items, sub, expected_spec_ids", PACKAGE_STORAGE_LIST_SPECS_TESTS
 )
-def test_package_storage_list_specs(
-    items, sub, expected_spec_ids, _clean_package_storage_table
-):
+def test_package_storage_list_specs(items, sub, expected_spec_ids):
     """
     GIVEN items in the database and sub
     WHEN list_specs is called on PackageStorage with the sub

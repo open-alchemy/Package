@@ -6,13 +6,14 @@ from pynamodb import models, attributes
 
 from ... import config
 from . import exceptions
+from . import types
 
 
-TPackageStoreSub = str
-TPackageStoreSpecId = str
-TPackageStoreVersion = str
-TPackageStoreUpdatedAt = str
-TPackageStoreModelCount = int
+TPackageStoreSub = types.TSub
+TPackageStoreSpecId = types.TSpecId
+TPackageStoreVersion = types.TVersion
+TPackageStoreUpdatedAt = types.TUpdatedAt
+TPackageStoreModelCount = types.TModelCount
 TPackageStoreUpdatedAtSpecId = str
 
 
@@ -148,7 +149,7 @@ class PackageStorage(models.Model):
         item_latest.save()
 
     @classmethod
-    def get_latest_version(
+    def get_latest_spec_version(
         cls, *, sub: TPackageStoreSub, spec_id: TPackageStoreSpecId
     ) -> TPackageStoreVersion:
         """
