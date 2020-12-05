@@ -28,21 +28,30 @@ class Storage:
             for obj in contents:
                 yield obj["Key"]
 
-    def list(self, prefix: typing.Optional[types.TPrefix] = None) -> types.TKeys:
+    def list(
+        self,
+        prefix: typing.Optional[types.TPrefix] = None,
+        suffix: typing.Optional[types.TPrefix] = None,
+    ) -> types.TKeys:
         """
         List available objects.
 
         Args:
             prefix: The prefix any keys must match.
+            suffix: The suffix any keys must match.
 
         Returns:
             All keys that match the prefix if it was supplied.
 
         """
         try:
-            return list(
-                self._list_generator(prefix=prefix if prefix is not None else "")
+            prefix_keys = self._list_generator(
+                prefix=prefix if prefix is not None else ""
             )
+            prefix_suffix_keys = filter(
+                lambda key: suffix is None or key.endswith(suffix), prefix_keys
+            )
+            return list(prefix_suffix_keys)
         except (
             botocore_exceptions.BotoCoreError,
             botocore_exceptions.ClientError,

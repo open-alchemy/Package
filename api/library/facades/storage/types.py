@@ -4,7 +4,7 @@ import typing
 
 TKey = str
 TPrefix = str
-TPostfix = str
+TSuffix = str
 TKeys = typing.List[TKey]
 TValue = str
 
@@ -12,7 +12,11 @@ TValue = str
 class TStorage(typing.Protocol):
     """Interface for storage."""
 
-    def list(self, prefix: typing.Optional[TPrefix] = None) -> TKeys:
+    def list(
+        self,
+        prefix: typing.Optional[TPrefix] = None,
+        suffix: typing.Optional[TSuffix] = None,
+    ) -> TKeys:
         """List available objects."""
         ...
 

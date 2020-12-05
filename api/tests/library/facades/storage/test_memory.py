@@ -198,10 +198,10 @@ LIST_TESTS = [
 
 
 @pytest.mark.parametrize("class_", CLASSES)
-@pytest.mark.parametrize("set_args, prefix, postfix, expected_keys", LIST_TESTS)
-def test_get_no_set(class_, set_args, prefix, postfix, expected_keys):
+@pytest.mark.parametrize("set_args, prefix, suffix, expected_keys", LIST_TESTS)
+def test_get_no_set(class_, set_args, prefix, suffix, expected_keys):
     """
-    GIVEN storage class, set args and prefix and postfix
+    GIVEN storage class, set args and prefix and suffix
     WHEN it is constructed, set is called with the args and list is called
     THEN the expected keys are returned.
     """
@@ -209,6 +209,6 @@ def test_get_no_set(class_, set_args, prefix, postfix, expected_keys):
     for key, value in set_args:
         storage_instance.set(key=key, value=value)
 
-    returned_keys = storage_instance.list(prefix=prefix, postfix=postfix)
+    returned_keys = storage_instance.list(prefix=prefix, suffix=suffix)
 
     assert returned_keys == expected_keys

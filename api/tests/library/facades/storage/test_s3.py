@@ -9,20 +9,71 @@ from library.facades import storage
 
 
 @pytest.mark.parametrize(
-    "response, prefix, expected_prefix, expected_keys",
+    "response, prefix, suffix, expected_prefix, expected_keys",
     [
-        pytest.param({}, None, "", [], id="empty response"),
-        pytest.param({}, "prefix 1", "prefix 1", [], id="empty response with prefix"),
+        pytest.param({}, None, None, "", [], id="empty response"),
+        pytest.param(
+            {}, "prefix 1", None, "prefix 1", [], id="empty response with prefix"
+        ),
         pytest.param(
             {"Contents": [{"Key": "key 1"}]},
+            None,
             None,
             "",
             ["key 1"],
             id="single key response",
         ),
+        pytest.param(
+            {"Contents": [{"Key": "key 1"}]},
+            None,
+            "key 1",
+            "",
+            ["key 1"],
+            id="single key response suffix hit",
+        ),
+        pytest.param(
+            {"Contents": [{"Key": "key 1"}]},
+            None,
+            "key 2",
+            "",
+            [],
+            id="single key response suffix miss",
+        ),
+        pytest.param(
+            {"Contents": [{"Key": "akey 1"}, {"Key": "bkey 1"}]},
+            None,
+            "key 1",
+            "",
+            ["akey 1", "bkey 1"],
+            id="multiple key response suffix hit",
+        ),
+        pytest.param(
+            {"Contents": [{"Key": "key 1"}, {"Key": "key 2"}]},
+            None,
+            "key 1",
+            "",
+            ["key 1"],
+            id="multiple key response suffix first hit",
+        ),
+        pytest.param(
+            {"Contents": [{"Key": "key 1"}, {"Key": "key 2"}]},
+            None,
+            "key 2",
+            "",
+            ["key 2"],
+            id="multiple key response suffix second hit",
+        ),
+        pytest.param(
+            {"Contents": [{"Key": "key 1"}, {"Key": "key 2"}]},
+            None,
+            "key 3",
+            "",
+            [],
+            id="multiple key response suffix miss",
+        ),
     ],
 )
-def test_list(response, prefix, expected_prefix, expected_keys):
+def test_list(response, suffix, prefix, expected_prefix, expected_keys):
     """
     GIVEN stubbed s3 client
     WHEN list is called
@@ -35,7 +86,7 @@ def test_list(response, prefix, expected_prefix, expected_keys):
     stubber.add_response("list_objects_v2", response, expected_params)
     stubber.activate()
 
-    returned_keys = s3_instance.list(prefix=prefix)
+    returned_keys = s3_instance.list(prefix=prefix, suffix=suffix)
 
     stubber.assert_no_pending_responses()
     assert returned_keys == expected_keys

@@ -15,14 +15,14 @@ class Storage:
     def list(
         self,
         prefix: typing.Optional[types.TPrefix] = None,
-        postfix: typing.Optional[types.TPostfix] = None,
+        suffix: typing.Optional[types.TSuffix] = None,
     ) -> types.TKeys:
         """
         List available objects.
 
         Args:
             prefix: The prefix any keys must match.
-            postfix: The postfix any keys must match.
+            suffix: The suffix any keys must match.
 
         Returns:
             All keys that match the prefix if it was supplied.
@@ -32,10 +32,10 @@ class Storage:
         prefix_match_keys = filter(
             lambda key: prefix is None or key.startswith(prefix), all_keys
         )
-        prefix_postfix_match_keys = filter(
-            lambda key: postfix is None or key.endswith(postfix), prefix_match_keys
+        prefix_suffix_match_keys = filter(
+            lambda key: suffix is None or key.endswith(suffix), prefix_match_keys
         )
-        return list(prefix_postfix_match_keys)
+        return list(prefix_suffix_match_keys)
 
     def _check_exists(self, key: types.TKey) -> None:
         """
