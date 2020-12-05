@@ -31,12 +31,28 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.local/share/virtualenvs
-          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/api/Pipfile.lock') }}
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('api/Pipfile.lock') }}
       - name: install dependencies
         working-directory: ./api
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
         run: |
           pipenv install --dev
+      - name: set up node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: cache node modules
+        id: cache-node_modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: api/node_modules
+          key: ${{ runner.os }}-api-${{ env.cache-name }}-${{ hashFiles('api/package-lock.json') }}
+      - name: install dependencies
+        if: steps.cache-node_modules.outputs.cache-hit != 'true'
+        working-directory: ./api
+        run: npm install
       - name: run tests
         working-directory: ./api
         run: |
@@ -95,7 +111,7 @@ jobs:
           cache-name: cache-node-modules
         with:
           path: infrastructure/node_modules
-          key: ${{ runner.os }}-infrastructure-${{ env.cache-name }}-${{ hashFiles('**/infrastructure/package-lock.json') }}
+          key: ${{ runner.os }}-infrastructure-${{ env.cache-name }}-${{ hashFiles('infrastructure/package-lock.json') }}
       - name: install dependencies
         if: steps.cache-node_modules.outputs.cache-hit != 'true'
         working-directory: ./infrastructure
