@@ -1,8 +1,35 @@
 """Handle specs endpoint."""
 
+import json
+
 from .facades import server, storage, database
 from .helpers import spec
 from . import exceptions
+
+
+def list_(user: str) -> server.Response:
+    """
+    Accept a spec and store it.
+
+    Args:
+        user: The user from the token.
+
+    Returns:
+        The response to the request.
+
+    """
+    try:
+        return server.Response(
+            json.dumps(database.get_database().list_specs(sub=user)),
+            status=200,
+            mimetype="application/json",
+        )
+    except database.exceptions.DatabaseError:
+        return server.Response(
+            "something went wrong whilst reading from the database",
+            status=500,
+            mimetype="text/plain",
+        )
 
 
 def put(body: bytearray, spec_id: str, user: str) -> server.Response:
@@ -13,6 +40,9 @@ def put(body: bytearray, spec_id: str, user: str) -> server.Response:
         body: The spec to store.
         spec_id: The id of the spec.
         user: The user from the token.
+
+    Returns:
+        The response to the request.
 
     """
     language = server.Request.request.headers["X-LANGUAGE"]

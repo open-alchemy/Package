@@ -1,10 +1,72 @@
 """Tests for the specs endpoint."""
+
 import json
 
 from unittest import mock
 
 from library import specs
 from library.facades import storage, server, database
+
+
+def test_list_(_clean_package_storage_table):
+    """
+    GIVEN user and database with a single spec
+    WHEN list_ is called with the user
+    THEN all the specs stored on the user are returned.
+    """
+    user = "user 1"
+    spec_id = "spec id 1"
+    database.get_database().create_update_spec(
+        sub=user, spec_id=spec_id, version="version 1", model_count=1
+    )
+
+    response = specs.list_(user=user)
+
+    assert response.status_code == 200
+    assert response.mimetype == "application/json"
+    assert json.loads(response.data.decode()) == [spec_id]
+
+
+def test_list_miss(_clean_package_storage_table):
+    """
+    GIVEN user and database with a single spec for a different user
+    WHEN list_ is called with the user
+    THEN empty list is returned.
+    """
+    user = "user 1"
+    spec_id = "spec id 1"
+    database.get_database().create_update_spec(
+        sub="user 2", spec_id=spec_id, version="version 1", model_count=1
+    )
+
+    response = specs.list_(user=user)
+
+    assert response.status_code == 200
+    assert response.mimetype == "application/json"
+    assert json.loads(response.data.decode()) == []
+
+
+def test_list_database_error(monkeypatch):
+    """
+    GIVEN user and database that raises a DatabaseError
+    WHEN list_ is called with the user
+    THEN a 500 is returned.
+    """
+    user = "user 1"
+    spec_id = "spec id 1"
+    mock_database_list_specs = mock.MagicMock()
+    mock_database_list_specs.side_effect = database.exceptions.DatabaseError
+    monkeypatch.setattr(
+        database.get_database(),
+        "list_specs",
+        mock_database_list_specs,
+    )
+
+    response = specs.list_(user=user)
+
+    assert response.status_code == 500
+    assert response.mimetype == "text/plain"
+    assert "database" in response.data.decode()
 
 
 def test_put(monkeypatch, _clean_package_storage_table):

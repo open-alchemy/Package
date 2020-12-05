@@ -12,6 +12,25 @@ security:
   - bearerAuth: []
 
 paths:
+  /specs:
+    get:
+      summary: List all available specs
+      operationId: library.specs.list_
+      responses:
+        200:
+          description: All the available specs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SpecId"
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
   /specs/{spec_id}:
     put:
       summary: Create or update a new spec
@@ -50,6 +69,12 @@ paths:
                 type: string
         401:
           description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        402:
+          description: Payment required
           content:
             text/plain:
               schema:
