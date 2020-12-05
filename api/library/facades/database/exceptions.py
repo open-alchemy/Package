@@ -3,9 +3,9 @@
 from ... import exceptions
 
 
-class BaseError(exceptions.BaseError):
+class DatabaseError(exceptions.BaseError):
     """The base exceptions for databases."""
 
 
-class NotFoundError(BaseError):
+class NotFoundError(DatabaseError):
     """When an item was not found in the database."""

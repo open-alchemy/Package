@@ -2,6 +2,7 @@
 
 from . import dynamodb
 from . import types
+from . import exceptions
 
 
 def _construct_database() -> types.TDatabase:

@@ -1,5 +1,7 @@
 """Tests for spec controller."""
 
+import json
+
 import jwt
 import pytest
 from library import config
@@ -46,19 +48,31 @@ def test_specs_put_unauthorized(client):
     assert respose.status_code == 401
 
 
-def test_specs_put(client):
+def test_specs_put(client, _clean_package_storage_table):
     """
     GIVEN spec id, data and token
     WHEN PUT /v1/specs/{spec-id} is called with the Authorization header
     THEN the value is stored against the spec id.
     """
-    data = "spec 1"
+    version = "version 1"
+    schemas = {
+        "Schema": {
+            "type": "object",
+            "x-tablename": "schema",
+            "properties": {"id": {"type": "integer"}},
+        }
+    }
+    data = json.dumps(
+        {"info": {"version": version}, "components": {"schemas": schemas}}
+    )
     spec_id = "id 1"
     sub = "sub 1"
     token = jwt.encode({"sub": sub}, "secret 1").decode()
 
     respose = client.put(
-        f"/v1/specs/{spec_id}", data=data, headers={"Authorization": f"Bearer {token}"}
+        f"/v1/specs/{spec_id}",
+        data=data,
+        headers={"Authorization": f"Bearer {token}", "X-LANGUAGE": "JSON"},
     )
 
     assert respose.status_code == 204
@@ -68,4 +82,6 @@ def test_specs_put(client):
         == config.get_env().access_control_allow_origin
     )
 
-    assert storage.get_storage().get(key=f"{sub}/{spec_id}/spec.json") == data
+    assert '"x-tablename":"schema"' in storage.get_storage().get(
+        key=f"{sub}/{spec_id}/{version}-spec.json"
+    )

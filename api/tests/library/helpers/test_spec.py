@@ -127,3 +127,101 @@ def test_process():
     assert returned_result.spec_str == json.dumps(
         {"components": {"schemas": schemas}}, separators=(",", ":")
     )
+    assert returned_result.model_count == 1
+
+
+@pytest.mark.parametrize(
+    "schemas, expected_model_count",
+    [
+        pytest.param(
+            {
+                "Schema": {
+                    "type": "object",
+                    "x-tablename": "schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            },
+            1,
+            id="single x-tablename",
+        ),
+        pytest.param(
+            {
+                "Schema": {
+                    "type": "object",
+                    "x-tablename": "schema",
+                    "properties": {"id": {"type": "integer"}},
+                },
+                "ChildSchema": {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/Schema"},
+                        {
+                            "type": "object",
+                            "x-inherits": True,
+                            "properties": {"child_id": {"type": "integer"}},
+                        },
+                    ]
+                },
+            },
+            2,
+            id="single x-inherits",
+        ),
+        pytest.param(
+            {
+                "Schema1": {
+                    "type": "object",
+                    "x-tablename": "schema_1",
+                    "properties": {"id": {"type": "integer"}},
+                },
+                "Schema2": {
+                    "type": "object",
+                    "x-tablename": "schema_2",
+                    "properties": {"id": {"type": "integer"}},
+                },
+            },
+            2,
+            id="multiple x-tablename",
+        ),
+        pytest.param(
+            {
+                "Schema": {
+                    "type": "object",
+                    "x-tablename": "schema",
+                    "properties": {"id": {"type": "integer"}},
+                },
+                "ChildSchema1": {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/Schema"},
+                        {
+                            "type": "object",
+                            "x-inherits": True,
+                            "properties": {"child_id": {"type": "integer"}},
+                        },
+                    ]
+                },
+                "ChildSchema2": {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/Schema"},
+                        {
+                            "type": "object",
+                            "x-inherits": True,
+                            "properties": {"child_id": {"type": "integer"}},
+                        },
+                    ]
+                },
+            },
+            3,
+            id="multiple x-inherits",
+        ),
+    ],
+)
+def test_process_model_count(schemas, expected_model_count):
+    """
+    GIVEN schemas
+    WHEN process is called with the schemas
+    THEN the expected model count is returned.
+    """
+    spec_str = json.dumps({"components": {"schemas": schemas}})
+
+    returned_result = spec.process(spec_str=spec_str, language="JSON")
+
+    assert returned_result.model_count == expected_model_count

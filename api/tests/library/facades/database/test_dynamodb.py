@@ -47,7 +47,7 @@ def test_get_latest_spec_version():
     spec_id = "spec id 1"
     database_instance = dynamodb.Database()
 
-    with pytest.raises(exceptions.BaseError):
+    with pytest.raises(exceptions.DatabaseError):
         database_instance.get_latest_spec_version(sub=sub, spec_id=spec_id)
 
     version_1 = "version 1"
@@ -69,10 +69,10 @@ def test_get_latest_spec_version():
         database_instance.get_latest_spec_version(sub=sub, spec_id=spec_id) == version_2
     )
 
-    with pytest.raises(exceptions.BaseError):
+    with pytest.raises(exceptions.DatabaseError):
         database_instance.get_latest_spec_version(sub=sub, spec_id="spec id 2")
 
-    with pytest.raises(exceptions.BaseError):
+    with pytest.raises(exceptions.DatabaseError):
         database_instance.get_latest_spec_version(sub="sub 2", spec_id=spec_id)
 
 

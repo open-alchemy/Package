@@ -54,6 +54,8 @@ class TSpecInfo:
     spec_str: str
     # The version of the spec
     version: str
+    # The number of models in the spec
+    model_count: int
 
 
 def process(*, spec_str: str, language: str) -> TSpecInfo:
@@ -69,8 +71,12 @@ def process(*, spec_str: str, language: str) -> TSpecInfo:
     try:
         schemas = build.get_schemas(spec=spec)
     except open_alchemy.exceptions.MalformedSchemaError as exc:
-        raise exceptions.LoadSpecError("the schema is not valid") from exc
+        raise exceptions.LoadSpecError(f"the schema is not valid, {exc}") from exc
     final_spec_str = build.generate_spec(schemas=schemas)
     version = build.calculate_version(spec=spec, spec_str=spec_str)
 
-    return TSpecInfo(spec_str=final_spec_str, version=version)
+    model_count = final_spec_str.count('"x-tablename":') + final_spec_str.count(
+        '"x-inherits":'
+    )
+
+    return TSpecInfo(spec_str=final_spec_str, version=version, model_count=model_count)

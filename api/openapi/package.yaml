@@ -23,6 +23,15 @@ paths:
             $ref: "#/components/schemas/SpecId"
           required: true
           description: The id of the spec
+        - in: header
+          name: X-LANGUAGE
+          description: The language of the spec
+          required: true
+          schema:
+            type: string
+            enum:
+              - JSON
+              - YAML
       requestBody:
         description: The spec to store or update
         required: true
