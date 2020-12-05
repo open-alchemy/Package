@@ -4,6 +4,15 @@ import time
 from pynamodb import models, attributes
 
 from ... import config
+from . import exceptions
+
+
+TPackageStoreSub = str
+TPackageStoreSpecId = str
+TPackageStoreVersion = str
+TPackageStoreUpdatedAt = str
+TPackageStoreModelCount = int
+TPackageStoreUpdatedAtSpecId = str
 
 
 class PackageStorage(models.Model):
@@ -37,7 +46,7 @@ class PackageStorage(models.Model):
     updated_at_spec_id = attributes.UnicodeAttribute(range_key=True)
 
     @classmethod
-    def count_customer_models(cls, *, sub: str) -> int:
+    def count_customer_models(cls, *, sub: TPackageStoreSub) -> int:
         """
         Count the number of models on the latest specs for a customer.
 
@@ -60,7 +69,9 @@ class PackageStorage(models.Model):
         )
 
     @staticmethod
-    def calc_updated_at_spec_id(*, updated_at: str, spec_id: str) -> str:
+    def calc_updated_at_spec_id(
+        *, updated_at: TPackageStoreUpdatedAt, spec_id: TPackageStoreSpecId
+    ) -> TPackageStoreUpdatedAtSpecId:
         """
         Calculate the updated_at_spec_id value.
 
@@ -76,7 +87,12 @@ class PackageStorage(models.Model):
 
     @classmethod
     def create_update_item(
-        cls, *, sub: str, spec_id: str, version: str, model_count: int
+        cls,
+        *,
+        sub: TPackageStoreSub,
+        spec_id: TPackageStoreSpecId,
+        version: TPackageStoreVersion,
+        model_count: TPackageStoreModelCount,
     ) -> None:
         """
         Create or update an item.
@@ -117,3 +133,33 @@ class PackageStorage(models.Model):
             updated_at_spec_id=updated_at_spec_id_latest,
         )
         item_latest.save()
+
+    @classmethod
+    def get_latest_version(
+        cls, *, sub: TPackageStoreSub, spec_id: TPackageStoreSpecId
+    ) -> TPackageStoreVersion:
+        """
+        Get the latest version for a spec.
+
+        Raises NotFoundError if the spec is not found in the database.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+            spec_id: Unique identifier for the spec for a package.
+
+        Returns:
+            The latest version of the spec.
+
+        """
+        try:
+            item = cls.get(
+                hash_key=sub,
+                range_key=cls.calc_updated_at_spec_id(
+                    updated_at=cls.UPDATED_AT_LATEST, spec_id=spec_id
+                ),
+            )
+            return item.version
+        except cls.DoesNotExist as exc:
+            raise exceptions.NotFoundError(
+                f"the spec {spec_id} does not exist for customer {sub}"
+            ) from exc

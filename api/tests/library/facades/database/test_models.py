@@ -5,7 +5,7 @@ from unittest import mock
 
 import pytest
 
-from library.facades.database import models
+from library.facades.database import models, exceptions
 
 from . import factory
 
@@ -304,3 +304,144 @@ def test_package_storage_create_update_item_update(
 
     items = list(models.PackageStorage.scan())
     assert len(items) == 3
+
+
+PACKAGE_STORAGE_GET_LATEST_VERSION_NOT_FOUND_TESTS = [
+    pytest.param([], "sub 1", "spec id 1", id="empty"),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 2",
+                spec_id="spec id 1",
+                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#",
+            )
+        ],
+        "sub 1",
+        "spec id 1",
+        id="single item sub miss",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 2",
+                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#",
+            )
+        ],
+        "sub 1",
+        "spec id 1",
+        id="single item spec_id miss",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 1",
+                updated_at_spec_id="11#",
+            )
+        ],
+        "sub 1",
+        "spec id 1",
+        id="single item updated_at_spec_id miss",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "items, sub, spec_id", PACKAGE_STORAGE_GET_LATEST_VERSION_NOT_FOUND_TESTS
+)
+def test_package_storage_get_latest_version_not_found(
+    items, sub, spec_id, _clean_package_storage_table
+):
+    """
+    GIVEN items in the database and sub and spec id
+    WHEN create_update_item is called on PackageStorage with the sub and spec id
+    THEN NotFoundError is raised.
+    """
+    for item in items:
+        item.save()
+
+    with pytest.raises(exceptions.NotFoundError) as exc:
+        models.PackageStorage.get_latest_version(sub=sub, spec_id=spec_id)
+
+    assert sub in str(exc)
+    assert spec_id in str(exc)
+
+
+PACKAGE_STORAGE_GET_LATEST_VERSION_TESTS = [
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 1",
+                version="version 1",
+                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1",
+            )
+        ],
+        "sub 1",
+        "spec id 1",
+        "version 1",
+        id="single",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 1",
+                version="version 1",
+                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1",
+            ),
+            factory.PackageStorageFactory(
+                sub="sub 2",
+                spec_id="spec id 2",
+                version="version 2",
+                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 2",
+            ),
+        ],
+        "sub 1",
+        "spec id 1",
+        "version 1",
+        id="multiple first",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 1",
+                version="version 1",
+                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1",
+            ),
+            factory.PackageStorageFactory(
+                sub="sub 2",
+                spec_id="spec id 2",
+                version="version 2",
+                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 2",
+            ),
+        ],
+        "sub 2",
+        "spec id 2",
+        "version 2",
+        id="multiple second",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "items, sub, spec_id, expected_version", PACKAGE_STORAGE_GET_LATEST_VERSION_TESTS
+)
+def test_package_storage_get_latest_version(
+    items, sub, spec_id, expected_version, _clean_package_storage_table
+):
+    """
+    GIVEN items in the database and sub and spec id
+    WHEN create_update_item is called on PackageStorage with the sub and spec id
+    THEN the expected version is returned.
+    """
+    for item in items:
+        item.save()
+
+    returned_version = models.PackageStorage.get_latest_version(
+        sub=sub, spec_id=spec_id
+    )
+
+    assert returned_version == expected_version
