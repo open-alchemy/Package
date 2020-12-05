@@ -25,9 +25,7 @@ def _database():
             conn.list_tables()
             started = True
             break
-        except exceptions.PynamoDBConnectionError as exc:
-            print(exc)
-            time.sleep(0.001)
+        except exceptions.PynamoDBConnectionError:
             pass
     if not started:
         process.terminate()
