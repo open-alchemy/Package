@@ -6,4 +6,4 @@ class BaseError(Exception):
 
 
 class LoadSpecError(BaseError):
-    """Raised when a spec cannot be loaded from a string."""
+    """Raised when a spec cannot be loaded from a string or it is malformed."""

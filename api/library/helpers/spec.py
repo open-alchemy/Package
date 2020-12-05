@@ -1,8 +1,11 @@
 """Helpers for spec."""
 
+import dataclasses
 import json
 import typing
 
+from open_alchemy import build
+import open_alchemy
 import yaml
 from yaml import parser
 from yaml import scanner
@@ -43,15 +46,31 @@ def load(*, spec_str: str, language: str) -> TSpec:
     )
 
 
-def dump(*, spec: TSpec) -> str:
+@dataclasses.dataclass
+class TSpecInfo:
+    """Key information about a spec."""
+
+    # The spec in string format
+    spec_str: str
+    # The version of the spec
+    version: str
+
+
+def process(*, spec_str: str, language: str) -> TSpecInfo:
     """
-    Serialize the spec.
+    Checks that the spec is valid and calculates the version.
 
     Args:
-        spec: The spec to serialize.
-
-    Returns:
-        The serialized spec.
+        spec_str: The string to process.
+        language: The language of the spec, either YAML or JSON.
 
     """
-    return json.dumps(spec)
+    spec = load(spec_str=spec_str, language=language)
+    try:
+        schemas = build.get_schemas(spec=spec)
+    except open_alchemy.exceptions.MalformedSchemaError as exc:
+        raise exceptions.LoadSpecError("the schema is not valid") from exc
+    final_spec_str = build.generate_spec(schemas=schemas)
+    version = build.calculate_version(spec=spec, spec_str=spec_str)
+
+    return TSpecInfo(spec_str=final_spec_str, version=version)

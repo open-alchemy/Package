@@ -1,5 +1,7 @@
 """Tests for the helpers."""
 
+import json
+
 import pytest
 from library import exceptions
 from library.helpers import spec
@@ -70,21 +72,58 @@ def test_load(language, spec_str):
     """
     GIVEN language and spec string
     WHEN load is called with the language and spec string
-    THEN the expected exception spec is returned.
+    THEN the expected spec is returned.
     """
     returned_spec = spec.load(spec_str=spec_str, language=language)
 
     assert returned_spec == {"key": "value"}
 
 
-def test_dump():
+def test_process_invalid_str():
     """
-    GIVEN spec
-    WHEN dump si called
-    THEN the serialized spec is returned.
+    GIVEN invalid spec string
+    WHEN process is called
+    THEN LoadSpecError is raised.
     """
-    spec_ = {"key": "value"}
+    with pytest.raises(exceptions.LoadSpecError) as exc:
+        spec.process(spec_str="", language="INVAID")
 
-    returned_spec_str = spec.dump(spec=spec_)
+    assert "INVAID" in str(exc)
 
-    assert returned_spec_str == '{"key": "value"}'
+
+def test_process_invalid_schemas():
+    """
+    GIVEN spec string
+    WHEN process is called
+    THEN LoadSpecError is raised.
+    """
+    with pytest.raises(exceptions.LoadSpecError) as exc:
+        spec.process(spec_str=json.dumps({}), language="JSON")
+
+    assert "not valid" in str(exc)
+
+
+def test_process():
+    """
+    GIVEN spec string
+    WHEN process is called
+    THEN the version is calculated and the final string is returned.
+    """
+    version = "version 1"
+    schemas = {
+        "Schema": {
+            "type": "object",
+            "x-tablename": "schema",
+            "properties": {"id": {"type": "integer"}},
+        }
+    }
+    spec_str = json.dumps(
+        {"info": {"version": version}, "components": {"schemas": schemas}}
+    )
+
+    returned_result = spec.process(spec_str=spec_str, language="JSON")
+
+    assert returned_result.version == version
+    assert returned_result.spec_str == json.dumps(
+        {"components": {"schemas": schemas}}, separators=(",", ":")
+    )

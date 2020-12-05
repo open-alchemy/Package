@@ -13,6 +13,7 @@ pyjwt = "*"
 cryptography = "*"
 pynamodb = "*"
 pyyaml = "*"
+openalchemy = "*"
 
 [dev-packages]
 black = "*"
