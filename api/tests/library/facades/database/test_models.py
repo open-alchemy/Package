@@ -1,6 +1,7 @@
 """Tests for the models."""
 
 import time
+from unittest import mock
 
 import pytest
 
@@ -175,5 +176,131 @@ def test_package_storage_create_update_item_empty(_clean_package_storage_table):
     assert item.updated_at == models.PackageStorage.UPDATED_AT_LATEST
     assert item.updated_at_spec_id == f"{item.updated_at}#{item.spec_id}"
 
-    items = list(models.PackageStorage.query(sub))
+    items = list(models.PackageStorage.scan())
     assert len(items) == 2
+
+
+def test_package_storage_create_update_item_single(_clean_package_storage_table):
+    """
+    GIVEN database that has a different record and sub and spec id
+    WHEN create_update_item is called on PackageStorage with the sub, spec id
+    THEN an new item is created with the sub and spec id and updated_at with the
+        current time
+    AND another similar record with updated_at set to latest
+    """
+    initial_item = factory.PackageStorageFactory(sub="sub 1", spec_id="spec id 1")
+    initial_item.save()
+    sub = "sub 2"
+    spec_id = "spec id 2"
+    version = "version 2"
+    model_count = 21
+
+    models.PackageStorage.create_update_item(
+        sub=sub, spec_id=spec_id, version=version, model_count=model_count
+    )
+
+    items = list(
+        models.PackageStorage.query(
+            sub,
+            (
+                models.PackageStorage.updated_at_spec_id.startswith(
+                    f"{str(time.time())[:1]}"
+                )
+            ),
+        )
+    )
+    assert len(items) == 1
+    [item] = items
+    assert item.sub == sub
+    assert item.spec_id == spec_id
+    assert int(item.updated_at) == pytest.approx(time.time(), abs=10)
+
+    items = list(
+        models.PackageStorage.query(
+            sub,
+            models.PackageStorage.updated_at_spec_id.startswith(
+                f"{models.PackageStorage.UPDATED_AT_LATEST}#"
+            ),
+        )
+    )
+    assert len(items) == 1
+    [item] = items
+    assert item.sub == sub
+    assert item.spec_id == spec_id
+    assert item.updated_at == models.PackageStorage.UPDATED_AT_LATEST
+
+    items = list(models.PackageStorage.scan())
+    assert len(items) == 3
+
+
+def test_package_storage_create_update_item_update(
+    _clean_package_storage_table, monkeypatch
+):
+    """
+    GIVEN database that already has a record
+    WHEN create_update_item is called on PackageStorage with the values from the record
+    THEN an new item is created with the sub and spec id and updated_at with the
+        current time
+    AND another similar record with updated_at set to latest
+    """
+    sub = "sub 1"
+    spec_id = "spec id 1"
+    version_1 = "version 1"
+    time_1 = 1000000
+    model_count_1 = 11
+    version_2 = "version 2"
+    model_count_2 = 21
+    time_2 = 2000000
+    mock_time = mock.MagicMock()
+    monkeypatch.setattr(time, "time", mock_time)
+
+    mock_time.return_value = time_1
+    models.PackageStorage.create_update_item(
+        sub=sub, spec_id=spec_id, version=version_1, model_count=model_count_1
+    )
+    mock_time.return_value = time_2
+    models.PackageStorage.create_update_item(
+        sub=sub, spec_id=spec_id, version=version_2, model_count=model_count_2
+    )
+
+    # Check first time
+    items = list(
+        models.PackageStorage.query(
+            sub,
+            (models.PackageStorage.updated_at_spec_id.startswith(f"{time_1}#")),
+        )
+    )
+    assert len(items) == 1
+    [item] = items
+    assert item.model_count == model_count_1
+    assert item.version == version_1
+    assert int(item.updated_at) == time_1
+
+    # Check second time
+    items = list(
+        models.PackageStorage.query(
+            sub,
+            (models.PackageStorage.updated_at_spec_id.startswith(f"{time_2}#")),
+        )
+    )
+    assert len(items) == 1
+    [item] = items
+    assert item.model_count == model_count_2
+    assert item.version == version_2
+    assert int(item.updated_at) == time_2
+
+    items = list(
+        models.PackageStorage.query(
+            sub,
+            models.PackageStorage.updated_at_spec_id.startswith(
+                f"{models.PackageStorage.UPDATED_AT_LATEST}#"
+            ),
+        )
+    )
+    assert len(items) == 1
+    [item] = items
+    assert item.model_count == model_count_2
+    assert item.version == version_2
+
+    items = list(models.PackageStorage.scan())
+    assert len(items) == 3
