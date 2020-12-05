@@ -55,6 +55,9 @@ jobs:
         run: npm install
       - name: run tests
         working-directory: ./api
+        env:
+          AWS_ACCESS_KEY_ID: invalid id
+          AWS_SECRET_ACCESS_KEY: invalid key
         run: |
           pipenv run test
 

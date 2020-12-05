@@ -37,8 +37,6 @@ class PackageStorage(models.Model):
 
         if config.get_env().stage == config.Stage.TEST:
             host = "http://localhost:8000"
-            aws_access_key_id = "invalid id"
-            aws_secret_access_key = "invalid key"
 
     sub = attributes.UnicodeAttribute(hash_key=True)
     spec_id = attributes.UnicodeAttribute()
