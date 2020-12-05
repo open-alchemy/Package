@@ -25,7 +25,8 @@ def _database():
             conn.list_tables()
             started = True
             break
-        except exceptions.PynamoDBConnectionError:
+        except exceptions.PynamoDBConnectionError as exc:
+            print(exc)
             time.sleep(0.001)
             pass
     if not started:
@@ -38,10 +39,7 @@ def _database():
                 "could not start the database server and failed to terminate process, "
                 f"pid: {process.pid}"
             )
-        raise AssertionError(
-            f"could not start the database server, stdout: {process.stdout.read()}, "
-            f"stderr: {process.stderr.read()}"
-        )
+        raise AssertionError("could not start the database server")
 
     yield host
 
