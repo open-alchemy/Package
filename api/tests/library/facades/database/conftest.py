@@ -37,8 +37,8 @@ def _database():
                 f"pid: {process.pid}"
             )
         raise AssertionError(
-            f"could not start the database server, stdout: {process.stdout}, "f
-            "stderr: {process.stderr}"
+            f"could not start the database server, stdout: {process.stdout}, "
+            f"stderr: {process.stderr}"
         )
 
     yield host
