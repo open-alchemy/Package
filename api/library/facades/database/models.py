@@ -51,6 +51,9 @@ class PackageStorage(models.Model):
         """
         Count the number of models on the latest specs for a customer.
 
+        Filters for a particular customer and updated_at_spec_id to start with
+        'latest#' and sums over model_count.
+
         Args:
             sub: Unique identifier for the customer.
 
@@ -69,9 +72,9 @@ class PackageStorage(models.Model):
             )
         )
 
-    @staticmethod
+    @classmethod
     def calc_updated_at_spec_id(
-        *, updated_at: TPackageStoreUpdatedAt, spec_id: TPackageStoreSpecId
+        cls, *, updated_at: TPackageStoreUpdatedAt, spec_id: TPackageStoreSpecId
     ) -> TPackageStoreUpdatedAtSpecId:
         """
         Calculate the updated_at_spec_id value.
@@ -84,6 +87,10 @@ class PackageStorage(models.Model):
             The value for updated_at_spec_id
 
         """
+        # Zero pad updated_at if it is not latest
+        if updated_at != cls.UPDATED_AT_LATEST:
+            updated_at = updated_at.zfill(20)
+
         return f"{updated_at}#{spec_id}"
 
     @classmethod
@@ -97,6 +104,11 @@ class PackageStorage(models.Model):
     ) -> None:
         """
         Create or update an item.
+
+        Creates or updates 2 items in the database. The updated_at attribute for the
+        first is calculated based on seconds since epoch and for the second is set to
+        'latest'. Also computes the sort key updated_at_spec_id based on updated_at and
+        spec_id.
 
         Args:
             sub: Unique identifier for a cutsomer.
@@ -144,6 +156,9 @@ class PackageStorage(models.Model):
 
         Raises NotFoundError if the spec is not found in the database.
 
+        Calculates updated_at_spec_id by setting updated_at to latest and using the
+        spec_id. Tries to retrieve an item for a customer based on the sort key.
+
         Args:
             sub: Unique identifier for a cutsomer.
             spec_id: Unique identifier for the spec for a package.
@@ -169,6 +184,8 @@ class PackageStorage(models.Model):
     def list_specs(cls, *, sub: TPackageStoreSub) -> typing.List[TPackageStoreSpecId]:
         """
         List all available specs for a customer.
+
+        Filters for a customer and for updated_at_spec_id to start with latest.
 
         Args:
             sub: Unique identifier for a cutsomer.

@@ -142,9 +142,7 @@ def test_package_storage_create_update_item_empty(_clean_package_storage_table):
     items = list(
         models.PackageStorage.query(
             sub,
-            models.PackageStorage.updated_at_spec_id.startswith(
-                f"{str(time.time())[:1]}"
-            ),
+            models.PackageStorage.updated_at_spec_id.startswith("0"),
         )
     )
     assert len(items) == 1
@@ -156,7 +154,7 @@ def test_package_storage_create_update_item_empty(_clean_package_storage_table):
     assert item.model_count == model_count
     assert not "." in item.updated_at
     assert int(item.updated_at) == pytest.approx(time.time(), abs=10)
-    assert item.updated_at_spec_id == f"{item.updated_at}#{item.spec_id}"
+    assert item.updated_at_spec_id == f"{item.updated_at.zfill(20)}#{item.spec_id}"
 
     items = list(
         models.PackageStorage.query(
@@ -202,11 +200,7 @@ def test_package_storage_create_update_item_single(_clean_package_storage_table)
     items = list(
         models.PackageStorage.query(
             sub,
-            (
-                models.PackageStorage.updated_at_spec_id.startswith(
-                    f"{str(time.time())[:1]}"
-                )
-            ),
+            (models.PackageStorage.updated_at_spec_id.startswith("0")),
         )
     )
     assert len(items) == 1
@@ -237,11 +231,11 @@ def test_package_storage_create_update_item_update(
     _clean_package_storage_table, monkeypatch
 ):
     """
-    GIVEN database that already has a record
-    WHEN create_update_item is called on PackageStorage with the values from the record
-    THEN an new item is created with the sub and spec id and updated_at with the
-        current time
-    AND another similar record with updated_at set to latest
+    GIVEN empty database a sub and spec id and multiple model count and versions
+    WHEN create_update_item is called on PackageStorage multiple times with the same
+        sub and spec id but different versions and model counts at different times
+    THEN a record for each version is added to the database
+    AND the latest record points to the last inserted record.
     """
     sub = "sub 1"
     spec_id = "spec id 1"
@@ -267,7 +261,11 @@ def test_package_storage_create_update_item_update(
     items = list(
         models.PackageStorage.query(
             sub,
-            (models.PackageStorage.updated_at_spec_id.startswith(f"{time_1}#")),
+            (
+                models.PackageStorage.updated_at_spec_id.startswith(
+                    f"{str(time_1).zfill(20)}#"
+                )
+            ),
         )
     )
     assert len(items) == 1
@@ -280,7 +278,11 @@ def test_package_storage_create_update_item_update(
     items = list(
         models.PackageStorage.query(
             sub,
-            (models.PackageStorage.updated_at_spec_id.startswith(f"{time_2}#")),
+            (
+                models.PackageStorage.updated_at_spec_id.startswith(
+                    f"{str(time_2).zfill(20)}#"
+                )
+            ),
         )
     )
     assert len(items) == 1
@@ -546,7 +548,7 @@ PACKAGE_STORAGE_LIST_SPECS_TESTS = [
 @pytest.mark.parametrize(
     "items, sub, expected_spec_ids", PACKAGE_STORAGE_LIST_SPECS_TESTS
 )
-def test_package_storage_get_latest_version(
+def test_package_storage_list_specs(
     items, sub, expected_spec_ids, _clean_package_storage_table
 ):
     """
