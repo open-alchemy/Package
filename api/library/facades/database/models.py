@@ -1,5 +1,6 @@
 """Database models."""
 
+import typing
 import time
 from pynamodb import models, attributes
 
@@ -163,3 +164,25 @@ class PackageStorage(models.Model):
             raise exceptions.NotFoundError(
                 f"the spec {spec_id} does not exist for customer {sub}"
             ) from exc
+
+    @classmethod
+    def list_specs(cls, *, sub: TPackageStoreSub) -> typing.List[TPackageStoreSpecId]:
+        """
+        List all available specs for a customer.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+
+        Returns:
+            List of all spec id for the customer.
+
+        """
+        return list(
+            map(
+                lambda item: item.spec_id,
+                cls.query(
+                    sub,
+                    cls.updated_at_spec_id.startswith(f"{cls.UPDATED_AT_LATEST}#"),
+                ),
+            )
+        )

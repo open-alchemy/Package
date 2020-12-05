@@ -355,7 +355,7 @@ def test_package_storage_get_latest_version_not_found(
 ):
     """
     GIVEN items in the database and sub and spec id
-    WHEN create_update_item is called on PackageStorage with the sub and spec id
+    WHEN get_latest_version is called on PackageStorage with the sub and spec id
     THEN NotFoundError is raised.
     """
     for item in items:
@@ -434,7 +434,7 @@ def test_package_storage_get_latest_version(
 ):
     """
     GIVEN items in the database and sub and spec id
-    WHEN create_update_item is called on PackageStorage with the sub and spec id
+    WHEN get_latest_version is called on PackageStorage with the sub and spec id
     THEN the expected version is returned.
     """
     for item in items:
@@ -445,3 +445,118 @@ def test_package_storage_get_latest_version(
     )
 
     assert returned_version == expected_version
+
+
+PACKAGE_STORAGE_LIST_SPECS_TESTS = [
+    pytest.param(
+        [],
+        "sub 1",
+        [],
+        id="empty",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1",
+            )
+        ],
+        "sub 2",
+        [],
+        id="single sub miss",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                updated_at_spec_id="11#",
+            )
+        ],
+        "sub 1",
+        [],
+        id="single updated_at_spec_id miss",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 1",
+                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1",
+            )
+        ],
+        "sub 1",
+        ["spec id 1"],
+        id="single hit",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(sub="sub 1", updated_at_spec_id="11#"),
+            factory.PackageStorageFactory(sub="sub 2", updated_at_spec_id="21#"),
+        ],
+        "sub 3",
+        [],
+        id="multiple miss",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 1",
+                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1",
+            ),
+            factory.PackageStorageFactory(sub="sub 2", updated_at_spec_id="21#"),
+        ],
+        "sub 1",
+        ["spec id 1"],
+        id="multiple first hit",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(sub="sub 1", updated_at_spec_id="11#"),
+            factory.PackageStorageFactory(
+                sub="sub 2",
+                spec_id="spec id 2",
+                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 2",
+            ),
+        ],
+        "sub 2",
+        ["spec id 2"],
+        id="multiple second hit",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 1",
+                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1",
+            ),
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 2",
+                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 2",
+            ),
+        ],
+        "sub 1",
+        ["spec id 1", "spec id 2"],
+        id="multiple hit",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "items, sub, expected_spec_ids", PACKAGE_STORAGE_LIST_SPECS_TESTS
+)
+def test_package_storage_get_latest_version(
+    items, sub, expected_spec_ids, _clean_package_storage_table
+):
+    """
+    GIVEN items in the database and sub
+    WHEN list_specs is called on PackageStorage with the sub
+    THEN the expected spec ids are returned.
+    """
+    for item in items:
+        item.save()
+
+    returned_spec_ids = models.PackageStorage.list_specs(sub=sub)
+
+    assert returned_spec_ids == expected_spec_ids
