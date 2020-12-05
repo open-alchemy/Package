@@ -4,6 +4,7 @@ import typing
 
 TKey = str
 TPrefix = str
+TPostfix = str
 TKeys = typing.List[TKey]
 TValue = str
 

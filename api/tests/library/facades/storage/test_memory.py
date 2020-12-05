@@ -74,17 +74,66 @@ def test_set_delete_get(class_):
 
 
 LIST_TESTS = [
-    pytest.param([], None, [], id="no objects"),
-    pytest.param([("key 1", "value 1")], None, ["key 1"], id="single objects"),
+    pytest.param([], None, None, [], id="no objects"),
+    pytest.param([("key 1", "value 1")], None, None, ["key 1"], id="single objects"),
     pytest.param(
-        [("key 1", "value 1")], "key 1", ["key 1"], id="single objects prefix full hit"
+        [("key 1", "value 1")],
+        "key 1",
+        None,
+        ["key 1"],
+        id="single objects prefix full hit",
     ),
     pytest.param(
-        [("key 1", "value 1")], "key", ["key 1"], id="single objects prefix partial hit"
+        [("key 1", "value 1")],
+        "key",
+        None,
+        ["key 1"],
+        id="single objects prefix partial hit",
     ),
-    pytest.param([("key 1", "value 1")], "key 2", [], id="single objects prefix miss"),
+    pytest.param(
+        [("key 1", "value 1")], "key 2", None, [], id="single objects prefix miss"
+    ),
+    pytest.param(
+        [("key 1", "value 1")],
+        None,
+        "key 1",
+        ["key 1"],
+        id="single objects postfix full hit",
+    ),
+    pytest.param(
+        [("key 1", "value 1")],
+        None,
+        " 1",
+        ["key 1"],
+        id="single objects postfix partial hit",
+    ),
+    pytest.param(
+        [("key 1", "value 1")], None, "key 2", [], id="single objects postfix miss"
+    ),
+    pytest.param(
+        [("key 1", "value 1")],
+        "key",
+        "2",
+        [],
+        id="single objects prefix hit postfix miss",
+    ),
+    pytest.param(
+        [("key 1", "value 1")],
+        "value",
+        "1",
+        [],
+        id="single objects prefix miss postfix hit",
+    ),
+    pytest.param(
+        [("key 1", "value 1")],
+        "key",
+        "1",
+        ["key 1"],
+        id="single objects prefix hit postfix hit",
+    ),
     pytest.param(
         [("key 1", "value 1"), ("key 2", "value 2")],
+        None,
         None,
         ["key 1", "key 2"],
         id="multiple objects",
@@ -92,35 +141,67 @@ LIST_TESTS = [
     pytest.param(
         [("key 1", "value 1"), ("key 2", "value 2")],
         "key",
+        None,
         ["key 1", "key 2"],
         id="multiple objects prefix all hit",
     ),
     pytest.param(
         [("key 1", "value 1"), ("key 2", "value 2")],
         "key 1",
+        None,
         ["key 1"],
         id="multiple objects prefix first hit",
     ),
     pytest.param(
         [("key 1", "value 1"), ("key 2", "value 2")],
         "key 2",
+        None,
         ["key 2"],
         id="multiple objects prefix second hit",
     ),
     pytest.param(
         [("key 1", "value 1"), ("key 2", "value 2")],
         "key 3",
+        None,
         [],
         id="multiple objects prefix no hit",
+    ),
+    pytest.param(
+        [("akey 1", "value 1"), ("bkey 1", "value 2")],
+        None,
+        " 1",
+        ["akey 1", "bkey 1"],
+        id="multiple objects postfix all hit",
+    ),
+    pytest.param(
+        [("key 1", "value 1"), ("key 2", "value 2")],
+        None,
+        "key 1",
+        ["key 1"],
+        id="multiple objects postfix first hit",
+    ),
+    pytest.param(
+        [("key 1", "value 1"), ("key 2", "value 2")],
+        None,
+        "key 2",
+        ["key 2"],
+        id="multiple objects postfix second hit",
+    ),
+    pytest.param(
+        [("key 1", "value 1"), ("key 2", "value 2")],
+        None,
+        "key 3",
+        [],
+        id="multiple objects postfix no hit",
     ),
 ]
 
 
 @pytest.mark.parametrize("class_", CLASSES)
-@pytest.mark.parametrize("set_args, prefix, expected_keys", LIST_TESTS)
-def test_get_no_set(class_, set_args, prefix, expected_keys):
+@pytest.mark.parametrize("set_args, prefix, postfix, expected_keys", LIST_TESTS)
+def test_get_no_set(class_, set_args, prefix, postfix, expected_keys):
     """
-    GIVEN storage class, set args and prefix
+    GIVEN storage class, set args and prefix and postfix
     WHEN it is constructed, set is called with the args and list is called
     THEN the expected keys are returned.
     """
@@ -128,6 +209,6 @@ def test_get_no_set(class_, set_args, prefix, expected_keys):
     for key, value in set_args:
         storage_instance.set(key=key, value=value)
 
-    returned_keys = storage_instance.list(prefix=prefix)
+    returned_keys = storage_instance.list(prefix=prefix, postfix=postfix)
 
     assert returned_keys == expected_keys

@@ -12,23 +12,30 @@ class Storage:
         """Construct."""
         self.storage: typing.Dict[types.TKey, types.TValue] = {}
 
-    def list(self, prefix: typing.Optional[types.TPrefix] = None) -> types.TKeys:
+    def list(
+        self,
+        prefix: typing.Optional[types.TPrefix] = None,
+        postfix: typing.Optional[types.TPostfix] = None,
+    ) -> types.TKeys:
         """
         List available objects.
 
         Args:
             prefix: The prefix any keys must match.
+            postfix: The postfix any keys must match.
 
         Returns:
             All keys that match the prefix if it was supplied.
 
         """
-        return list(
-            filter(
-                lambda key: prefix is None or key.startswith(prefix),
-                self.storage.keys(),
-            )
+        all_keys = self.storage.keys()
+        prefix_match_keys = filter(
+            lambda key: prefix is None or key.startswith(prefix), all_keys
         )
+        prefix_postfix_match_keys = filter(
+            lambda key: postfix is None or key.endswith(postfix), prefix_match_keys
+        )
+        return list(prefix_postfix_match_keys)
 
     def _check_exists(self, key: types.TKey) -> None:
         """
