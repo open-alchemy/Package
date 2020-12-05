@@ -5,6 +5,7 @@ import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import * as codedeploy from '@aws-cdk/aws-codedeploy';
+import * as dynamodb from '@aws-cdk/aws-dynamodb';
 import * as route53 from '@aws-cdk/aws-route53';
 import * as route53Targets from '@aws-cdk/aws-route53-targets';
 import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
@@ -21,6 +22,17 @@ export class ApiStack extends cdk.Stack {
     // Storage for the packages
     const bucket = new s3.Bucket(this, 'PackageBucket', {
       bucketName: CONFIG.storage.bucketName,
+    });
+
+    // Database for the packages
+    const table = new dynamodb.Table(this, 'Table', {
+      partitionKey: { name: 'sub', type: dynamodb.AttributeType.STRING },
+      tableName: CONFIG.storage.tableName,
+      sortKey: {
+        name: 'updated_at_spec_id',
+        type: dynamodb.AttributeType.STRING,
+      },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
     });
 
     // Lambda function
@@ -43,6 +55,7 @@ export class ApiStack extends cdk.Stack {
       },
     });
     bucket.grantReadWrite(func);
+    table.grantReadWriteData(func);
     const version = new lambda.Version(
       this,
       `LambdaVersion-${deploymentPackageHash}`,
