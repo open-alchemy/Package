@@ -4,7 +4,7 @@ import pytest
 from library import exceptions
 from library.helpers import spec
 
-LOAD_SPEC_ERROR_TESTS = [
+LOAD_ERROR_TESTS = [
     pytest.param(
         "INVALID",
         "",
@@ -37,12 +37,12 @@ LOAD_SPEC_ERROR_TESTS = [
 
 
 @pytest.mark.parametrize(
-    "language, spec_str, expected_exception, expected_reason", LOAD_SPEC_ERROR_TESTS
+    "language, spec_str, expected_exception, expected_reason", LOAD_ERROR_TESTS
 )
-def test_load_spec_error(language, spec_str, expected_exception, expected_reason):
+def test_load_error(language, spec_str, expected_exception, expected_reason):
     """
     GIVEN language and spec string
-    WHEN load_spec is called with the language and spec string
+    WHEN load is called with the language and spec string
     THEN the expected exception is raised with the expected reason.
     """
     with pytest.raises(expected_exception) as exc:
@@ -51,7 +51,7 @@ def test_load_spec_error(language, spec_str, expected_exception, expected_reason
     assert str(exc.value) == expected_reason
 
 
-LOAD_SPEC_TESTS = [
+LOAD_TESTS = [
     pytest.param(
         "JSON",
         '{"key": "value"}',
@@ -65,13 +65,26 @@ LOAD_SPEC_TESTS = [
 ]
 
 
-@pytest.mark.parametrize("language, spec_str", LOAD_SPEC_TESTS)
-def test_load_spec(language, spec_str):
+@pytest.mark.parametrize("language, spec_str", LOAD_TESTS)
+def test_load(language, spec_str):
     """
     GIVEN language and spec string
-    WHEN load_spec is called with the language and spec string
+    WHEN load is called with the language and spec string
     THEN the expected exception spec is returned.
     """
     returned_spec = spec.load(spec_str=spec_str, language=language)
 
     assert returned_spec == {"key": "value"}
+
+
+def test_dump():
+    """
+    GIVEN spec
+    WHEN dump si called
+    THEN the serialized spec is returned.
+    """
+    spec_ = {"key": "value"}
+
+    returned_spec_str = spec.dump(spec=spec_)
+
+    assert returned_spec_str == '{"key": "value"}'

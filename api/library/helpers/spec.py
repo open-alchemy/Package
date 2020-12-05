@@ -10,7 +10,10 @@ from yaml import scanner
 from .. import exceptions
 
 
-def load(*, spec_str: str, language: str) -> typing.Dict[str, typing.Any]:
+TSpec = typing.Dict[str, typing.Any]
+
+
+def load(*, spec_str: str, language: str) -> TSpec:
     """
     Load the spec from a string using a particular language.
 
@@ -38,3 +41,17 @@ def load(*, spec_str: str, language: str) -> typing.Dict[str, typing.Any]:
     raise exceptions.LoadSpecError(
         f"unsupported language {language}, supported languages are JSON and YAML"
     )
+
+
+def dump(*, spec: TSpec) -> str:
+    """
+    Serialize the spec.
+
+    Args:
+        spec: The spec to serialize.
+
+    Returns:
+        The serialized spec.
+
+    """
+    return json.dumps(spec)
