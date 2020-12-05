@@ -36,7 +36,10 @@ def _database():
                 "could not start the database server and failed to terminate process, "
                 f"pid: {process.pid}"
             )
-        raise AssertionError("could not start the database server")
+        raise AssertionError(
+            f"could not start the database server, stdout: {process.stdout}, "f
+            "stderr: {process.stderr}"
+        )
 
     yield host
 
