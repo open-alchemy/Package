@@ -225,3 +225,28 @@ def test_process_model_count(schemas, expected_model_count):
     returned_result = spec.process(spec_str=spec_str, language="JSON")
 
     assert returned_result.model_count == expected_model_count
+
+
+def test_prepare():
+    """
+    GIVEN spec string and version
+    WHEN prepare is called with the spec and version
+    THEN a nicely formatted spec is returned.
+    """
+    spec_str = json.dumps(
+        {"components": {"schemas": {"Schema": {"key": "value"}}}}, separators=(",", ":")
+    )
+    version = "version 1"
+
+    returned_spec_str = spec.prepare(spec_str=spec_str, version=version)
+
+    assert (
+        returned_spec_str
+        == f"""info:
+  version: {version}
+components:
+  schemas:
+    Schema:
+      key: value
+"""
+    )

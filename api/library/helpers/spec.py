@@ -80,3 +80,21 @@ def process(*, spec_str: str, language: str) -> TSpecInfo:
     )
 
     return TSpecInfo(spec_str=final_spec_str, version=version, model_count=model_count)
+
+
+def prepare(*, spec_str: str, version: str) -> str:
+    """
+    Prepare a stored spec to be returned to the user.
+
+    De-serializes using JSON, adds version and serializes using YAML.
+
+    Args:
+        spec_str: The spec as it is stored.
+        version: The version of the spec.
+
+    Returns:
+        The spec in a user friendly form.
+
+    """
+    spec = json.loads(spec_str)
+    return yaml.dump({"info": {"version": version}}) + yaml.dump(spec)

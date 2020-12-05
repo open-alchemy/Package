@@ -32,6 +32,58 @@ def list_(user: str) -> server.Response:
         )
 
 
+def get(spec_id: str, user: str) -> server.Response:
+    """
+    Retrieve a spec for a user.
+
+    Args:
+        spec_id: The id of the spec.
+        user: The user from the token.
+
+    Returns:
+        The response to the request.
+
+    """
+    try:
+        version = database.get_database().get_latest_spec_version(
+            sub=user, spec_id=spec_id
+        )
+        spec_str = storage.get_storage().get(
+            key=f"{user}/{spec_id}/{version}-spec.json"
+        )
+        prepared_spec_str = spec.prepare(spec_str=spec_str, version=version)
+
+        return server.Response(
+            prepared_spec_str,
+            status=200,
+            mimetype="text/plain",
+        )
+    except database.exceptions.NotFoundError:
+        return server.Response(
+            f"could not find the spec with id {spec_id}",
+            status=404,
+            mimetype="text/plain",
+        )
+    except database.exceptions.DatabaseError:
+        return server.Response(
+            "something went wrong whilst reading from the database",
+            status=500,
+            mimetype="text/plain",
+        )
+    except storage.exceptions.ObjectNotFoundError:
+        return server.Response(
+            f"could not find the spec with id {spec_id}",
+            status=404,
+            mimetype="text/plain",
+        )
+    except storage.exceptions.StorageError:
+        return server.Response(
+            "something went wrong whilst reading the spec",
+            status=500,
+            mimetype="text/plain",
+        )
+
+
 def put(body: bytearray, spec_id: str, user: str) -> server.Response:
     """
     Accept a spec and store it.

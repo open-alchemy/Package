@@ -73,6 +73,39 @@ def test_specs_get(client, _clean_package_storage_table):
     assert json.loads(respose.data.decode()) == [spec_id]
 
 
+def test_specs_spec_id_get(client, _clean_package_storage_table):
+    """
+    GIVEN database with a single spec
+    WHEN GET /v1/specs/{spec_id} is called with the Authorization header
+    THEN the spec is returned.
+    """
+    sub = "sub 1"
+    spec_id = "spec id 1"
+    version = "version 1"
+    database.get_database().create_update_spec(
+        sub=sub, spec_id=spec_id, version=version, model_count=1
+    )
+    spec = {"key": "value"}
+    storage.get_storage().set(
+        key=f"{sub}/{spec_id}/{version}-spec.json",
+        value=json.dumps(spec, separators=(",", ":")),
+    )
+    token = jwt.encode({"sub": sub}, "secret 1").decode()
+
+    respose = client.get(
+        f"/v1/specs/{spec_id}", headers={"Authorization": f"Bearer {token}"}
+    )
+
+    assert respose.status_code == 200
+    assert "Access-Control-Allow-Origin" in respose.headers
+    assert (
+        respose.headers["Access-Control-Allow-Origin"]
+        == config.get_env().access_control_allow_origin
+    )
+
+    assert "key: value" in respose.data.decode()
+
+
 def test_specs_spec_id_put(client, _clean_package_storage_table):
     """
     GIVEN spec id, data and token

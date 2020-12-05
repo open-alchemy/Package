@@ -69,6 +69,118 @@ def test_list_database_error(monkeypatch):
     assert "database" in response.data.decode()
 
 
+def test_get(_clean_package_storage_table):
+    """
+    GIVEN user and database and storage with a single spec
+    WHEN get is called with the user and spec id
+    THEN the spec value is returned.
+    """
+    user = "user 1"
+    spec_id = "spec id 1"
+    version = "version 1"
+    database.get_database().create_update_spec(
+        sub=user, spec_id=spec_id, version=version, model_count=1
+    )
+    spec = {"key": "value"}
+    storage.get_storage().set(
+        key=f"{user}/{spec_id}/{version}-spec.json",
+        value=json.dumps(spec, separators=(",", ":")),
+    )
+
+    response = specs.get(user=user, spec_id=spec_id)
+
+    assert response.status_code == 200
+    assert response.mimetype == "text/plain"
+    assert f"version: {version}" in response.data.decode()
+    assert f"key: value" in response.data.decode()
+
+
+def test_get_database_error(_clean_package_storage_table, monkeypatch):
+    """
+    GIVEN user and database that raises an error
+    WHEN get is called with the user and spec id
+    THEN a 500 is returned.
+    """
+    user = "user 1"
+    spec_id = "spec id 1"
+    mock_database_get_latest_spec_version = mock.MagicMock()
+    mock_database_get_latest_spec_version.side_effect = (
+        database.exceptions.DatabaseError
+    )
+    monkeypatch.setattr(
+        database.get_database(),
+        "get_latest_spec_version",
+        mock_database_get_latest_spec_version,
+    )
+
+    response = specs.get(user=user, spec_id=spec_id)
+
+    assert response.status_code == 500
+    assert response.mimetype == "text/plain"
+    assert "database" in response.data.decode()
+
+
+def test_get_database_miss(_clean_package_storage_table):
+    """
+    GIVEN user and empty database
+    WHEN get is called with the user and spec id
+    THEN a 404 is returned.
+    """
+    user = "user 1"
+    spec_id = "spec id 1"
+
+    response = specs.get(user=user, spec_id=spec_id)
+
+    assert response.status_code == 404
+    assert response.mimetype == "text/plain"
+    assert spec_id in response.data.decode()
+    assert "not find" in response.data.decode()
+
+
+def test_get_storage_error(_clean_package_storage_table, monkeypatch):
+    """
+    GIVEN user and database with a spec but storage that raises an error
+    WHEN get is called with the user and spec id
+    THEN a 500 is returned.
+    """
+    user = "user 1"
+    spec_id = "spec id 1"
+    version = "version 1"
+    database.get_database().create_update_spec(
+        sub=user, spec_id=spec_id, version=version, model_count=1
+    )
+    mock_storage_get = mock.MagicMock()
+    mock_storage_get.side_effect = storage.exceptions.StorageError
+    monkeypatch.setattr(storage.get_storage(), "get", mock_storage_get)
+
+    response = specs.get(user=user, spec_id=spec_id)
+
+    assert response.status_code == 500
+    assert response.mimetype == "text/plain"
+    assert "reading" in response.data.decode()
+
+
+def test_get_storage_miss(_clean_package_storage_table):
+    """
+    GIVEN user and database with a spec but empty storage
+    WHEN get is called with the user and spec id
+    THEN a 404 is returned.
+    """
+    user = "user 1"
+    spec_id = "spec id 1"
+    version = "version 1"
+    database.get_database().create_update_spec(
+        sub=user, spec_id=spec_id, version=version, model_count=1
+    )
+
+    response = specs.get(user=user, spec_id=spec_id)
+
+    assert response.status_code == 404
+    assert response.mimetype == "text/plain"
+    assert spec_id in response.data.decode()
+    assert "not find" in response.data.decode()
+
+
 def test_put(monkeypatch, _clean_package_storage_table):
     """
     GIVEN body and spec id

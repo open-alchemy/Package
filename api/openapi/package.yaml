@@ -32,16 +32,35 @@ paths:
               schema:
                 type: string
   /specs/{spec_id}:
+    get:
+      summary: Retrieve a spec
+      operationId: library.specs.get
+      parameters:
+        - $ref: "#/components/parameters/SpecId"
+      responses:
+        200:
+          description: The requested spec
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/SpecValue"
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: Spec was not found
+          content:
+            text/plain:
+              schema:
+                type: string
     put:
       summary: Create or update a new spec
       operationId: library.specs.put
       parameters:
-        - in: path
-          name: spec_id
-          schema:
-            $ref: "#/components/schemas/SpecId"
-          required: true
-          description: The id of the spec
+        - $ref: "#/components/parameters/SpecId"
         - in: header
           name: X-LANGUAGE
           description: The language of the spec
@@ -81,6 +100,14 @@ paths:
                 type: string
 
 components:
+  parameters:
+    SpecId:
+      in: path
+      name: spec_id
+      schema:
+        $ref: "#/components/schemas/SpecId"
+      required: true
+      description: The id of the spec
   securitySchemes:
     bearerAuth:
       type: http
