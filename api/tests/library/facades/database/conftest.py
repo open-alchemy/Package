@@ -1,8 +1,8 @@
 """Fixtures for database tests."""
 
-from urllib import request, error
 import subprocess
 
+from pynamodb import connection, exceptions
 import pytest
 
 from library.facades.database import models
@@ -14,17 +14,22 @@ def _database():
     process = subprocess.Popen(
         ["npx", "node", "tests/library/facades/database/init-database.js"]
     )
-    url = "http://localhost:8000"
+    host = "http://localhost:8000"
 
     # Wait for the server to be available
-    head_request = request.Request(url, method="HEAD")
+    started = False
     for _ in range(10):
         try:
-            request.urlopen(head_request)
-        except error.URLError:
+            connection.Connection(host=host)
+            started = True
+            break
+        except exceptions.PynamoDBConnectionError:
             pass
+    if not started:
+        process.terminate()
+        raise AssertionError("could not start the database server")
 
-    yield url
+    yield host
 
     process.terminate()
 
