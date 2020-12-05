@@ -31,5 +31,29 @@ class PackageStorage(models.Model):
     spec_id = attributes.UnicodeAttribute()
     version = attributes.UnicodeAttribute()
     updated_at = attributes.UnicodeAttribute()
+    UPDATED_AT_LATEST = "latest"
     model_count = attributes.NumberAttribute()
     updated_at_spec_id = attributes.UnicodeAttribute(range_key=True)
+
+    @classmethod
+    def count_customer_models(cls, *, sub: str) -> int:
+        """
+        Count the number of models on the latest specs for a customer.
+
+        Args:
+            sub: Unique identifier for the customer.
+
+        Returns:
+            The sum of the model count on the latest version of each unique spec for
+            the customer.
+
+        """
+        return sum(
+            map(
+                lambda item: int(item.model_count),
+                cls.query(
+                    sub,
+                    cls.updated_at_spec_id.startswith(f"{cls.UPDATED_AT_LATEST}#"),
+                ),
+            )
+        )

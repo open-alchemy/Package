@@ -16,6 +16,7 @@ pynamodb = "*"
 [dev-packages]
 black = "*"
 pytest = "*"
+factory-boy = "*"
 
 [requires]
 python_version = "3.9"

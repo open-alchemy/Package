@@ -30,14 +30,14 @@ def _database():
 
 
 @pytest.fixture(scope="module")
-def _package_store_table(_database):
-    """Create the package-store table and empty it after every test."""
+def _package_storage_table(_database):
+    """Create the package-storage table and empty it after every test."""
     models.PackageStorage.create_table(read_capacity_units=1, write_capacity_units=1)
 
 
 @pytest.fixture()
-def _clean_package_store_table(_package_store_table):
-    """Create the package-store table and empty it after every test."""
+def _clean_package_storage_table(_package_storage_table):
+    """Create the package-storage table and empty it after every test."""
     yield
 
     with models.PackageStorage.batch_write() as batch:
