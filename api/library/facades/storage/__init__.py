@@ -24,5 +24,5 @@ _STORAGE = _construct_storage()
 
 
 def get_storage() -> types.TStorage:
-    """Return a facade for the seed."""
+    """Return a facade for the storage."""
     return _STORAGE
