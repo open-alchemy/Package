@@ -147,11 +147,75 @@ export class ApiStack extends cdk.Stack {
       uiSubResource.addMethod('GET', integration);
     });
     const specsResource = versionResource.addResource('specs');
-    const specsIdResource = specsResource.addResource('{spec_id}');
-    specsIdResource.addMethod('PUT', integration, {
+    specsResource.addMethod('GET', integration, {
+      authorizationScopes: [
+        'https://package.api.openalchemy.io/spec.read',
+        cognito.OAuthScope.COGNITO_ADMIN.scopeName,
+      ],
+      authorizationType: apigateway.AuthorizationType.COGNITO,
+      authorizer: {
+        authorizerId: cdk.Fn.ref(authorizer.logicalId),
+      },
+    });
+    const specsSpecIdResource = specsResource.addResource('{spec_id}');
+    specsSpecIdResource.addMethod('GET', integration, {
+      authorizationScopes: [
+        'https://package.api.openalchemy.io/spec.read',
+        cognito.OAuthScope.COGNITO_ADMIN.scopeName,
+      ],
+      authorizationType: apigateway.AuthorizationType.COGNITO,
+      authorizer: {
+        authorizerId: cdk.Fn.ref(authorizer.logicalId),
+      },
+    });
+    specsSpecIdResource.addMethod('PUT', integration, {
       authorizationScopes: [
         'https://package.api.openalchemy.io/spec.write',
-        `https://package.api.openalchemy.io/${cognito.OAuthScope.COGNITO_ADMIN.scopeName}`,
+        cognito.OAuthScope.COGNITO_ADMIN.scopeName,
+      ],
+      authorizationType: apigateway.AuthorizationType.COGNITO,
+      authorizer: {
+        authorizerId: cdk.Fn.ref(authorizer.logicalId),
+      },
+    });
+    specsSpecIdResource.addMethod('DELETE', integration, {
+      authorizationScopes: [
+        'https://package.api.openalchemy.io/spec.write',
+        cognito.OAuthScope.COGNITO_ADMIN.scopeName,
+      ],
+      authorizationType: apigateway.AuthorizationType.COGNITO,
+      authorizer: {
+        authorizerId: cdk.Fn.ref(authorizer.logicalId),
+      },
+    });
+    const specsIdVersionsResource = specsSpecIdResource.addResource('versions');
+    specsIdVersionsResource.addMethod('GET', integration, {
+      authorizationScopes: [
+        'https://package.api.openalchemy.io/spec.read',
+        cognito.OAuthScope.COGNITO_ADMIN.scopeName,
+      ],
+      authorizationType: apigateway.AuthorizationType.COGNITO,
+      authorizer: {
+        authorizerId: cdk.Fn.ref(authorizer.logicalId),
+      },
+    });
+    const specsIdVersionsVersionResource = specsIdVersionsResource.addResource(
+      '{version}'
+    );
+    specsIdVersionsVersionResource.addMethod('GET', integration, {
+      authorizationScopes: [
+        'https://package.api.openalchemy.io/spec.read',
+        cognito.OAuthScope.COGNITO_ADMIN.scopeName,
+      ],
+      authorizationType: apigateway.AuthorizationType.COGNITO,
+      authorizer: {
+        authorizerId: cdk.Fn.ref(authorizer.logicalId),
+      },
+    });
+    specsIdVersionsVersionResource.addMethod('PUT', integration, {
+      authorizationScopes: [
+        'https://package.api.openalchemy.io/spec.write',
+        cognito.OAuthScope.COGNITO_ADMIN.scopeName,
       ],
       authorizationType: apigateway.AuthorizationType.COGNITO,
       authorizer: {
