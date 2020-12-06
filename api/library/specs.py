@@ -164,3 +164,13 @@ def delete(spec_id: str, user: str) -> server.Response:
         The response to the request.
 
     """
+    try:
+        database.get_database().delete_spec(sub=user, spec_id=spec_id)
+    except database.exceptions.DatabaseError:
+        pass
+    try:
+        storage.get_storage().delete_spec(user=user, spec_id=spec_id)
+    except storage.exceptions.StorageError:
+        pass
+
+    return server.Response(status=204)

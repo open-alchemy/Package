@@ -112,12 +112,6 @@ paths:
             text/plain:
               schema:
                 type: string
-        404:
-          description: Spec was not found
-          content:
-            text/plain:
-              schema:
-                type: string
 
 components:
   parameters:

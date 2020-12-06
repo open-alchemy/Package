@@ -1,8 +1,9 @@
 """Tests for the specs endpoint."""
 
 import json
-
 from unittest import mock
+
+import pytest
 
 from library import specs
 from library.facades import storage, server, database
@@ -387,3 +388,82 @@ def test_put_database_update_error(monkeypatch, _clean_package_storage_table):
     assert response.status_code == 500
     assert response.mimetype == "text/plain"
     assert "database" in response.data.decode()
+
+
+def test_delete(_clean_package_storage_table):
+    """
+    GIVEN database and storage with spec and user and spec id
+    WHEN put is called with the body and spec id
+    THEN the spec is deleted from the storage and database.
+    """
+    spec_id = "id 1"
+    user = "user 1"
+    version = "version 1"
+    database.get_database().create_update_spec(
+        sub=user, spec_id=spec_id, version=version, model_count=1
+    )
+    storage.get_storage().create_update_spec(
+        user=user, spec_id=spec_id, version=version, spec_str="spec str 1"
+    )
+
+    response = specs.delete(spec_id=spec_id, user=user)
+
+    with pytest.raises(storage.exceptions.StorageError):
+        storage.get_storage().get_spec(user=user, spec_id=spec_id, version=version)
+    assert database.get_database().count_customer_models(sub=user) == 0
+    assert response.status_code == 204
+
+
+def test_delete_database_error(monkeypatch, _clean_package_storage_table):
+    """
+    GIVEN database that raises a DatabaseError and storage with spec and user and spec
+        id
+    WHEN put is called with the body and spec id
+    THEN the spec is deleted from the storage.
+    """
+    spec_id = "id 1"
+    user = "user 1"
+    version = "version 1"
+    mock_database_delete_spec = mock.MagicMock()
+    mock_database_delete_spec.side_effect = database.exceptions.DatabaseError
+    monkeypatch.setattr(
+        database.get_database(),
+        "delete_spec",
+        mock_database_delete_spec,
+    )
+    storage.get_storage().create_update_spec(
+        user=user, spec_id=spec_id, version=version, spec_str="spec str 1"
+    )
+
+    response = specs.delete(spec_id=spec_id, user=user)
+
+    with pytest.raises(storage.exceptions.StorageError):
+        storage.get_storage().get_spec(user=user, spec_id=spec_id, version=version)
+    assert response.status_code == 204
+
+
+def test_delete_database_error(monkeypatch, _clean_package_storage_table):
+    """
+    GIVEN database and storage that raises a StorageError with spec and user and spec
+        id
+    WHEN put is called with the body and spec id
+    THEN the spec is deleted from the database.
+    """
+    spec_id = "id 1"
+    user = "user 1"
+    version = "version 1"
+    database.get_database().create_update_spec(
+        sub=user, spec_id=spec_id, version=version, model_count=1
+    )
+    mock_storage_delete_spec = mock.MagicMock()
+    mock_storage_delete_spec.side_effect = storage.exceptions.StorageError
+    monkeypatch.setattr(
+        storage.get_storage(),
+        "delete_spec",
+        mock_storage_delete_spec,
+    )
+
+    response = specs.delete(spec_id=spec_id, user=user)
+
+    assert database.get_database().count_customer_models(sub=user) == 0
+    assert response.status_code == 204
