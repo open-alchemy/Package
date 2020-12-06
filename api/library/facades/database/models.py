@@ -30,6 +30,10 @@ class SpecIdUpdatedAtIndex(indexes.LocalSecondaryIndex):
 
     class Meta:
         projection = indexes.AllProjection()
+        index_name = config.get_env().package_database_index_name
+
+        if config.get_env().stage == config.Stage.TEST:
+            host = "http://localhost:8000"
 
     sub = attributes.UnicodeAttribute(hash_key=True)
     spec_id_updated_at = attributes.UnicodeAttribute(range_key=True)
@@ -40,6 +44,9 @@ class PackageStorage(models.Model):
     Information about a package.
 
     Attrs:
+        UPDATED_AT_LATEST: Constant for what to set updated_at to to indicate it is the
+            latest record
+
         sub: Unique identifier for a customer
         spec_id: Unique identifier for a spec for a package
         version: The version of a spec for a package
@@ -48,8 +55,13 @@ class PackageStorage(models.Model):
             the spec.
         model_count: The number of 'x-tablename' and 'x-inherits' in a spec
         updated_at_spec_id: Combination of 'updated_at' and 'spec_id' separeted with #
+        spec_id_updated_at: Combination of 'spec_id' and 'updated_at' separeted with #
+
+        spec_id_updated_at_index: Index for querying spec_id_updated_at efficiently
 
     """
+
+    UPDATED_AT_LATEST = "latest"
 
     class Meta:
         table_name = config.get_env().package_database_table_name
@@ -61,10 +73,10 @@ class PackageStorage(models.Model):
     spec_id = attributes.UnicodeAttribute()
     version = attributes.UnicodeAttribute()
     updated_at = attributes.UnicodeAttribute()
-    UPDATED_AT_LATEST = "latest"
     model_count = attributes.NumberAttribute()
     updated_at_spec_id = attributes.UnicodeAttribute(range_key=True)
     spec_id_updated_at = attributes.UnicodeAttribute()
+
     spec_id_updated_at_index = SpecIdUpdatedAtIndex()
 
     @classmethod
@@ -227,3 +239,22 @@ class PackageStorage(models.Model):
                 ),
             )
         )
+
+    @classmethod
+    def delete_spec(
+        cls, *, sub: TPackageStoreSub, spec_id: TPackageStoreSpecId
+    ) -> None:
+        """
+        Delete a spec from the database.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+            spec_id: Unique identifier for the spec for a package.
+
+        """
+        items = cls.spec_id_updated_at_index.query(
+            sub, cls.spec_id_updated_at.startswith(f"{spec_id}#")
+        )
+        with cls.batch_write() as batch:
+            for item in items:
+                batch.delete(item)

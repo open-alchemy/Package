@@ -446,12 +446,7 @@ def test_package_storage_get_latest_spec_version(items, sub, spec_id, expected_v
 
 
 PACKAGE_STORAGE_LIST_SPECS_TESTS = [
-    pytest.param(
-        [],
-        "sub 1",
-        [],
-        id="empty",
-    ),
+    pytest.param([], "sub 1", [], id="empty"),
     pytest.param(
         [
             factory.PackageStorageFactory(
@@ -556,3 +551,136 @@ def test_package_storage_list_specs(items, sub, expected_spec_ids):
     returned_spec_ids = models.PackageStorage.list_specs(sub=sub)
 
     assert returned_spec_ids == expected_spec_ids
+
+
+PACKAGE_STORAGE_DELETE_SPEC_TESTS = [
+    pytest.param([], "sub 1", "spec id 1", 0, id="empty"),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 1",
+                spec_id_updated_at="spec id 1#11",
+            )
+        ],
+        "sub 2",
+        "spec id 1",
+        1,
+        id="single sub miss",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 1",
+                spec_id_updated_at="spec id 1#11",
+            )
+        ],
+        "sub 1",
+        "spec id 2",
+        1,
+        id="single spec_id miss",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 1",
+                spec_id_updated_at="spec id 1#11",
+            )
+        ],
+        "sub 1",
+        "spec id 1",
+        0,
+        id="single hit",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 1",
+                spec_id_updated_at="spec id 1#11",
+            ),
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 1",
+                spec_id_updated_at="spec id 1#21",
+            ),
+        ],
+        "sub 1",
+        "spec id 1",
+        0,
+        id="multiple hit",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 1",
+                spec_id_updated_at="spec id 1#11",
+            ),
+            factory.PackageStorageFactory(
+                sub="sub 2",
+                spec_id="spec id 2",
+                spec_id_updated_at="spec id 2#21",
+            ),
+        ],
+        "sub 1",
+        "spec id 1",
+        1,
+        id="multiple first hit",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 1",
+                spec_id_updated_at="spec id 1#11",
+            ),
+            factory.PackageStorageFactory(
+                sub="sub 2",
+                spec_id="spec id 2",
+                spec_id_updated_at="spec id 2#21",
+            ),
+        ],
+        "sub 2",
+        "spec id 2",
+        1,
+        id="multiple second hit",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                spec_id="spec id 1",
+                spec_id_updated_at="spec id 1#11",
+            ),
+            factory.PackageStorageFactory(
+                sub="sub 2",
+                spec_id="spec id 2",
+                spec_id_updated_at="spec id 2#21",
+            ),
+        ],
+        "sub 3",
+        "spec id 3",
+        2,
+        id="multiple miss",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "items, sub, spec_id, expected_item_count", PACKAGE_STORAGE_DELETE_SPEC_TESTS
+)
+def test_package_storage_delete_spec(items, sub, spec_id, expected_item_count):
+    """
+    GIVEN items in the database and sub and spec id
+    WHEN delete_spec is called on PackageStorage with the sub and spec id
+    THEN the expected number of items in the database remain.
+    """
+    for item in items:
+        item.save()
+
+    returned_spec_ids = models.PackageStorage.delete_spec(sub=sub, spec_id=spec_id)
+
+    assert len(list(models.PackageStorage.scan())) == expected_item_count

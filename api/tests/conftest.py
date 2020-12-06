@@ -54,7 +54,14 @@ def _database():
 @pytest.fixture(scope="session")
 def _package_storage_table(_database):
     """Create the package-storage table and empty it after every test."""
-    models.PackageStorage.create_table(read_capacity_units=1, write_capacity_units=1)
+    assert not models.PackageStorage.exists()
+    models.PackageStorage.create_table(
+        read_capacity_units=1,
+        write_capacity_units=1,
+        wait=True,
+    )
+
+    yield
 
 
 @pytest.fixture()
