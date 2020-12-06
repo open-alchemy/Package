@@ -57,7 +57,7 @@ def _get_env() -> TEnvironment:
     assert isinstance(package_database_table_name, str)
 
     package_database_index_name = os.getenv(
-        "PACKAGE_DATABASE_INDEX_NAME", "package-storage"
+        "PACKAGE_DATABASE_INDEX_NAME", "specIdUpdatedAt"
     )
     assert isinstance(package_database_index_name, str)
 

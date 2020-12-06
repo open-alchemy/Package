@@ -10,6 +10,8 @@ export const CONFIG = {
   },
   storage: {
     bucketName: `package-storage.${domainName}`,
+  },
+  database: {
     tableName: 'package-storage',
     indexName: 'specIdUpdatedAt',
   },
