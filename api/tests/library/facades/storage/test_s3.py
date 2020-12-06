@@ -271,7 +271,7 @@ def test_set_error_client():
 
 def test_set():
     """
-    GIVEN stubbed s3 client that returns an object
+    GIVEN stubbed s3 client
     WHEN set is called
     THEN the client is called with the expected parameters.
     """
@@ -331,7 +331,7 @@ def test_delete_error_client():
 
 def test_delete():
     """
-    GIVEN stubbed s3 client that returns an object
+    GIVEN stubbed s3 client
     WHEN delete is called
     THEN the client is called with the expected parameters.
     """
@@ -345,5 +345,75 @@ def test_delete():
     stubber.activate()
 
     s3_instance.delete(key=key)
+
+    stubber.assert_no_pending_responses()
+
+
+def test_delete_all_error_core():
+    """
+    GIVEN request that raises a core error
+    WHEN delete_all is called
+    THEN StorageError is raised.
+    """
+    bucket = "bucket 1"
+    key = "key 1"
+    s3_instance = storage.s3.Storage(bucket)
+    stubber = stub.Stubber(s3_instance.client)
+    stubber.activate()
+
+    with pytest.raises(storage.exceptions.StorageError) as exc:
+        s3_instance.delete_all(keys=[key])
+
+    stubber.assert_no_pending_responses()
+    assert "deleting" in str(exc)
+    assert "keys" in str(exc)
+
+
+def test_delete_all_error_client():
+    """
+    GIVEN stubbed s3 client that raises an error
+    WHEN delete_all is called
+    THEN StorageError is raised.
+    """
+    bucket = "bucket1"
+    key = "key 1"
+    s3_instance = storage.s3.Storage(bucket)
+    stubber = stub.Stubber(s3_instance.client)
+    stubber.add_client_error("delete_objects")
+    stubber.activate()
+
+    with pytest.raises(storage.exceptions.StorageError) as exc:
+        s3_instance.delete_all(keys=[key])
+
+    stubber.assert_no_pending_responses()
+    assert "deleting" in str(exc)
+    assert "keys" in str(exc)
+
+
+@pytest.mark.parametrize(
+    "keys, expected_objects",
+    [
+        pytest.param([], [], id="no keys"),
+        pytest.param(["key 1"], [{"Key": "key 1"}], id="single keys"),
+        pytest.param(
+            ["key 1", "key 2"], [{"Key": "key 1"}, {"Key": "key 2"}], id="multiple keys"
+        ),
+    ],
+)
+def test_delete_all(keys, expected_objects):
+    """
+    GIVEN stubbed s3 client and keys to delete
+    WHEN delete_all is called
+    THEN the client is called with the expected parameters.
+    """
+    bucket = "bucket1"
+    s3_instance = storage.s3.Storage(bucket)
+    stubber = stub.Stubber(s3_instance.client)
+    expected_params = {"Bucket": bucket, "Delete": {"Objects": expected_objects}}
+    response = {}
+    stubber.add_response("delete_objects", response, expected_params)
+    stubber.activate()
+
+    s3_instance.delete_all(keys=keys)
 
     stubber.assert_no_pending_responses()

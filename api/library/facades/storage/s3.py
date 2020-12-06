@@ -41,7 +41,7 @@ class Storage:
             suffix: The suffix any keys must match.
 
         Returns:
-            All keys that match the prefix if it was supplied.
+            All keys that match the prefix and suffix if they were supplied.
 
         """
         try:
@@ -119,4 +119,24 @@ class Storage:
         except botocore_exceptions.ClientError as exc:
             raise exceptions.ObjectNotFoundError(
                 f"could not find object at key {key}"
+            ) from exc
+
+    def delete_all(self, *, keys: types.TKeys) -> None:
+        """
+        Delete the objects behind the keys.
+
+        Args:
+            keys: The keys of the objects to delete.
+
+        """
+        try:
+            self.client.delete_objects(
+                Bucket=self.bucket, Delete={"Objects": [{"Key": key} for key in keys]}
+            )
+        except (
+            botocore_exceptions.BotoCoreError,
+            botocore_exceptions.ClientError,
+        ) as exc:
+            raise exceptions.StorageError(
+                "something went wrong when deleting keys"
             ) from exc

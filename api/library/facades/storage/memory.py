@@ -25,7 +25,7 @@ class Storage:
             suffix: The suffix any keys must match.
 
         Returns:
-            All keys that match the prefix if it was supplied.
+            All keys that match the prefix and suffix if they were supplied.
 
         """
         all_keys = self.storage.keys()
@@ -92,7 +92,7 @@ class Storage:
 
     def delete_all(self, *, keys: types.TKeys) -> None:
         """
-        Delete the keys behind the objects.
+        Delete the objects behind the keys.
 
         Args:
             keys: The keys of the objects to delete.
