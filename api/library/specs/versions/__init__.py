@@ -1,7 +1,9 @@
 """Handle specs versions endpoint."""
 
+import json
+
 from ... import types
-from ...facades import server
+from ...facades import server, storage
 
 
 def list_(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
@@ -16,3 +18,23 @@ def list_(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
         The response to the request.
 
     """
+    try:
+        return server.Response(
+            json.dumps(
+                storage.get_storage().get_spec_versions(user=user, spec_id=spec_id)
+            ),
+            status=200,
+            mimetype="application/json",
+        )
+    except storage.exceptions.ObjectNotFoundError:
+        return server.Response(
+            f"could not find spec with id {spec_id}",
+            status=404,
+            mimetype="text/plain",
+        )
+    except storage.exceptions.StorageError:
+        return server.Response(
+            "something went wrong whilst reading from the storage",
+            status=500,
+            mimetype="text/plain",
+        )
