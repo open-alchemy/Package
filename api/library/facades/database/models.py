@@ -34,7 +34,7 @@ class PackageStorage(models.Model):
     """
 
     class Meta:
-        table_name = config.get_env().package_storage_table_name
+        table_name = config.get_env().package_database_table_name
 
         if config.get_env().stage == config.Stage.TEST:
             host = "http://localhost:8000"

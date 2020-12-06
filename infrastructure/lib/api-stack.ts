@@ -59,11 +59,13 @@ export class ApiStack extends cdk.Stack {
         STAGE: 'PROD',
         ACCESS_CONTROL_ALLOW_ORIGIN: '*',
         ACCESS_CONTROL_ALLOW_HEADERS: 'x-language',
-        SPECS_BUCKET_NAME: CONFIG.storage.bucketName,
+        PACKAGE_STORAGE_BUCKET_NAME: CONFIG.storage.bucketName,
+        PACKAGE_DATABASE_TABLE_NAME: CONFIG.database.tableName,
+        PACKAGE_DATABASE_INDEX_NAME: CONFIG.database.indexName,
       },
     });
     bucket.grantReadWrite(func);
-    table.grantReadWriteData(func);
+    // table.grantReadWriteData(func);
     const version = new lambda.Version(
       this,
       `LambdaVersion-${deploymentPackageHash}`,

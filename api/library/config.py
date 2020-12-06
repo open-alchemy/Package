@@ -22,13 +22,15 @@ class TEnvironment:
     # The stage the application is running in
     stage: Stage
     # The name of the bucket with the specs
-    specs_bucket_name: str
+    package_storage_bucket_name: str
     # The CORS origin response
     access_control_allow_origin: str
     # The CORS headers response
     access_control_allow_headers: str
     # The name of the package storage table
-    package_storage_table_name: str
+    package_database_table_name: str
+    # The name of the package storage index
+    package_database_index_name: str
 
 
 def _get_env() -> TEnvironment:
@@ -38,8 +40,8 @@ def _get_env() -> TEnvironment:
     assert stage_str in _STAGES
     stage = Stage[stage_str]
 
-    specs_bucket_name = os.getenv("SPECS_BUCKET_NAME", "")
-    assert isinstance(specs_bucket_name, str)
+    package_storage_bucket_name = os.getenv("PACKAGE_STORAGE_BUCKET_NAME", "")
+    assert isinstance(package_storage_bucket_name, str)
 
     access_control_allow_origin = os.getenv("ACCESS_CONTROL_ALLOW_ORIGIN", "*")
     assert isinstance(access_control_allow_origin, str)
@@ -49,17 +51,23 @@ def _get_env() -> TEnvironment:
     )
     assert isinstance(access_control_allow_headers, str)
 
-    package_storage_table_name = os.getenv(
-        "PACKAGE_STORAGE_TABLE_NAME", "package-storage"
+    package_database_table_name = os.getenv(
+        "PACKAGE_DATABASE_TABLE_NAME", "package-storage"
     )
-    assert isinstance(package_storage_table_name, str)
+    assert isinstance(package_database_table_name, str)
+
+    package_database_index_name = os.getenv(
+        "PACKAGE_DATABASE_INDEX_NAME", "package-storage"
+    )
+    assert isinstance(package_database_index_name, str)
 
     return TEnvironment(
         stage=stage,
-        specs_bucket_name=specs_bucket_name,
+        package_storage_bucket_name=package_storage_bucket_name,
         access_control_allow_origin=access_control_allow_origin,
         access_control_allow_headers=access_control_allow_headers,
-        package_storage_table_name=package_storage_table_name,
+        package_database_table_name=package_database_table_name,
+        package_database_index_name=package_database_index_name,
     )
 
 
