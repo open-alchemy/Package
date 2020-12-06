@@ -246,3 +246,43 @@ def test_specs_spec_id_version_version_get(client):
     )
 
     assert "key: value" in respose.data.decode()
+
+
+def test_specs_spec_id_versions_version_put(client, _clean_package_storage_table):
+    """
+    GIVEN spec id, data, version and token
+    WHEN PUT /v1/specs/{spec-id}/versions/{version} is called with the Authorization
+        header
+    THEN the value is stored and written to the database against the spec id.
+    """
+    version = "version 1"
+    schemas = {
+        "Schema": {
+            "type": "object",
+            "x-tablename": "schema",
+            "properties": {"id": {"type": "integer"}},
+        }
+    }
+    data = json.dumps(
+        {"info": {"version": version}, "components": {"schemas": schemas}}
+    )
+    spec_id = "id 1"
+    sub = "sub 1"
+    token = jwt.encode({"sub": sub}, "secret 1").decode()
+
+    respose = client.put(
+        f"/v1/specs/{spec_id}/versions/{version}",
+        data=data,
+        headers={"Authorization": f"Bearer {token}", "X-LANGUAGE": "JSON"},
+    )
+
+    assert respose.status_code == 204
+    assert "Access-Control-Allow-Origin" in respose.headers
+    assert (
+        respose.headers["Access-Control-Allow-Origin"]
+        == config.get_env().access_control_allow_origin
+    )
+
+    assert '"x-tablename":"schema"' in storage.get_storage_facade().get_spec(
+        user=sub, spec_id=spec_id, version=version
+    )
