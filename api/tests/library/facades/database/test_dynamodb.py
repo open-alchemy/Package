@@ -2,7 +2,7 @@
 
 import pytest
 
-from library.facades.database import dynamodb, exceptions
+from library.facades.database import dynamodb, exceptions, models
 
 
 def test_count_customer_models():
@@ -102,3 +102,32 @@ def test_list_specs():
     )
 
     assert database_instance.list_specs(sub=sub) == [spec_id_1, spec_id_2]
+
+
+def test_delete_specs():
+    """
+    GIVEN sub, spec id, version and model count
+    WHEN create_update_spec is called with the spec info and delete_spec is called
+    THEN the spec is deleted.
+    """
+    sub = "sub 1"
+    spec_id = "spec id 1"
+    version = "version 1"
+    model_count = 1
+    database_instance = dynamodb.Database()
+    database_instance.create_update_spec(
+        sub=sub, spec_id=spec_id, version=version, model_count=model_count
+    )
+
+    assert database_instance.list_specs(sub=sub) == [spec_id]
+    assert database_instance.count_customer_models(sub=sub) == model_count
+    assert (
+        database_instance.get_latest_spec_version(sub=sub, spec_id=spec_id) == version
+    )
+
+    database_instance.delete_spec(sub=sub, spec_id=spec_id)
+
+    assert database_instance.list_specs(sub=sub) == []
+    assert database_instance.count_customer_models(sub=sub) == 0
+    with pytest.raises(exceptions.NotFoundError):
+        database_instance.get_latest_spec_version(sub=sub, spec_id=spec_id)

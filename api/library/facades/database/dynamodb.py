@@ -76,3 +76,15 @@ class Database:
 
         """
         return models.PackageStorage.list_specs(sub=sub)
+
+    @staticmethod
+    def delete_spec(*, sub: types.TSub, spec_id: types.TSpecId) -> None:
+        """
+        Delete a spec from the database.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+            spec_id: Unique identifier for the spec for a package.
+
+        """
+        models.PackageStorage.delete_spec(sub=sub, spec_id=spec_id)

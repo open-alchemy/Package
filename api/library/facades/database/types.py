@@ -72,3 +72,15 @@ class TDatabase(typing.Protocol):
 
         """
         ...
+
+    @staticmethod
+    def delete_spec(*, sub: TSub, spec_id: TSpecId) -> None:
+        """
+        Delete a spec from the database.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+            spec_id: Unique identifier for the spec for a package.
+
+        """
+        ...
