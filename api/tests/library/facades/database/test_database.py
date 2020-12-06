@@ -2,7 +2,7 @@
 
 import pytest
 
-from library.facades.database import exceptions, get_database
+from library.facades import database
 
 
 def test_count_customer_models():
@@ -13,7 +13,7 @@ def test_count_customer_models():
     THEN the model count is returned.
     """
     sub = "sub 1"
-    database_instance = get_database()
+    database_instance = database.get_database()
 
     assert database_instance.count_customer_models(sub=sub) == 0
 
@@ -45,9 +45,9 @@ def test_get_latest_spec_version():
     """
     sub = "sub 1"
     spec_id = "spec id 1"
-    database_instance = get_database()
+    database_instance = database.get_database()
 
-    with pytest.raises(exceptions.DatabaseError):
+    with pytest.raises(database.exceptions.DatabaseError):
         database_instance.get_latest_spec_version(sub=sub, spec_id=spec_id)
 
     version_1 = "version 1"
@@ -69,10 +69,10 @@ def test_get_latest_spec_version():
         database_instance.get_latest_spec_version(sub=sub, spec_id=spec_id) == version_2
     )
 
-    with pytest.raises(exceptions.DatabaseError):
+    with pytest.raises(database.exceptions.DatabaseError):
         database_instance.get_latest_spec_version(sub=sub, spec_id="spec id 2")
 
-    with pytest.raises(exceptions.DatabaseError):
+    with pytest.raises(database.exceptions.DatabaseError):
         database_instance.get_latest_spec_version(sub="sub 2", spec_id=spec_id)
 
 
@@ -83,7 +83,7 @@ def test_list_specs():
     THEN all specs for the customer are returned.
     """
     sub = "sub 1"
-    database_instance = get_database()
+    database_instance = database.get_database()
 
     assert database_instance.list_specs(sub=sub) == []
 
@@ -114,7 +114,7 @@ def test_delete_specs():
     spec_id = "spec id 1"
     version = "version 1"
     model_count = 1
-    database_instance = get_database()
+    database_instance = database.get_database()
     database_instance.create_update_spec(
         sub=sub, spec_id=spec_id, version=version, model_count=model_count
     )
@@ -129,5 +129,5 @@ def test_delete_specs():
 
     assert database_instance.list_specs(sub=sub) == []
     assert database_instance.count_customer_models(sub=sub) == 0
-    with pytest.raises(exceptions.NotFoundError):
+    with pytest.raises(database.exceptions.NotFoundError):
         database_instance.get_latest_spec_version(sub=sub, spec_id=spec_id)

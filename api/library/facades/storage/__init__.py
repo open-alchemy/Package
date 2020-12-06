@@ -79,6 +79,10 @@ class _StorageFacade:
             spec_id: Unique identifier for the spec.
 
         """
+        delete_keys = _STORAGE.list(prefix=f"{user}/{spec_id}")
+        if not delete_keys:
+            raise exceptions.StorageError("no keys to delete")
+        _STORAGE.delete_all(keys=delete_keys)
 
 
 _FACADE = _StorageFacade()
