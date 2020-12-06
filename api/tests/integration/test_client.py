@@ -75,7 +75,7 @@ def test_specs_get(client, _clean_package_storage_table):
 
 def test_specs_spec_id_get(client, _clean_package_storage_table):
     """
-    GIVEN database with a single spec
+    GIVEN database and storage with a single spec
     WHEN GET /v1/specs/{spec_id} is called with the Authorization header
     THEN the spec is returned.
     """
@@ -112,7 +112,7 @@ def test_specs_spec_id_put(client, _clean_package_storage_table):
     """
     GIVEN spec id, data and token
     WHEN PUT /v1/specs/{spec-id} is called with the Authorization header
-    THEN the value is stored against the spec id.
+    THEN the value is stored and written to the database against the spec id.
     """
     version = "version 1"
     schemas = {
@@ -145,3 +145,40 @@ def test_specs_spec_id_put(client, _clean_package_storage_table):
     assert '"x-tablename":"schema"' in storage.get_storage().get_spec(
         user=sub, spec_id=spec_id, version=version
     )
+
+
+def test_specs_spec_id_delete(client, _clean_package_storage_table):
+    """
+    GIVEN database and storage with a single spec
+    WHEN DELETE /v1/specs/{spec_id} is called with the Authorization header
+    THEN the spec is deleted from the database and storage.
+    """
+    sub = "sub 1"
+    spec_id = "spec id 1"
+    version = "version 1"
+    database.get_database().create_update_spec(
+        sub=sub, spec_id=spec_id, version=version, model_count=1
+    )
+    spec = {"key": "value"}
+    storage.get_storage().create_update_spec(
+        user=sub,
+        spec_id=spec_id,
+        version=version,
+        spec_str=json.dumps(spec, separators=(",", ":")),
+    )
+    token = jwt.encode({"sub": sub}, "secret 1").decode()
+
+    respose = client.delete(
+        f"/v1/specs/{spec_id}", headers={"Authorization": f"Bearer {token}"}
+    )
+
+    assert respose.status_code == 204
+    assert "Access-Control-Allow-Origin" in respose.headers
+    assert (
+        respose.headers["Access-Control-Allow-Origin"]
+        == config.get_env().access_control_allow_origin
+    )
+
+    with pytest.raises(storage.exceptions.StorageError):
+        storage.get_storage().get_spec(user=sub, spec_id=spec_id, version=version)
+    assert database.get_database().count_customer_models(sub=sub) == 0
