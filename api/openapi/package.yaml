@@ -57,7 +57,7 @@ paths:
               schema:
                 type: string
     put:
-      summary: Create or update a new spec
+      summary: Create or update a spec
       operationId: library.specs.put
       parameters:
         - $ref: "#/components/parameters/SpecId"
@@ -82,6 +82,12 @@ paths:
           description: The spec has been stored
         500:
           description: Something went wrong whilst saving the spec
+          content:
+            text/plain:
+              schema:
+                type: string
+        400:
+          description: The spec is not valid
           content:
             text/plain:
               schema:
@@ -161,6 +167,55 @@ paths:
                 type: string
         404:
           description: Spec was not found
+          content:
+            text/plain:
+              schema:
+                type: string
+    put:
+      summary: Create or update a specific versions of a spec
+      operationId: library.specs.versions.put
+      parameters:
+        - $ref: "#/components/parameters/SpecId"
+        - $ref: "#/components/parameters/SpecVersion"
+        - in: header
+          name: X-LANGUAGE
+          description: The language of the spec
+          required: true
+          schema:
+            type: string
+            enum:
+              - JSON
+              - YAML
+      requestBody:
+        description: The spec to store or update
+        required: true
+        content:
+          text/plain:
+            schema:
+              $ref: "#/components/schemas/SpecValue"
+      responses:
+        204:
+          description: The spec has been stored
+        500:
+          description: Something went wrong whilst saving the spec
+          content:
+            text/plain:
+              schema:
+                type: string
+        400:
+          description: The spec is not valid or there is a version mismatch in the path and spec
+          content:
+            text/plain:
+              schema:
+                type: string
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        402:
+          description: Payment required
           content:
             text/plain:
               schema:
