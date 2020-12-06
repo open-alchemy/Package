@@ -25,23 +25,23 @@ export class ApiStack extends cdk.Stack {
     });
 
     // Database for the packages
-    // const table = new dynamodb.Table(this, 'Table', {
-    //   partitionKey: { name: 'sub', type: dynamodb.AttributeType.STRING },
-    //   tableName: CONFIG.storage.tableName,
-    //   sortKey: {
-    //     name: 'updated_at_spec_id',
-    //     type: dynamodb.AttributeType.STRING,
-    //   },
-    //   billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-    // });
-    // table.addLocalSecondaryIndex({
-    //   indexName: 'specIdUpdatedAt',
-    //   sortKey: {
-    //     name: 'spec_id_updated_at',
-    //     type: dynamodb.AttributeType.STRING,
-    //   },
-    //   projectionType: dynamodb.ProjectionType.ALL,
-    // });
+    const table = new dynamodb.Table(this, 'Table', {
+      partitionKey: { name: 'sub', type: dynamodb.AttributeType.STRING },
+      tableName: CONFIG.database.tableName,
+      sortKey: {
+        name: 'updated_at_spec_id',
+        type: dynamodb.AttributeType.STRING,
+      },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+    });
+    table.addLocalSecondaryIndex({
+      indexName: 'specIdUpdatedAt',
+      sortKey: {
+        name: 'spec_id_updated_at',
+        type: dynamodb.AttributeType.STRING,
+      },
+      projectionType: dynamodb.ProjectionType.ALL,
+    });
 
     // Lambda function
     const deploymentPackage = 'resources/api/deployment-package.zip';
@@ -65,7 +65,7 @@ export class ApiStack extends cdk.Stack {
       },
     });
     bucket.grantReadWrite(func);
-    // table.grantReadWriteData(func);
+    table.grantReadWriteData(func);
     const version = new lambda.Version(
       this,
       `LambdaVersion-${deploymentPackageHash}`,

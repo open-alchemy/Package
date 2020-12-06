@@ -2,7 +2,7 @@
 
 import typing
 import time
-from pynamodb import models, attributes
+from pynamodb import models, attributes, indexes
 
 from ... import config
 from . import exceptions
@@ -15,6 +15,10 @@ TPackageStoreVersion = types.TVersion
 TPackageStoreUpdatedAt = types.TUpdatedAt
 TPackageStoreModelCount = types.TModelCount
 TPackageStoreUpdatedAtSpecId = str
+
+
+class SpecIdUpdatedAtViewIndex(indexes.LocalSecondaryIndex):
+    """Local secondary index for querying based on spec_id."""
 
 
 class PackageStorage(models.Model):
