@@ -1,4 +1,4 @@
-name: Periodic Production Tests for the OpenAlchemy Editor
+name: Periodic Production Tests for the OpenAlchemy Package Store
 
 on:
   schedule:
