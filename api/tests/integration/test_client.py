@@ -184,3 +184,31 @@ def test_specs_spec_id_delete(client, _clean_package_storage_table):
             user=sub, spec_id=spec_id, version=version
         )
     assert database.get_database().count_customer_models(sub=sub) == 0
+
+
+def test_specs_spec_id_versions_get(client):
+    """
+    GIVEN database and storage with a single spec
+    WHEN GET /v1/specs/{spec_id}/versions is called with the Authorization header
+    THEN the version is returned.
+    """
+    sub = "sub 1"
+    spec_id = "spec id 1"
+    version = "version 1"
+    storage.get_storage_facade().create_update_spec(
+        user=sub, spec_id=spec_id, version=version, spec_str="spec str 1"
+    )
+    token = jwt.encode({"sub": sub}, "secret 1").decode()
+
+    respose = client.get(
+        f"/v1/specs/{spec_id}/versions", headers={"Authorization": f"Bearer {token}"}
+    )
+
+    assert respose.status_code == 200
+    assert "Access-Control-Allow-Origin" in respose.headers
+    assert (
+        respose.headers["Access-Control-Allow-Origin"]
+        == config.get_env().access_control_allow_origin
+    )
+
+    assert json.loads(respose.data.decode()) == [version]
