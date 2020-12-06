@@ -123,12 +123,12 @@ def put(
             )
 
         # Check that the maximum number of models hasn't been exceeded
-        current_count = database.get_database().count_customer_models(sub=user)
-        if current_count + spec_info.model_count > 100:
+        free_tier_check = database.get_database().check_would_exceed_free_tier(
+            sub=user, model_count=spec_info.model_count
+        )
+        if free_tier_check.result:
             return server.Response(
-                "with this spec the maximum number of 100 models for the free tier "
-                f"would be exceeded, current models count: {current_count}, "
-                f"models in this spec: {spec_info.model_count}",
+                free_tier_check.reason,
                 status=402,
                 mimetype="text/plain",
             )

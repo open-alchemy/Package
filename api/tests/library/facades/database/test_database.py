@@ -36,6 +36,45 @@ def test_count_customer_models():
     assert database_instance.count_customer_models(sub="sub 2") == 0
 
 
+@pytest.mark.parametrize(
+    "initial_count, additional_count, expected_result",
+    [
+        pytest.param(0, 0, False, id="zero initial count, zero additional"),
+        pytest.param(
+            0, 99, False, id="zero initial count, just less than limit additional"
+        ),
+        pytest.param(0, 100, True, id="zero initial count, equal to limit additional"),
+        pytest.param(0, 150, True, id="zero initial count, more than limit additional"),
+        pytest.param(
+            99, 0, False, id="just less than limit initial count, zero additional"
+        ),
+        pytest.param(100, 0, True, id="equal to limit initial count, zero additional"),
+        pytest.param(100, 0, True, id="more than limit initial count, zero additional"),
+    ],
+)
+def test_check_would_exceed_free_tier(initial_count, additional_count, expected_result):
+    """
+    GIVEN initial count and additional count
+    WHEN create_update_spec is called with the initial count and
+        check_would_exceed_free_tier with the additional count
+    THEN the expected result is returned
+    """
+    sub = "sub 1"
+    spec_id = "spec id 1"
+    version = "version 1"
+    database_instance = database.get_database()
+
+    database_instance.create_update_spec(
+        sub=sub, spec_id=spec_id, version=version, model_count=initial_count
+    )
+
+    returned_result = database_instance.check_would_exceed_free_tier(
+        sub=sub, model_count=additional_count
+    )
+
+    assert returned_result.result == expected_result
+
+
 def test_get_latest_spec_version():
     """
     GIVEN sub, spec id, version and model count
