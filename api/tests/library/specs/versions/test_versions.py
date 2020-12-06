@@ -64,3 +64,66 @@ def test_list_storage_error(monkeypatch):
     assert response.status_code == 500
     assert response.mimetype == "text/plain"
     assert "storage" in response.data.decode()
+
+
+def test_get():
+    """
+    GIVEN user and version and database and storage with a single spec
+    WHEN get is called with the user and spec id
+    THEN the spec value is returned.
+    """
+    user = "user 1"
+    spec_id = "spec id 1"
+    version = "version 1"
+    spec = {"key": "value"}
+    storage.get_storage_facade().create_update_spec(
+        user=user,
+        spec_id=spec_id,
+        version=version,
+        spec_str=json.dumps(spec, separators=(",", ":")),
+    )
+
+    response = versions.get(user=user, spec_id=spec_id, version=version)
+
+    assert response.status_code == 200
+    assert response.mimetype == "text/plain"
+    assert f"version: {version}" in response.data.decode()
+    assert f"key: value" in response.data.decode()
+
+
+def test_get_storage_facade_error(monkeypatch):
+    """
+    GIVEN user and database with a spec but storage that raises an error
+    WHEN get is called with the user and spec id
+    THEN a 500 is returned.
+    """
+    user = "user 1"
+    spec_id = "spec id 1"
+    version = "version 1"
+    mock_storage_get_spec = mock.MagicMock()
+    mock_storage_get_spec.side_effect = storage.exceptions.StorageError
+    monkeypatch.setattr(storage.get_storage_facade(), "get_spec", mock_storage_get_spec)
+
+    response = versions.get(user=user, spec_id=spec_id, version=version)
+
+    assert response.status_code == 500
+    assert response.mimetype == "text/plain"
+    assert "reading" in response.data.decode()
+
+
+def test_get_storage_facade_miss(_clean_package_storage_table):
+    """
+    GIVEN user and database with a spec but empty storage
+    WHEN get is called with the user and spec id
+    THEN a 404 is returned.
+    """
+    user = "user 1"
+    spec_id = "spec id 1"
+    version = "version 1"
+
+    response = versions.get(user=user, spec_id=spec_id, version=version)
+
+    assert response.status_code == 404
+    assert response.mimetype == "text/plain"
+    assert spec_id in response.data.decode()
+    assert "not find" in response.data.decode()

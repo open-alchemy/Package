@@ -139,6 +139,32 @@ paths:
             text/plain:
               schema:
                 type: string
+  /specs/{spec_id}/versions/{version}:
+    get:
+      summary: Retrieve a spec
+      operationId: library.specs.versions.get
+      parameters:
+        - $ref: "#/components/parameters/SpecId"
+        - $ref: "#/components/parameters/SpecVersion"
+      responses:
+        200:
+          description: The requested spec
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/SpecValue"
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: Spec was not found
+          content:
+            text/plain:
+              schema:
+                type: string
 
 components:
   parameters:
@@ -149,6 +175,13 @@ components:
         $ref: "#/components/schemas/SpecId"
       required: true
       description: The id of the spec
+    SpecVersion:
+      in: path
+      name: version
+      schema:
+        $ref: "#/components/schemas/SpecVersion"
+      required: true
+      description: The version of the spec
   securitySchemes:
     bearerAuth:
       type: http
