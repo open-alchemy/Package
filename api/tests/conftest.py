@@ -77,9 +77,10 @@ def _clean_package_storage_table(_package_storage_table):
 @pytest.fixture(autouse=True)
 def clean_storage():
     """Delete all objects from the storage."""
+    # pylint: disable=protected-access
+
     yield
 
-    keys = storage.get_storage().list()
+    keys = storage._STORAGE.list()
 
-    for key in keys:
-        storage.get_storage().delete(key=key)
+    storage._STORAGE.delete_all(keys=keys)

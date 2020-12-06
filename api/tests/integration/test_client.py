@@ -86,9 +86,11 @@ def test_specs_spec_id_get(client, _clean_package_storage_table):
         sub=sub, spec_id=spec_id, version=version, model_count=1
     )
     spec = {"key": "value"}
-    storage.get_storage().set(
-        key=f"{sub}/{spec_id}/{version}-spec.json",
-        value=json.dumps(spec, separators=(",", ":")),
+    storage.get_storage().create_update_spec(
+        user=sub,
+        spec_id=spec_id,
+        version=version,
+        spec_str=json.dumps(spec, separators=(",", ":")),
     )
     token = jwt.encode({"sub": sub}, "secret 1").decode()
 
@@ -140,6 +142,6 @@ def test_specs_spec_id_put(client, _clean_package_storage_table):
         == config.get_env().access_control_allow_origin
     )
 
-    assert '"x-tablename":"schema"' in storage.get_storage().get(
-        key=f"{sub}/{spec_id}/{version}-spec.json"
+    assert '"x-tablename":"schema"' in storage.get_storage().get_spec(
+        user=sub, spec_id=spec_id, version=version
     )

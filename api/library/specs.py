@@ -48,8 +48,8 @@ def get(spec_id: str, user: str) -> server.Response:
         version = database.get_database().get_latest_spec_version(
             sub=user, spec_id=spec_id
         )
-        spec_str = storage.get_storage().get(
-            key=f"{user}/{spec_id}/{version}-spec.json"
+        spec_str = storage.get_storage().get_spec(
+            user=user, spec_id=spec_id, version=version
         )
         prepared_spec_str = spec.prepare(spec_str=spec_str, version=version)
 
@@ -115,9 +115,11 @@ def put(body: bytearray, spec_id: str, user: str) -> server.Response:
             )
 
         # Store the spec
-        storage.get_storage().set(
-            key=f"{user}/{spec_id}/{spec_info.version}-spec.json",
-            value=spec_info.spec_str,
+        storage.get_storage().create_update_spec(
+            user=user,
+            spec_id=spec_id,
+            version=spec_info.version,
+            spec_str=spec_info.spec_str,
         )
 
         # Write an update into the database
@@ -148,3 +150,17 @@ def put(body: bytearray, spec_id: str, user: str) -> server.Response:
             status=500,
             mimetype="text/plain",
         )
+
+
+def delete(spec_id: str, user: str) -> server.Response:
+    """
+    Delete a spec for a user.
+
+    Args:
+        spec_id: The id of the spec.
+        user: The user from the token.
+
+    Returns:
+        The response to the request.
+
+    """

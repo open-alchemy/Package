@@ -98,6 +98,26 @@ paths:
             text/plain:
               schema:
                 type: string
+    delete:
+      summary: Delete a spec
+      operationId: library.specs.delete
+      parameters:
+        - $ref: "#/components/parameters/SpecId"
+      responses:
+        204:
+          description: The spec has been deleted
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: Spec was not found
+          content:
+            text/plain:
+              schema:
+                type: string
 
 components:
   parameters:

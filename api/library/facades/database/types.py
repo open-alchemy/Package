@@ -2,9 +2,11 @@
 
 import typing
 
-TSub = str
-TSpecId = str
-TVersion = str
+from ... import types
+
+TSub = types.TUser
+TSpecId = types.TSpecId
+TVersion = types.TSpecVersion
 TUpdatedAt = str
 TModelCount = int
 

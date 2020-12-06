@@ -82,9 +82,11 @@ def test_get(_clean_package_storage_table):
         sub=user, spec_id=spec_id, version=version, model_count=1
     )
     spec = {"key": "value"}
-    storage.get_storage().set(
-        key=f"{user}/{spec_id}/{version}-spec.json",
-        value=json.dumps(spec, separators=(",", ":")),
+    storage.get_storage().create_update_spec(
+        user=user,
+        spec_id=spec_id,
+        version=version,
+        spec_str=json.dumps(spec, separators=(",", ":")),
     )
 
     response = specs.get(user=user, spec_id=spec_id)
@@ -149,9 +151,9 @@ def test_get_storage_error(_clean_package_storage_table, monkeypatch):
     database.get_database().create_update_spec(
         sub=user, spec_id=spec_id, version=version, model_count=1
     )
-    mock_storage_get = mock.MagicMock()
-    mock_storage_get.side_effect = storage.exceptions.StorageError
-    monkeypatch.setattr(storage.get_storage(), "get", mock_storage_get)
+    mock_storage_get_spec = mock.MagicMock()
+    mock_storage_get_spec.side_effect = storage.exceptions.StorageError
+    monkeypatch.setattr(storage.get_storage(), "get_spec", mock_storage_get_spec)
 
     response = specs.get(user=user, spec_id=spec_id)
 
@@ -207,8 +209,8 @@ def test_put(monkeypatch, _clean_package_storage_table):
 
     response = specs.put(body=body.encode(), spec_id=spec_id, user=user)
 
-    assert storage.get_storage().get(
-        key=f"{user}/{spec_id}/{version}-spec.json"
+    assert storage.get_storage().get_spec(
+        user=user, spec_id=spec_id, version=version
     ) == json.dumps({"components": {"schemas": schemas}}, separators=(",", ":"))
     assert database.get_database().count_customer_models(sub=user) == 1
     assert response.status_code == 204
@@ -332,9 +334,11 @@ def test_put_storage_error(monkeypatch, _clean_package_storage_table):
     )
     spec_id = "id 1"
     user = "user 1"
-    mock_storage_set = mock.MagicMock()
-    mock_storage_set.side_effect = storage.exceptions.StorageError
-    monkeypatch.setattr(storage.get_storage(), "set", mock_storage_set)
+    mock_storage_create_update_spec = mock.MagicMock()
+    mock_storage_create_update_spec.side_effect = storage.exceptions.StorageError
+    monkeypatch.setattr(
+        storage.get_storage(), "create_update_spec", mock_storage_create_update_spec
+    )
 
     response = specs.put(body=body.encode(), spec_id=spec_id, user=user)
 
@@ -376,8 +380,8 @@ def test_put_database_update_error(monkeypatch, _clean_package_storage_table):
 
     response = specs.put(body=body.encode(), spec_id=spec_id, user=user)
 
-    assert storage.get_storage().get(
-        key=f"{user}/{spec_id}/{version}-spec.json"
+    assert storage.get_storage().get_spec(
+        user=user, spec_id=spec_id, version=version
     ) == json.dumps({"components": {"schemas": schemas}}, separators=(",", ":"))
     assert database.get_database().count_customer_models(sub=user) == 0
     assert response.status_code == 500
