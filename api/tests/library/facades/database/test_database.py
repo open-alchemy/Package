@@ -1,8 +1,8 @@
-"""Tests for DynamoDB database facade."""
+"""Tests for database facade."""
 
 import pytest
 
-from library.facades.database import dynamodb, exceptions, models
+from library.facades.database import exceptions, get_database
 
 
 def test_count_customer_models():
@@ -13,7 +13,7 @@ def test_count_customer_models():
     THEN the model count is returned.
     """
     sub = "sub 1"
-    database_instance = dynamodb.Database()
+    database_instance = get_database()
 
     assert database_instance.count_customer_models(sub=sub) == 0
 
@@ -45,7 +45,7 @@ def test_get_latest_spec_version():
     """
     sub = "sub 1"
     spec_id = "spec id 1"
-    database_instance = dynamodb.Database()
+    database_instance = get_database()
 
     with pytest.raises(exceptions.DatabaseError):
         database_instance.get_latest_spec_version(sub=sub, spec_id=spec_id)
@@ -83,7 +83,7 @@ def test_list_specs():
     THEN all specs for the customer are returned.
     """
     sub = "sub 1"
-    database_instance = dynamodb.Database()
+    database_instance = get_database()
 
     assert database_instance.list_specs(sub=sub) == []
 
@@ -114,7 +114,7 @@ def test_delete_specs():
     spec_id = "spec id 1"
     version = "version 1"
     model_count = 1
-    database_instance = dynamodb.Database()
+    database_instance = get_database()
     database_instance.create_update_spec(
         sub=sub, spec_id=spec_id, version=version, model_count=model_count
     )
