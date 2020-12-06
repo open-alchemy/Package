@@ -117,6 +117,10 @@ def test_get_spec_versions():
 
     assert storage_instance.get_spec_versions(user=user, spec_id=spec_id) == [version_1]
 
+    storage.get_storage().set(key=f"{user}/{spec_id}/{version_1}.gzip", value="value 1")
+
+    assert storage_instance.get_spec_versions(user=user, spec_id=spec_id) == [version_1]
+
     version_2 = "version 2"
 
     storage_instance.create_update_spec(

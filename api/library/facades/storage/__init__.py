@@ -24,6 +24,11 @@ def _construct_storage() -> types.TStorage:
 _STORAGE = _construct_storage()
 
 
+def get_storage() -> types.TStorage:
+    """Return a facade for the storage."""
+    return _STORAGE
+
+
 class _StorageFacade:
     """Facade for the storage that exposes important functionality."""
 
