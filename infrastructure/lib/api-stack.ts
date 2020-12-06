@@ -5,6 +5,7 @@ import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import * as codedeploy from '@aws-cdk/aws-codedeploy';
+import * as cognito from '@aws-cdk/aws-cognito';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
 import * as route53 from '@aws-cdk/aws-route53';
 import * as route53Targets from '@aws-cdk/aws-route53-targets';
@@ -148,7 +149,10 @@ export class ApiStack extends cdk.Stack {
     const specsResource = versionResource.addResource('specs');
     const specsIdResource = specsResource.addResource('{spec_id}');
     specsIdResource.addMethod('PUT', integration, {
-      authorizationScopes: ['https://package.api.openalchemy.io/spec.write'],
+      authorizationScopes: [
+        'https://package.api.openalchemy.io/spec.write',
+        `https://package.api.openalchemy.io/${cognito.OAuthScope.COGNITO_ADMIN.scopeName}`,
+      ],
       authorizationType: apigateway.AuthorizationType.COGNITO,
       authorizer: {
         authorizerId: cdk.Fn.ref(authorizer.logicalId),

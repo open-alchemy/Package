@@ -34,16 +34,50 @@ def test_endpoint_options(client, path, method):
     )
 
 
-def test_specs_put_unauthorized(client):
+@pytest.mark.parametrize(
+    "url",
+    [
+        "/v1/specs",
+        "/v1/specs/spec 1",
+        "/v1/specs/spec 1/versions",
+        "/v1/specs/spec 1/versions/version 1",
+    ],
+)
+def test_get_unauthorized(client, url):
     """
-    GIVEN spec id and data
-    WHEN PUT /v1/specs/{spec-id} is called without the Authorization header
+    GIVEN url and data
+    WHEN GET url is called without the Authorization header
+    THEN 401 is returned.
+    """
+    respose = client.get(url)
+
+    assert respose.status_code == 401
+
+
+@pytest.mark.parametrize("url", ["/v1/specs/spec 1"])
+def test_delete_unauthorized(client, url):
+    """
+    GIVEN url and data
+    WHEN DELETE url is called without the Authorization header
+    THEN 401 is returned.
+    """
+    respose = client.delete(url)
+
+    assert respose.status_code == 401
+
+
+@pytest.mark.parametrize(
+    "url", ["/v1/specs/spec 1", "/v1/specs/spec 1/versions/version 1"]
+)
+def test_put_unauthorized(client, url):
+    """
+    GIVEN url and data
+    WHEN PUT url is called without the Authorization header
     THEN 401 is returned.
     """
     data = "spec 1"
-    spec_id = "id 1"
 
-    respose = client.put(f"/v1/specs/{spec_id}", data=data)
+    respose = client.put(url, data=data)
 
     assert respose.status_code == 401
 
