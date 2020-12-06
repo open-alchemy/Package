@@ -15,10 +15,24 @@ TPackageStoreVersion = types.TVersion
 TPackageStoreUpdatedAt = types.TUpdatedAt
 TPackageStoreModelCount = types.TModelCount
 TPackageStoreUpdatedAtSpecId = str
+TPackageStoreSpecIdUpdatedAt = str
 
 
-class SpecIdUpdatedAtViewIndex(indexes.LocalSecondaryIndex):
+class TPackageStoreIndexValues(typing.NamedTuple):
+    """The index values for PackageStore."""
+
+    updated_at_spec_id: TPackageStoreUpdatedAtSpecId
+    spec_id_updated_at: TPackageStoreSpecIdUpdatedAt
+
+
+class SpecIdUpdatedAtIndex(indexes.LocalSecondaryIndex):
     """Local secondary index for querying based on spec_id."""
+
+    class Meta:
+        projection = indexes.AllProjection()
+
+    sub = attributes.UnicodeAttribute(hash_key=True)
+    spec_id_updated_at = attributes.UnicodeAttribute(range_key=True)
 
 
 class PackageStorage(models.Model):
@@ -50,6 +64,8 @@ class PackageStorage(models.Model):
     UPDATED_AT_LATEST = "latest"
     model_count = attributes.NumberAttribute()
     updated_at_spec_id = attributes.UnicodeAttribute(range_key=True)
+    spec_id_updated_at = attributes.UnicodeAttribute()
+    spec_id_updated_at_index = SpecIdUpdatedAtIndex()
 
     @classmethod
     def count_customer_models(cls, *, sub: TPackageStoreSub) -> int:
@@ -78,9 +94,9 @@ class PackageStorage(models.Model):
         )
 
     @classmethod
-    def calc_updated_at_spec_id(
+    def calc_index_values(
         cls, *, updated_at: TPackageStoreUpdatedAt, spec_id: TPackageStoreSpecId
-    ) -> TPackageStoreUpdatedAtSpecId:
+    ) -> TPackageStoreIndexValues:
         """
         Calculate the updated_at_spec_id value.
 
@@ -96,7 +112,10 @@ class PackageStorage(models.Model):
         if updated_at != cls.UPDATED_AT_LATEST:
             updated_at = updated_at.zfill(20)
 
-        return f"{updated_at}#{spec_id}"
+        return TPackageStoreIndexValues(
+            updated_at_spec_id=f"{updated_at}#{spec_id}",
+            spec_id_updated_at=f"{spec_id}#{updated_at}",
+        )
 
     @classmethod
     def create_update_item(
@@ -124,22 +143,21 @@ class PackageStorage(models.Model):
         """
         # Write item
         updated_at = str(int(time.time()))
-        updated_at_spec_id = cls.calc_updated_at_spec_id(
-            updated_at=updated_at, spec_id=spec_id
-        )
+        index_values = cls.calc_index_values(updated_at=updated_at, spec_id=spec_id)
         item = cls(
             sub=sub,
             spec_id=spec_id,
             version=version,
             model_count=model_count,
             updated_at=updated_at,
-            updated_at_spec_id=updated_at_spec_id,
+            updated_at_spec_id=index_values.updated_at_spec_id,
+            spec_id_updated_at=index_values.spec_id_updated_at,
         )
         item.save()
 
         # Write latest item
         updated_at_latest = cls.UPDATED_AT_LATEST
-        updated_at_spec_id_latest = cls.calc_updated_at_spec_id(
+        index_values_latest = cls.calc_index_values(
             updated_at=updated_at_latest, spec_id=spec_id
         )
         item_latest = cls(
@@ -148,7 +166,8 @@ class PackageStorage(models.Model):
             version=version,
             model_count=model_count,
             updated_at=updated_at_latest,
-            updated_at_spec_id=updated_at_spec_id_latest,
+            updated_at_spec_id=index_values_latest.updated_at_spec_id,
+            spec_id_updated_at=index_values_latest.spec_id_updated_at,
         )
         item_latest.save()
 
@@ -175,9 +194,9 @@ class PackageStorage(models.Model):
         try:
             item = cls.get(
                 hash_key=sub,
-                range_key=cls.calc_updated_at_spec_id(
+                range_key=cls.calc_index_values(
                     updated_at=cls.UPDATED_AT_LATEST, spec_id=spec_id
-                ),
+                ).updated_at_spec_id,
             )
             return item.version
         except cls.DoesNotExist as exc:

@@ -152,7 +152,9 @@ def test_package_storage_create_update_item_empty():
     assert item.model_count == model_count
     assert not "." in item.updated_at
     assert int(item.updated_at) == pytest.approx(time.time(), abs=10)
-    assert item.updated_at_spec_id == f"{item.updated_at.zfill(20)}#{item.spec_id}"
+    expected_updated_at = item.updated_at.zfill(20)
+    assert item.updated_at_spec_id == f"{expected_updated_at}#{item.spec_id}"
+    assert item.spec_id_updated_at == f"{item.spec_id}#{expected_updated_at}"
 
     items = list(
         models.PackageStorage.query(
@@ -171,6 +173,7 @@ def test_package_storage_create_update_item_empty():
     assert item.model_count == model_count
     assert item.updated_at == models.PackageStorage.UPDATED_AT_LATEST
     assert item.updated_at_spec_id == f"{item.updated_at}#{item.spec_id}"
+    assert item.spec_id_updated_at == f"{item.spec_id}#{item.updated_at}"
 
     items = list(models.PackageStorage.scan())
     assert len(items) == 2

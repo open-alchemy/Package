@@ -9,7 +9,7 @@ from library.facades import storage
 from library.facades.database import models
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def _database():
     """Starts the database server."""
     process = subprocess.Popen(
@@ -51,7 +51,7 @@ def _database():
         )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def _package_storage_table(_database):
     """Create the package-storage table and empty it after every test."""
     models.PackageStorage.create_table(read_capacity_units=1, write_capacity_units=1)
