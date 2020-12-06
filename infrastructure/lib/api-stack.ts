@@ -67,6 +67,7 @@ export class ApiStack extends cdk.Stack {
     });
     bucket.grantReadWrite(func);
     table.grantReadWriteData(func);
+    table.grant(func, 'dynamodb:DescribeTable');
     const version = new lambda.Version(
       this,
       `LambdaVersion-${deploymentPackageHash}`,
