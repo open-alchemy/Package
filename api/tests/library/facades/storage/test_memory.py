@@ -199,7 +199,7 @@ LIST_TESTS = [
 
 @pytest.mark.parametrize("class_", CLASSES)
 @pytest.mark.parametrize("set_args, prefix, suffix, expected_keys", LIST_TESTS)
-def test_get_no_set(class_, set_args, prefix, suffix, expected_keys):
+def test_list(class_, set_args, prefix, suffix, expected_keys):
     """
     GIVEN storage class, set args and prefix and suffix
     WHEN it is constructed, set is called with the args and list is called
@@ -210,5 +210,79 @@ def test_get_no_set(class_, set_args, prefix, suffix, expected_keys):
         storage_instance.set(key=key, value=value)
 
     returned_keys = storage_instance.list(prefix=prefix, suffix=suffix)
+
+    assert returned_keys == expected_keys
+
+
+@pytest.mark.parametrize("class_", CLASSES)
+def test_delete_all_no_set(class_):
+    """
+    GIVEN storage class
+    WHEN it is constructed and delete_all is called
+    THEN ObjectNotFoundError is raised.
+    """
+    key = "key 1"
+    storage_instance = class_()
+
+    with pytest.raises(storage.exceptions.ObjectNotFoundError) as exc:
+        storage_instance.delete_all(keys=[key])
+
+    assert key in str(exc)
+
+
+DELETE_ALL_TESTS = [
+    pytest.param([], [], [], id="no objects"),
+    pytest.param(
+        [("key 1", "value 1")], [], ["key 1"], id="single objects delete none"
+    ),
+    pytest.param([("key 1", "value 1")], ["key 1"], [], id="single objects delete one"),
+    pytest.param(
+        [("key 1", "value 1"), ("key 2", "value 2")],
+        [],
+        ["key 1", "key 2"],
+        id="multiple objects delete none",
+    ),
+    pytest.param(
+        [("key 1", "value 1"), ("key 2", "value 2")],
+        ["key 1"],
+        ["key 2"],
+        id="multiple objects delete first",
+    ),
+    pytest.param(
+        [("key 1", "value 1"), ("key 2", "value 2")],
+        ["key 2"],
+        ["key 1"],
+        id="multiple objects delete second",
+    ),
+    pytest.param(
+        [("key 1", "value 1"), ("key 2", "value 2")],
+        ["key 1", "key 2"],
+        [],
+        id="multiple objects delete all",
+    ),
+    pytest.param(
+        [("key 1", "value 1"), ("key 2", "value 2")],
+        ["key 2", "key 1"],
+        [],
+        id="multiple objects delete all different order",
+    ),
+]
+
+
+@pytest.mark.parametrize("class_", CLASSES)
+@pytest.mark.parametrize("set_args, delete_keys, expected_keys", DELETE_ALL_TESTS)
+def test_delete_all(class_, set_args, delete_keys, expected_keys):
+    """
+    GIVEN storage class, set args and keys to delete
+    WHEN it is constructed, set is called with the args and delete_all is called with
+        the keys to delete and list is called
+    THEN the expected keys are returned.
+    """
+    storage_instance = class_()
+    for key, value in set_args:
+        storage_instance.set(key=key, value=value)
+
+    returned_keys = storage_instance.delete_all(keys=delete_keys)
+    returned_keys = storage_instance.list()
 
     assert returned_keys == expected_keys

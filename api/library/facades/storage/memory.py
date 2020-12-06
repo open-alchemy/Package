@@ -89,3 +89,14 @@ class Storage:
         """
         self._check_exists(key)
         del self.storage[key]
+
+    def delete_all(self, *, keys: types.TKeys) -> None:
+        """
+        Delete the keys behind the objects.
+
+        Args:
+            keys: The keys of the objects to delete.
+
+        """
+        for key in keys:
+            self.delete(key=key)
