@@ -43,13 +43,26 @@ def test_count_customer_models():
         pytest.param(
             0, 99, False, id="zero initial count, just less than limit additional"
         ),
-        pytest.param(0, 100, True, id="zero initial count, equal to limit additional"),
+        pytest.param(0, 100, False, id="zero initial count, equal to limit additional"),
+        pytest.param(
+            0, 101, True, id="zero initial count, just more than limit additional"
+        ),
         pytest.param(0, 150, True, id="zero initial count, more than limit additional"),
         pytest.param(
             99, 0, False, id="just less than limit initial count, zero additional"
         ),
-        pytest.param(100, 0, True, id="equal to limit initial count, zero additional"),
-        pytest.param(100, 0, True, id="more than limit initial count, zero additional"),
+        pytest.param(100, 0, False, id="equal to limit initial count, zero additional"),
+        pytest.param(
+            101, 0, True, id="just more than limit initial count, zero additional"
+        ),
+        pytest.param(150, 0, True, id="more than limit initial count, zero additional"),
+        pytest.param(
+            50, 49, False, id="sum of initial and additional just less than limit"
+        ),
+        pytest.param(50, 50, False, id="sum of initial and additional equal to limit"),
+        pytest.param(
+            50, 51, True, id="sum of initial and additional just more than limit"
+        ),
     ],
 )
 def test_check_would_exceed_free_tier(initial_count, additional_count, expected_result):
