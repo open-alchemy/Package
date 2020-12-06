@@ -186,8 +186,8 @@ def test_get_storage_facade_miss(_clean_package_storage_table):
 
 def test_put(monkeypatch, _clean_package_storage_table):
     """
-    GIVEN body and spec id
-    WHEN put is called with the body and spec id
+    GIVEN body, spec id and user
+    WHEN put is called with the body, spec id and user
     THEN the spec is stored against the spec id.
     """
     mock_request = mock.MagicMock()
@@ -217,10 +217,10 @@ def test_put(monkeypatch, _clean_package_storage_table):
     assert response.status_code == 204
 
 
-def test_put_invalid_spec_error(monkeypatch, _clean_package_storage_table):
+def test_put_invalid_spec_error(monkeypatch):
     """
-    GIVEN body with invalid spec and spec id
-    WHEN put is called with the body and spec id
+    GIVEN body with invalid spec and spec id and user
+    WHEN put is called with the body, spec id and user
     THEN a 400 with an invalid spec is returned.
     """
     mock_request = mock.MagicMock()
@@ -297,12 +297,14 @@ def test_put_database_count_error(monkeypatch, _clean_package_storage_table):
     )
     spec_id = "id 1"
     user = "user 1"
-    mock_database_count_customer_models = mock.MagicMock()
-    mock_database_count_customer_models.side_effect = database.exceptions.DatabaseError
+    mock_database_check_would_exceed_free_tier = mock.MagicMock()
+    mock_database_check_would_exceed_free_tier.side_effect = (
+        database.exceptions.DatabaseError
+    )
     monkeypatch.setattr(
         database.get_database(),
-        "count_customer_models",
-        mock_database_count_customer_models,
+        "check_would_exceed_free_tier",
+        mock_database_check_would_exceed_free_tier,
     )
 
     response = specs.put(body=body.encode(), spec_id=spec_id, user=user)

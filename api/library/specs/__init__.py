@@ -88,6 +88,10 @@ def put(body: bytearray, spec_id: types.TSpecId, user: types.TUser) -> server.Re
     """
     Accept a spec and store it.
 
+    Returns 400 if the spec is not valid.
+    Returns 402 if the free tier is exceeded.
+    Returns 500 if something went wrong.
+
     Args:
         body: The spec to store.
         spec_id: The id of the spec.
@@ -104,12 +108,12 @@ def put(body: bytearray, spec_id: types.TSpecId, user: types.TUser) -> server.Re
         spec_info = spec.process(spec_str=body.decode(), language=language)
 
         # Check that the maximum number of models hasn't been exceeded
-        current_count = database.get_database().count_customer_models(sub=user)
-        if current_count + spec_info.model_count > 100:
+        free_tier_check = database.get_database().check_would_exceed_free_tier(
+            sub=user, model_count=spec_info.model_count
+        )
+        if free_tier_check.result:
             return server.Response(
-                "with this spec the maximum number of 100 models for the free trial "
-                f"would be exceeded, current models count: {current_count}, "
-                f"models in this spec: {spec_info.model_count}",
+                free_tier_check.reason,
                 status=402,
                 mimetype="text/plain",
             )

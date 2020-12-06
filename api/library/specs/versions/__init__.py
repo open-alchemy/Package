@@ -2,8 +2,8 @@
 
 import json
 
-from ... import types
-from ...facades import server, storage
+from ... import types, exceptions
+from ...facades import server, storage, database
 from ...helpers import spec
 
 
@@ -51,7 +51,7 @@ def get(
 
     Args:
         spec_id: The id of the spec.
-        version: The version of the spec to get
+        version: The version of the spec.
         user: The user from the token.
 
     Returns:
@@ -78,6 +78,94 @@ def get(
     except storage.exceptions.StorageError:
         return server.Response(
             "something went wrong whilst reading the spec",
+            status=500,
+            mimetype="text/plain",
+        )
+
+
+def put(
+    body: bytearray,
+    spec_id: types.TSpecId,
+    version: types.TSpecVersion,
+    user: types.TUser,
+) -> server.Response:
+    """
+    Update a specific version of a spec.
+
+    Returns 400 if the spec is not valid.
+    Returns 400 if the requested version does not match the calculated version.
+    Returns 402 if the free tier is exceeded.
+    Returns 500 if something went wrong.
+
+    Args:
+        body: The spec to store.
+        spec_id: The id of the spec.
+        user: The user from the token.
+        version: The version of the spec.
+
+    Returns:
+        The response to the request.
+
+    """
+    language = server.Request.request.headers["X-LANGUAGE"]
+
+    try:
+        # Check whether spec is valid
+        spec_info = spec.process(spec_str=body.decode(), language=language)
+
+        # Check that the requested versionmatches the calculated version
+        if version != spec_info.version:
+            return server.Response(
+                f"the requested version {version} does not match the version of the "
+                f"spec {spec_info.version}",
+                status=400,
+                mimetype="text/plain",
+            )
+
+        # Check that the maximum number of models hasn't been exceeded
+        current_count = database.get_database().count_customer_models(sub=user)
+        if current_count + spec_info.model_count > 100:
+            return server.Response(
+                "with this spec the maximum number of 100 models for the free tier "
+                f"would be exceeded, current models count: {current_count}, "
+                f"models in this spec: {spec_info.model_count}",
+                status=402,
+                mimetype="text/plain",
+            )
+
+        # Store the spec
+        storage.get_storage_facade().create_update_spec(
+            user=user,
+            spec_id=spec_id,
+            version=spec_info.version,
+            spec_str=spec_info.spec_str,
+        )
+
+        # Write an update into the database
+        database.get_database().create_update_spec(
+            sub=user,
+            spec_id=spec_id,
+            version=spec_info.version,
+            model_count=spec_info.model_count,
+        )
+
+        return server.Response(status=204)
+
+    except exceptions.LoadSpecError as exc:
+        return server.Response(
+            f"the spec is not valid, {exc}",
+            status=400,
+            mimetype="text/plain",
+        )
+    except storage.exceptions.StorageError:
+        return server.Response(
+            "something went wrong whilst storing the spec",
+            status=500,
+            mimetype="text/plain",
+        )
+    except database.exceptions.DatabaseError:
+        return server.Response(
+            "something went wrong whilst updating the database",
             status=500,
             mimetype="text/plain",
         )
