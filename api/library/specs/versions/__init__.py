@@ -21,7 +21,9 @@ def list_(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
     try:
         return server.Response(
             json.dumps(
-                storage.get_storage().get_spec_versions(user=user, spec_id=spec_id)
+                storage.get_storage_facade().get_spec_versions(
+                    user=user, spec_id=spec_id
+                )
             ),
             status=200,
             mimetype="application/json",

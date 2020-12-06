@@ -83,7 +83,7 @@ def test_get(_clean_package_storage_table):
         sub=user, spec_id=spec_id, version=version, model_count=1
     )
     spec = {"key": "value"}
-    storage.get_storage().create_update_spec(
+    storage.get_storage_facade().create_update_spec(
         user=user,
         spec_id=spec_id,
         version=version,
@@ -140,7 +140,7 @@ def test_get_database_miss(_clean_package_storage_table):
     assert "not find" in response.data.decode()
 
 
-def test_get_storage_error(_clean_package_storage_table, monkeypatch):
+def test_get_storage_facade_error(_clean_package_storage_table, monkeypatch):
     """
     GIVEN user and database with a spec but storage that raises an error
     WHEN get is called with the user and spec id
@@ -154,7 +154,7 @@ def test_get_storage_error(_clean_package_storage_table, monkeypatch):
     )
     mock_storage_get_spec = mock.MagicMock()
     mock_storage_get_spec.side_effect = storage.exceptions.StorageError
-    monkeypatch.setattr(storage.get_storage(), "get_spec", mock_storage_get_spec)
+    monkeypatch.setattr(storage.get_storage_facade(), "get_spec", mock_storage_get_spec)
 
     response = specs.get(user=user, spec_id=spec_id)
 
@@ -163,7 +163,7 @@ def test_get_storage_error(_clean_package_storage_table, monkeypatch):
     assert "reading" in response.data.decode()
 
 
-def test_get_storage_miss(_clean_package_storage_table):
+def test_get_storage_facade_miss(_clean_package_storage_table):
     """
     GIVEN user and database with a spec but empty storage
     WHEN get is called with the user and spec id
@@ -210,7 +210,7 @@ def test_put(monkeypatch, _clean_package_storage_table):
 
     response = specs.put(body=body.encode(), spec_id=spec_id, user=user)
 
-    assert storage.get_storage().get_spec(
+    assert storage.get_storage_facade().get_spec(
         user=user, spec_id=spec_id, version=version
     ) == json.dumps({"components": {"schemas": schemas}}, separators=(",", ":"))
     assert database.get_database().count_customer_models(sub=user) == 1
@@ -338,7 +338,9 @@ def test_put_storage_error(monkeypatch, _clean_package_storage_table):
     mock_storage_create_update_spec = mock.MagicMock()
     mock_storage_create_update_spec.side_effect = storage.exceptions.StorageError
     monkeypatch.setattr(
-        storage.get_storage(), "create_update_spec", mock_storage_create_update_spec
+        storage.get_storage_facade(),
+        "create_update_spec",
+        mock_storage_create_update_spec,
     )
 
     response = specs.put(body=body.encode(), spec_id=spec_id, user=user)
@@ -381,7 +383,7 @@ def test_put_database_update_error(monkeypatch, _clean_package_storage_table):
 
     response = specs.put(body=body.encode(), spec_id=spec_id, user=user)
 
-    assert storage.get_storage().get_spec(
+    assert storage.get_storage_facade().get_spec(
         user=user, spec_id=spec_id, version=version
     ) == json.dumps({"components": {"schemas": schemas}}, separators=(",", ":"))
     assert database.get_database().count_customer_models(sub=user) == 0
@@ -402,14 +404,16 @@ def test_delete(_clean_package_storage_table):
     database.get_database().create_update_spec(
         sub=user, spec_id=spec_id, version=version, model_count=1
     )
-    storage.get_storage().create_update_spec(
+    storage.get_storage_facade().create_update_spec(
         user=user, spec_id=spec_id, version=version, spec_str="spec str 1"
     )
 
     response = specs.delete(spec_id=spec_id, user=user)
 
     with pytest.raises(storage.exceptions.StorageError):
-        storage.get_storage().get_spec(user=user, spec_id=spec_id, version=version)
+        storage.get_storage_facade().get_spec(
+            user=user, spec_id=spec_id, version=version
+        )
     assert database.get_database().count_customer_models(sub=user) == 0
     assert response.status_code == 204
 
@@ -431,14 +435,16 @@ def test_delete_database_error(monkeypatch, _clean_package_storage_table):
         "delete_spec",
         mock_database_delete_spec,
     )
-    storage.get_storage().create_update_spec(
+    storage.get_storage_facade().create_update_spec(
         user=user, spec_id=spec_id, version=version, spec_str="spec str 1"
     )
 
     response = specs.delete(spec_id=spec_id, user=user)
 
     with pytest.raises(storage.exceptions.StorageError):
-        storage.get_storage().get_spec(user=user, spec_id=spec_id, version=version)
+        storage.get_storage_facade().get_spec(
+            user=user, spec_id=spec_id, version=version
+        )
     assert response.status_code == 204
 
 
@@ -458,7 +464,7 @@ def test_delete_database_error(monkeypatch, _clean_package_storage_table):
     mock_storage_delete_spec = mock.MagicMock()
     mock_storage_delete_spec.side_effect = storage.exceptions.StorageError
     monkeypatch.setattr(
-        storage.get_storage(),
+        storage.get_storage_facade(),
         "delete_spec",
         mock_storage_delete_spec,
     )

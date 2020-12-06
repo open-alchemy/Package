@@ -16,7 +16,7 @@ def test_list_():
     user = "user 1"
     spec_id = "spec id 1"
     version = "version 1"
-    storage.get_storage().create_update_spec(
+    storage.get_storage_facade().create_update_spec(
         user=user, spec_id=spec_id, version=version, spec_str="spec str 1"
     )
 
@@ -54,7 +54,9 @@ def test_list_storage_error(monkeypatch):
     mock_storage_get_spec_versions = mock.MagicMock()
     mock_storage_get_spec_versions.side_effect = storage.exceptions.StorageError
     monkeypatch.setattr(
-        storage.get_storage(), "get_spec_versions", mock_storage_get_spec_versions
+        storage.get_storage_facade(),
+        "get_spec_versions",
+        mock_storage_get_spec_versions,
     )
 
     response = versions.list_(user=user, spec_id=spec_id)

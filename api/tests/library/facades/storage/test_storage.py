@@ -17,7 +17,7 @@ def test_get_spec():
     version_1 = "version 1"
     spec_str_1 = "spec str 1"
 
-    storage_instance = storage.get_storage()
+    storage_instance = storage.get_storage_facade()
 
     storage_instance.create_update_spec(
         user=user, spec_id=spec_id, version=version_1, spec_str=spec_str_1
@@ -66,7 +66,7 @@ def test_delete_spec():
     version_1 = "version 1"
     spec_str = "spec str 1"
 
-    storage_instance = storage.get_storage()
+    storage_instance = storage.get_storage_facade()
 
     storage_instance.create_update_spec(
         user=user, spec_id=spec_id, version=version_1, spec_str=spec_str
@@ -109,7 +109,7 @@ def test_get_spec_versions():
     version_1 = "version 1"
     spec_str = "spec str 1"
 
-    storage_instance = storage.get_storage()
+    storage_instance = storage.get_storage_facade()
 
     storage_instance.create_update_spec(
         user=user, spec_id=spec_id, version=version_1, spec_str=spec_str

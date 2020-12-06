@@ -86,7 +86,7 @@ def test_specs_spec_id_get(client, _clean_package_storage_table):
         sub=sub, spec_id=spec_id, version=version, model_count=1
     )
     spec = {"key": "value"}
-    storage.get_storage().create_update_spec(
+    storage.get_storage_facade().create_update_spec(
         user=sub,
         spec_id=spec_id,
         version=version,
@@ -142,7 +142,7 @@ def test_specs_spec_id_put(client, _clean_package_storage_table):
         == config.get_env().access_control_allow_origin
     )
 
-    assert '"x-tablename":"schema"' in storage.get_storage().get_spec(
+    assert '"x-tablename":"schema"' in storage.get_storage_facade().get_spec(
         user=sub, spec_id=spec_id, version=version
     )
 
@@ -160,7 +160,7 @@ def test_specs_spec_id_delete(client, _clean_package_storage_table):
         sub=sub, spec_id=spec_id, version=version, model_count=1
     )
     spec = {"key": "value"}
-    storage.get_storage().create_update_spec(
+    storage.get_storage_facade().create_update_spec(
         user=sub,
         spec_id=spec_id,
         version=version,
@@ -180,5 +180,7 @@ def test_specs_spec_id_delete(client, _clean_package_storage_table):
     )
 
     with pytest.raises(storage.exceptions.StorageError):
-        storage.get_storage().get_spec(user=sub, spec_id=spec_id, version=version)
+        storage.get_storage_facade().get_spec(
+            user=sub, spec_id=spec_id, version=version
+        )
     assert database.get_database().count_customer_models(sub=sub) == 0

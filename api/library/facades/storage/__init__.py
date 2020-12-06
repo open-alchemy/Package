@@ -116,6 +116,6 @@ class _StorageFacade:
 _FACADE = _StorageFacade()
 
 
-def get_storage() -> _StorageFacade:
+def get_storage_facade() -> _StorageFacade:
     """Return a facade for the storage."""
     return _FACADE
