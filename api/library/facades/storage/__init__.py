@@ -84,6 +84,34 @@ class _StorageFacade:
             raise exceptions.StorageError("no keys to delete")
         _STORAGE.delete_all(keys=delete_keys)
 
+    @staticmethod
+    def get_spec_versions(
+        user: library_types.TUser, spec_id: library_types.TSpecId
+    ) -> library_types.TSpecVersions:
+        """
+        Get the available versions for a spec.
+
+        Raises ObjectNotFoundError if the spec does not exist.
+
+        Args:
+            user: The user that owns the spec.
+            spec_id: Unique identifier for the spec.
+
+        Returns:
+            All available versions of the spec.
+
+        """
+        prefix = f"{user}/{spec_id}/"
+        suffix = "-spec.json"
+        keys = _STORAGE.list(prefix=prefix, suffix=suffix)
+
+        if not keys:
+            raise exceptions.ObjectNotFoundError(
+                f"the spec with id {spec_id} was not found"
+            )
+
+        return list(map(lambda key: key[len(prefix) : -len(suffix)], keys))
+
 
 _FACADE = _StorageFacade()
 

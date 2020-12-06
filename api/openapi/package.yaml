@@ -112,6 +112,33 @@ paths:
             text/plain:
               schema:
                 type: string
+  /specs/{spec_id}/versions:
+    get:
+      summary: List all available versions for a spec
+      operationId: library.specs.versions.list_
+      parameters:
+        - $ref: "#/components/parameters/SpecId"
+      responses:
+        200:
+          description: All the available versions for a spec
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SpecVersion"
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: Spec was not found
+          content:
+            text/plain:
+              schema:
+                type: string
 
 components:
   parameters:
@@ -133,4 +160,7 @@ components:
       type: string
     SpecValue:
       description: The value of an OpenAPI specification
+      type: string
+    SpecVersion:
+      description: The version of an OpenAPI specification
       type: string

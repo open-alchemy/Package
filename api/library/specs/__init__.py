@@ -2,12 +2,12 @@
 
 import json
 
-from .facades import server, storage, database
-from .helpers import spec
-from . import exceptions
+from ..facades import server, storage, database
+from ..helpers import spec
+from .. import exceptions, types
 
 
-def list_(user: str) -> server.Response:
+def list_(user: types.TUser) -> server.Response:
     """
     Accept a spec and store it.
 
@@ -32,7 +32,7 @@ def list_(user: str) -> server.Response:
         )
 
 
-def get(spec_id: str, user: str) -> server.Response:
+def get(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
     """
     Retrieve a spec for a user.
 
@@ -84,7 +84,7 @@ def get(spec_id: str, user: str) -> server.Response:
         )
 
 
-def put(body: bytearray, spec_id: str, user: str) -> server.Response:
+def put(body: bytearray, spec_id: types.TSpecId, user: types.TUser) -> server.Response:
     """
     Accept a spec and store it.
 
@@ -152,7 +152,7 @@ def put(body: bytearray, spec_id: str, user: str) -> server.Response:
         )
 
 
-def delete(spec_id: str, user: str) -> server.Response:
+def delete(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
     """
     Delete a spec for a user.
 
