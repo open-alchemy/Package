@@ -10,7 +10,7 @@ import yaml
 from yaml import parser
 from yaml import scanner
 
-from .. import exceptions
+from .. import exceptions, types
 
 
 TSpec = typing.Dict[str, typing.Any]
@@ -48,14 +48,23 @@ def load(*, spec_str: str, language: str) -> TSpec:
 
 @dataclasses.dataclass
 class TSpecInfo:
-    """Key information about a spec."""
+    """
+    Key information about a spec.
 
-    # The spec in string format
-    spec_str: str
-    # The version of the spec
-    version: str
-    # The number of models in the spec
-    model_count: int
+    Attrs:
+        spec_str:  The spec in string format
+        version:  The version of the spec
+        title:  The title of the spec
+        description:  The description of the spec
+        model_count:  The number of models in the spec
+
+    """
+
+    spec_str: types.TSpecValue
+    version: types.TSpecVersion
+    title: types.TSpecOptTitle
+    description: types.TSpecOptDescription
+    model_count: types.TSpecModelCount
 
 
 def process(*, spec_str: str, language: str) -> TSpecInfo:
@@ -79,7 +88,11 @@ def process(*, spec_str: str, language: str) -> TSpecInfo:
     )
 
     return TSpecInfo(
-        spec_str=spec_info.spec_str, version=spec_info.version, model_count=model_count
+        spec_str=spec_info.spec_str,
+        version=spec_info.version,
+        title=spec_info.title,
+        description=spec_info.description,
+        model_count=model_count,
     )
 
 

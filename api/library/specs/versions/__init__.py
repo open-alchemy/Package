@@ -146,6 +146,8 @@ def put(
             sub=user,
             spec_id=spec_id,
             version=spec_info.version,
+            title=spec_info.title,
+            description=spec_info.description,
             model_count=spec_info.model_count,
         )
 

@@ -199,8 +199,10 @@ def test_put(monkeypatch, _clean_package_storage_table):
     mock_request.headers = mock_headers
     monkeypatch.setattr(server.Request, "request", mock_request)
     version = "version 1"
+    title = "title 1"
+    description = "description 1"
     spec = {
-        "info": {"version": version},
+        "info": {"version": version, "title": title, "description": description},
         "components": {
             "schemas": {
                 "Schema": {
@@ -224,7 +226,18 @@ def test_put(monkeypatch, _clean_package_storage_table):
     assert '"Schema"' in spec_str
     assert '"x-tablename"' in spec_str
     assert '"schema"' in spec_str
+
     assert database.get_database().count_customer_models(sub=user) == 1
+    assert database.get_database().list_specs(sub=user) == [
+        {
+            "spec_id": spec_id,
+            "version": version,
+            "title": title,
+            "description": description,
+            "model_count": 1,
+        }
+    ]
+
     assert response.status_code == 204
 
 

@@ -110,8 +110,10 @@ def test_process():
     THEN the version is calculated and the final string is returned.
     """
     version = "version 1"
+    title = "title 1"
+    description = "description 1"
     spec_dict = {
-        "info": {"version": version},
+        "info": {"version": version, "title": title, "description": description},
         "components": {
             "schemas": {
                 "Schema": {
@@ -127,6 +129,8 @@ def test_process():
     returned_result = spec.process(spec_str=spec_str, language="JSON")
 
     assert returned_result.version == version
+    assert returned_result.title == title
+    assert returned_result.description == description
     assert f'"{version}"' in returned_result.spec_str
     assert '"Schema"' in returned_result.spec_str
     assert '"x-tablename"' in returned_result.spec_str

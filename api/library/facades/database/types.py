@@ -12,7 +12,7 @@ TOptTitle = types.TSpecOptTitle
 TDescription = types.TSpecDescription
 TOptDescription = types.TSpecOptDescription
 TUpdatedAt = str
-TModelCount = int
+TModelCount = types.TSpecModelCount
 
 
 class _TSpecInfoBase(typing.TypedDict, total=False):
@@ -93,8 +93,8 @@ class TDatabase(typing.Protocol):
             spec_id: Unique identifier for the spec for a package.
             version: The version of the spec.
             model_count: The number of models in the spec.
-            title: The title of a spec
-            description: The description of a spec
+            title: The title of a spec.
+            description: The description of a spec.
 
         """
         ...
