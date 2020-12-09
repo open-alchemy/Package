@@ -11,9 +11,13 @@ from . import types
 
 TPackageStoreSub = types.TSub
 TPackageStoreSpecId = types.TSpecId
-TPackageStoreVersion = types.TVersion
 TPackageStoreUpdatedAt = types.TUpdatedAt
+
+TPackageStoreVersion = types.TVersion
+TPackageStoreTitle = types.TTitle
+TPackageStoreDescription = types.TDescription
 TPackageStoreModelCount = types.TModelCount
+
 TPackageStoreUpdatedAtSpecId = str
 TPackageStoreSpecIdUpdatedAt = str
 
@@ -49,11 +53,15 @@ class PackageStorage(models.Model):
 
         sub: Unique identifier for a customer
         spec_id: Unique identifier for a spec for a package
-        version: The version of a spec for a package
         updated_at: The last time the spec version was updated in integer seconds since
             epoch stored as a string or 'latest' for the copy of the latest version of
             the spec.
+
+        version: The version of a spec for a package
+        title: The title of a spec
+        description: The description of a spec
         model_count: The number of 'x-tablename' and 'x-inherits' in a spec
+
         updated_at_spec_id: Combination of 'updated_at' and 'spec_id' separeted with #
         spec_id_updated_at: Combination of 'spec_id' and 'updated_at' separeted with #
 
@@ -141,6 +149,8 @@ class PackageStorage(models.Model):
         spec_id: TPackageStoreSpecId,
         version: TPackageStoreVersion,
         model_count: TPackageStoreModelCount,
+        title: TPackageStoreTitle = None,
+        description: TPackageStoreDescription = None,
     ) -> None:
         """
         Create or update an item.
@@ -155,6 +165,8 @@ class PackageStorage(models.Model):
             spec_id: Unique identifier for the spec for a package.
             version: The version of the spec.
             model_count: The number of models in the spec.
+            title: The title of a spec
+            description: The description of a spec
 
         """
         # Write item
@@ -163,9 +175,11 @@ class PackageStorage(models.Model):
         item = cls(
             sub=sub,
             spec_id=spec_id,
-            version=version,
-            model_count=model_count,
             updated_at=updated_at,
+            version=version,
+            title=title,
+            description=description,
+            model_count=model_count,
             updated_at_spec_id=index_values.updated_at_spec_id,
             spec_id_updated_at=index_values.spec_id_updated_at,
         )
@@ -180,8 +194,10 @@ class PackageStorage(models.Model):
             sub=sub,
             spec_id=spec_id,
             version=version,
-            model_count=model_count,
             updated_at=updated_at_latest,
+            title=title,
+            description=description,
+            model_count=model_count,
             updated_at_spec_id=index_values_latest.updated_at_spec_id,
             spec_id_updated_at=index_values_latest.spec_id_updated_at,
         )

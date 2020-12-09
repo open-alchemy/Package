@@ -120,8 +120,6 @@ def test_specs_create_get_delete(access_token, spec_id):
         assert json.loads(response.read().decode()) == [spec_id]
 
     # Check that the spec can be retrieved
-    expected_spec = copy.deepcopy(spec)
-    expected_spec["info"] = {"version": "e60f339cd838ed0f7801"}
     test_request = request.Request(
         f"https://package.api.openalchemy.io/v1/specs/{spec_id}",
         headers={"Authorization": f"Bearer {access_token}"},
@@ -129,7 +127,10 @@ def test_specs_create_get_delete(access_token, spec_id):
 
     with request.urlopen(test_request) as response:
         assert response.status == 200
-        assert yaml.safe_load(response.read().decode()) == expected_spec
+        spec_str = response.read().decode()
+        assert '"Schema"' in spec_str
+        assert '"x-tablename"' in spec_str
+        assert '"schema"' in spec_str
 
     # Delete the spec
     test_request = request.Request(

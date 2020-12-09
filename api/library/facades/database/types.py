@@ -7,6 +7,8 @@ from ... import types
 TSub = types.TUser
 TSpecId = types.TSpecId
 TVersion = types.TSpecVersion
+TTitle = types.TSpecTitle
+TDescription = types.TSpecVersion
 TUpdatedAt = str
 TModelCount = int
 
