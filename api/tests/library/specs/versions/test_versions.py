@@ -140,16 +140,19 @@ def test_put(monkeypatch, _clean_package_storage_table):
     mock_request.headers = mock_headers
     monkeypatch.setattr(server.Request, "request", mock_request)
     version = "version 1"
-    schemas = {
-        "Schema": {
-            "type": "object",
-            "x-tablename": "schema",
-            "properties": {"id": {"type": "integer"}},
-        }
+    spec = {
+        "info": {"version": version},
+        "components": {
+            "schemas": {
+                "Schema": {
+                    "type": "object",
+                    "x-tablename": "schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            }
+        },
     }
-    body = json.dumps(
-        {"info": {"version": version}, "components": {"schemas": schemas}}
-    )
+    body = json.dumps(spec)
     spec_id = "id 1"
     user = "user 1"
 
@@ -157,9 +160,13 @@ def test_put(monkeypatch, _clean_package_storage_table):
         body=body.encode(), spec_id=spec_id, version=version, user=user
     )
 
-    assert storage.get_storage_facade().get_spec(
+    spec_str = storage.get_storage_facade().get_spec(
         user=user, spec_id=spec_id, version=version
-    ) == json.dumps({"components": {"schemas": schemas}}, separators=(",", ":"))
+    )
+    assert f'"{version}"' in spec_str
+    assert '"Schema"' in spec_str
+    assert '"x-tablename"' in spec_str
+    assert '"schema"' in spec_str
     assert database.get_database().count_customer_models(sub=user) == 1
     assert response.status_code == 204
 
@@ -354,16 +361,19 @@ def test_put_database_update_error(monkeypatch, _clean_package_storage_table):
     mock_request.headers = mock_headers
     monkeypatch.setattr(server.Request, "request", mock_request)
     version = "version 1"
-    schemas = {
-        "Schema": {
-            "type": "object",
-            "x-tablename": "schema",
-            "properties": {"id": {"type": "integer"}},
-        }
+    spec = {
+        "info": {"version": version},
+        "components": {
+            "schemas": {
+                "Schema": {
+                    "type": "object",
+                    "x-tablename": "schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            }
+        },
     }
-    body = json.dumps(
-        {"info": {"version": version}, "components": {"schemas": schemas}}
-    )
+    body = json.dumps(spec)
     spec_id = "id 1"
     user = "user 1"
     mock_database_create_update_spec = mock.MagicMock()
@@ -378,9 +388,13 @@ def test_put_database_update_error(monkeypatch, _clean_package_storage_table):
         body=body.encode(), spec_id=spec_id, version=version, user=user
     )
 
-    assert storage.get_storage_facade().get_spec(
+    spec_str = storage.get_storage_facade().get_spec(
         user=user, spec_id=spec_id, version=version
-    ) == json.dumps({"components": {"schemas": schemas}}, separators=(",", ":"))
+    )
+    assert f'"{version}"' in spec_str
+    assert '"Schema"' in spec_str
+    assert '"x-tablename"' in spec_str
+    assert '"schema"' in spec_str
     assert database.get_database().count_customer_models(sub=user) == 0
     assert response.status_code == 500
     assert response.mimetype == "text/plain"

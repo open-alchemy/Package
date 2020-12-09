@@ -110,23 +110,27 @@ def test_process():
     THEN the version is calculated and the final string is returned.
     """
     version = "version 1"
-    schemas = {
-        "Schema": {
-            "type": "object",
-            "x-tablename": "schema",
-            "properties": {"id": {"type": "integer"}},
-        }
+    spec_dict = {
+        "info": {"version": version},
+        "components": {
+            "schemas": {
+                "Schema": {
+                    "type": "object",
+                    "x-tablename": "schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            }
+        },
     }
-    spec_str = json.dumps(
-        {"info": {"version": version}, "components": {"schemas": schemas}}
-    )
+    spec_str = json.dumps(spec_dict)
 
     returned_result = spec.process(spec_str=spec_str, language="JSON")
 
     assert returned_result.version == version
-    assert returned_result.spec_str == json.dumps(
-        {"components": {"schemas": schemas}}, separators=(",", ":")
-    )
+    assert f'"{version}"' in returned_result.spec_str
+    assert '"Schema"' in returned_result.spec_str
+    assert '"x-tablename"' in returned_result.spec_str
+    assert '"schema"' in returned_result.spec_str
     assert returned_result.model_count == 1
 
 
