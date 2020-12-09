@@ -15,7 +15,9 @@ TPackageStoreUpdatedAt = types.TUpdatedAt
 
 TPackageStoreVersion = types.TVersion
 TPackageStoreTitle = types.TTitle
+TPackageStoreOptTitle = types.TOptTitle
 TPackageStoreDescription = types.TDescription
+TPackageStoreOptDescription = types.TOptDescription
 TPackageStoreModelCount = types.TModelCount
 
 TPackageStoreUpdatedAtSpecId = str
@@ -149,8 +151,8 @@ class PackageStorage(models.Model):
         spec_id: TPackageStoreSpecId,
         version: TPackageStoreVersion,
         model_count: TPackageStoreModelCount,
-        title: TPackageStoreTitle = None,
-        description: TPackageStoreDescription = None,
+        title: TPackageStoreOptTitle = None,
+        description: TPackageStoreOptDescription = None,
     ) -> None:
         """
         Create or update an item.
@@ -236,8 +238,22 @@ class PackageStorage(models.Model):
                 f"the spec {spec_id} does not exist for customer {sub}"
             ) from exc
 
+    @staticmethod
+    def item_to_spec_info(item: "PackageStorage") -> types.TSpecInfo:
+        """Convert item to dict with information about the spec."""
+        spec_info: types.TSpecInfo = {
+            "spec_id": item.spec_id,
+            "version": item.version,
+            "model_count": item.model_count,
+        }
+        if item.title is not None:
+            spec_info["title"] = item.title
+        if item.description is not None:
+            spec_info["description"] = item.description
+        return spec_info
+
     @classmethod
-    def list_specs(cls, *, sub: TPackageStoreSub) -> typing.List[TPackageStoreSpecId]:
+    def list_specs(cls, *, sub: TPackageStoreSub) -> types.TSpecInfoList:
         """
         List all available specs for a customer.
 
@@ -252,7 +268,7 @@ class PackageStorage(models.Model):
         """
         return list(
             map(
-                lambda item: item.spec_id,
+                cls.item_to_spec_info,
                 cls.query(
                     sub,
                     cls.updated_at_spec_id.startswith(f"{cls.UPDATED_AT_LATEST}#"),

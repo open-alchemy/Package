@@ -17,15 +17,19 @@ def test_list_(_clean_package_storage_table):
     """
     user = "user 1"
     spec_id = "spec id 1"
+    version = "version 1"
+    model_count = 1
     database.get_database().create_update_spec(
-        sub=user, spec_id=spec_id, version="version 1", model_count=1
+        sub=user, spec_id=spec_id, version=version, model_count=model_count
     )
 
     response = specs.list_(user=user)
 
     assert response.status_code == 200
     assert response.mimetype == "application/json"
-    assert json.loads(response.data.decode()) == [spec_id]
+    assert json.loads(response.data.decode()) == [
+        {"spec_id": spec_id, "version": version, "model_count": model_count}
+    ]
 
 
 def test_list_miss(_clean_package_storage_table):

@@ -140,20 +140,46 @@ def test_list_specs():
     assert database_instance.list_specs(sub=sub) == []
 
     spec_id_1 = "spec id 1"
-    version = "version 1"
-    model_count = 1
+    version_1 = "version 1"
+    title = "title 1"
+    description = "description 1"
+    model_count_1 = 1
     database_instance.create_update_spec(
-        sub=sub, spec_id=spec_id_1, version=version, model_count=model_count
+        sub=sub,
+        spec_id=spec_id_1,
+        version=version_1,
+        model_count=model_count_1,
+        title=title,
+        description=description,
     )
 
-    assert database_instance.list_specs(sub=sub) == [spec_id_1]
+    spec_infos = database_instance.list_specs(sub=sub)
+    assert len(spec_infos) == 1
+    assert spec_infos == [
+        {
+            "spec_id": spec_id_1,
+            "version": version_1,
+            "title": title,
+            "description": description,
+            "model_count": model_count_1,
+        }
+    ]
 
     spec_id_2 = "spec id 2"
+    version_2 = "version 2"
+    model_count_2 = 2
     database_instance.create_update_spec(
-        sub=sub, spec_id=spec_id_2, version=version, model_count=model_count
+        sub=sub, spec_id=spec_id_2, version=version_2, model_count=model_count_2
     )
 
-    assert database_instance.list_specs(sub=sub) == [spec_id_1, spec_id_2]
+    spec_infos = database_instance.list_specs(sub=sub)
+    assert len(spec_infos) == 2
+    assert spec_infos[0]["spec_id"] == spec_id_1
+    assert spec_infos[1] == {
+        "spec_id": spec_id_2,
+        "version": version_2,
+        "model_count": model_count_2,
+    }
 
 
 def test_delete_specs():
@@ -171,7 +197,7 @@ def test_delete_specs():
         sub=sub, spec_id=spec_id, version=version, model_count=model_count
     )
 
-    assert database_instance.list_specs(sub=sub) == [spec_id]
+    assert len(database_instance.list_specs(sub=sub)) == 1
     assert database_instance.count_customer_models(sub=sub) == model_count
     assert (
         database_instance.get_latest_spec_version(sub=sub, spec_id=spec_id) == version
@@ -179,7 +205,7 @@ def test_delete_specs():
 
     database_instance.delete_spec(sub=sub, spec_id=spec_id)
 
-    assert database_instance.list_specs(sub=sub) == []
+    assert len(database_instance.list_specs(sub=sub)) == 0
     assert database_instance.count_customer_models(sub=sub) == 0
     with pytest.raises(database.exceptions.NotFoundError):
         database_instance.get_latest_spec_version(sub=sub, spec_id=spec_id)

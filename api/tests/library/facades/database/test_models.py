@@ -508,7 +508,7 @@ PACKAGE_STORAGE_LIST_SPECS_TESTS = [
             )
         ],
         "sub 1",
-        ["spec id 1"],
+        [0],
         id="single hit",
     ),
     pytest.param(
@@ -530,7 +530,7 @@ PACKAGE_STORAGE_LIST_SPECS_TESTS = [
             factory.PackageStorageFactory(sub="sub 2", updated_at_spec_id="21#"),
         ],
         "sub 1",
-        ["spec id 1"],
+        [0],
         id="multiple first hit",
     ),
     pytest.param(
@@ -543,7 +543,7 @@ PACKAGE_STORAGE_LIST_SPECS_TESTS = [
             ),
         ],
         "sub 2",
-        ["spec id 2"],
+        [1],
         id="multiple second hit",
     ),
     pytest.param(
@@ -560,16 +560,16 @@ PACKAGE_STORAGE_LIST_SPECS_TESTS = [
             ),
         ],
         "sub 1",
-        ["spec id 1", "spec id 2"],
+        [0, 1],
         id="multiple hit",
     ),
 ]
 
 
 @pytest.mark.parametrize(
-    "items, sub, expected_spec_ids", PACKAGE_STORAGE_LIST_SPECS_TESTS
+    "items, sub, expected_spec_idx_list", PACKAGE_STORAGE_LIST_SPECS_TESTS
 )
-def test_package_storage_list_specs(items, sub, expected_spec_ids):
+def test_package_storage_list_specs(items, sub, expected_spec_idx_list):
     """
     GIVEN items in the database and sub
     WHEN list_specs is called on PackageStorage with the sub
@@ -580,7 +580,44 @@ def test_package_storage_list_specs(items, sub, expected_spec_ids):
 
     returned_spec_ids = models.PackageStorage.list_specs(sub=sub)
 
-    assert returned_spec_ids == expected_spec_ids
+    expected_spec_info = list(
+        map(
+            models.PackageStorage.item_to_spec_info,
+            map(lambda idx: items[idx], expected_spec_idx_list),
+        )
+    )
+    assert returned_spec_ids == expected_spec_info
+
+
+@pytest.mark.parametrize(
+    "title, description, expected_spec_info",
+    [
+        pytest.param(None, None, {}, id="title description not defined"),
+        pytest.param(
+            "title 1",
+            "description 1",
+            {
+                "title": "title 1",
+                "description": "description 1",
+            },
+            id="title description defined",
+        ),
+    ],
+)
+def test_item_to_spec_info(title, description, expected_spec_info):
+    """
+    GIVEN title and description
+    WHEN PackageStorage is constructed with the title and description
+    THEN the expected spec info is returned.
+    """
+    item = factory.PackageStorageFactory(title=title, description=description)
+    expected_spec_info["spec_id"] = item.spec_id
+    expected_spec_info["version"] = item.version
+    expected_spec_info["model_count"] = item.model_count
+
+    spec_info = models.PackageStorage.item_to_spec_info(item)
+
+    assert spec_info == expected_spec_info
 
 
 PACKAGE_STORAGE_DELETE_SPEC_TESTS = [

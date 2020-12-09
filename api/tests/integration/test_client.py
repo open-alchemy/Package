@@ -90,8 +90,10 @@ def test_specs_get(client, _clean_package_storage_table):
     """
     sub = "sub 1"
     spec_id = "spec id 1"
+    version = "version 1"
+    model_count = 1
     database.get_database().create_update_spec(
-        sub=sub, spec_id=spec_id, version="version 1", model_count=1
+        sub=sub, spec_id=spec_id, version=version, model_count=model_count
     )
     token = jwt.encode({"sub": sub}, "secret 1").decode()
 
@@ -104,7 +106,9 @@ def test_specs_get(client, _clean_package_storage_table):
         == config.get_env().access_control_allow_origin
     )
 
-    assert json.loads(respose.data.decode()) == [spec_id]
+    assert json.loads(respose.data.decode()) == [
+        {"spec_id": spec_id, "version": version, "model_count": model_count}
+    ]
 
 
 def test_specs_spec_id_get(client, _clean_package_storage_table):

@@ -58,6 +58,8 @@ class Database:
         spec_id: types.TSpecId,
         version: types.TVersion,
         model_count: types.TModelCount,
+        title: types.TOptTitle = None,
+        description: types.TDescription = None,
     ) -> None:
         """
         Create or update a spec.
@@ -67,10 +69,17 @@ class Database:
             spec_id: Unique identifier for the spec for a package.
             version: types.The version of the spec.
             model_count: types.The number of models in the spec.
+            title: The title of a spec.
+            description: The description of a spec.
 
         """
         models.PackageStorage.create_update_item(
-            sub=sub, spec_id=spec_id, version=version, model_count=model_count
+            sub=sub,
+            spec_id=spec_id,
+            version=version,
+            model_count=model_count,
+            title=title,
+            description=description,
         )
 
     @staticmethod
@@ -93,7 +102,7 @@ class Database:
         return models.PackageStorage.get_latest_spec_version(sub=sub, spec_id=spec_id)
 
     @staticmethod
-    def list_specs(*, sub: types.TSub) -> typing.List[types.TSpecId]:
+    def list_specs(*, sub: types.TSub) -> types.TSpecInfoList:
         """
         List all available specs for a customer.
 

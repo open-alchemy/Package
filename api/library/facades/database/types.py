@@ -8,9 +8,28 @@ TSub = types.TUser
 TSpecId = types.TSpecId
 TVersion = types.TSpecVersion
 TTitle = types.TSpecTitle
-TDescription = types.TSpecVersion
+TOptTitle = types.TSpecOptTitle
+TDescription = types.TSpecDescription
+TOptDescription = types.TSpecOptDescription
 TUpdatedAt = str
 TModelCount = int
+
+
+class _TSpecInfoBase(typing.TypedDict, total=False):
+    """Optional information about a spec."""
+
+    title: TTitle
+    descritpion: TDescription
+
+
+class TSpecInfo(_TSpecInfoBase, total=True):
+    """All information about a spec."""
+
+    spec_id: TSpecId
+    version: TVersion
+
+
+TSpecInfoList = typing.List[TSpecInfo]
 
 
 class TCheckWouldExceedFreeTierReturn(typing.NamedTuple):
@@ -58,7 +77,13 @@ class TDatabase(typing.Protocol):
 
     @staticmethod
     def create_update_spec(
-        *, sub: TSub, spec_id: TSpecId, version: TVersion, model_count: TModelCount
+        *,
+        sub: TSub,
+        spec_id: TSpecId,
+        version: TVersion,
+        model_count: TModelCount,
+        title: TOptTitle = None,
+        description: TDescription = None
     ) -> None:
         """
         Create or update a spec.
@@ -68,6 +93,8 @@ class TDatabase(typing.Protocol):
             spec_id: Unique identifier for the spec for a package.
             version: The version of the spec.
             model_count: The number of models in the spec.
+            title: The title of a spec
+            description: The description of a spec
 
         """
         ...
@@ -90,7 +117,7 @@ class TDatabase(typing.Protocol):
         ...
 
     @staticmethod
-    def list_specs(*, sub: TSub) -> typing.List[TSpecId]:
+    def list_specs(*, sub: TSub) -> TSpecInfoList:
         """
         List all available specs for a customer.
 
