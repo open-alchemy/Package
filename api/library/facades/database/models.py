@@ -263,7 +263,7 @@ class PackageStorage(models.Model):
             sub: Unique identifier for a cutsomer.
 
         Returns:
-            List of all spec id for the customer.
+            List of information for all specs for the customer.
 
         """
         return list(
@@ -294,3 +294,39 @@ class PackageStorage(models.Model):
         with cls.batch_write() as batch:
             for item in items:
                 batch.delete(item)
+
+    @classmethod
+    def list_spec_versions(
+        cls, *, sub: TPackageStoreSub, spec_id: TPackageStoreSpecId
+    ) -> types.TSpecInfoList:
+        """
+        List all available versions for a spec for a customer.
+
+        Filters for a customer and for updated_at_spec_id to start with latest.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+
+        Returns:
+            List of information for all versions of a spec for the customer.
+
+        """
+        items = cls.spec_id_updated_at_index.query(
+            sub,
+            cls.spec_id_updated_at.startswith(f"{spec_id}#"),
+        )
+        items_no_latest = filter(
+            lambda item: item.updated_at != cls.UPDATED_AT_LATEST, items
+        )
+
+        seen_versions = set()
+
+        def de_duplicate_version(item: "PackageStorage") -> bool:
+            """Check for duplicate versions."""
+            if item.version in seen_versions:
+                return False
+            seen_versions.add(item.version)
+            return True
+
+        unique_version_items = filter(de_duplicate_version, items_no_latest)
+        return list(map(cls.item_to_spec_info, unique_version_items))

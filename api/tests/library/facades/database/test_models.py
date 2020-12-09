@@ -578,7 +578,7 @@ def test_package_storage_list_specs(items, sub, expected_spec_idx_list):
     for item in items:
         item.save()
 
-    returned_spec_ids = models.PackageStorage.list_specs(sub=sub)
+    returned_spec_infos = models.PackageStorage.list_specs(sub=sub)
 
     expected_spec_info = list(
         map(
@@ -586,7 +586,7 @@ def test_package_storage_list_specs(items, sub, expected_spec_idx_list):
             map(lambda idx: items[idx], expected_spec_idx_list),
         )
     )
-    assert returned_spec_ids == expected_spec_info
+    assert returned_spec_infos == expected_spec_info
 
 
 @pytest.mark.parametrize(
@@ -751,3 +751,180 @@ def test_package_storage_delete_spec(items, sub, spec_id, expected_item_count):
     returned_spec_ids = models.PackageStorage.delete_spec(sub=sub, spec_id=spec_id)
 
     assert len(list(models.PackageStorage.scan())) == expected_item_count
+
+
+PACKAGE_STORAGE_LIST_SPEC_VERSIONS_TESTS = [
+    pytest.param([], "sub 1", "spec id 1", [], id="empty"),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                updated_at="11",
+                spec_id_updated_at="spec id 1#11",
+            )
+        ],
+        "sub 2",
+        "spec id 1",
+        [],
+        id="single sub miss",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                updated_at="11",
+                spec_id_updated_at="spec id 1#11",
+            )
+        ],
+        "sub 1",
+        "spec id 2",
+        [],
+        id="single spec id miss",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                updated_at=models.PackageStorage.UPDATED_AT_LATEST,
+                spec_id_updated_at=f"spec id 1#{models.PackageStorage.UPDATED_AT_LATEST}",
+            )
+        ],
+        "sub 1",
+        "spec id 1",
+        [],
+        id="single updated at miss",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                updated_at="11",
+                spec_id_updated_at="spec id 1#11",
+            )
+        ],
+        "sub 1",
+        "spec id 1",
+        [0],
+        id="single hit",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                updated_at="11",
+                spec_id_updated_at="spec id 1#11",
+            ),
+            factory.PackageStorageFactory(
+                sub="sub 2",
+                updated_at="21",
+                spec_id_updated_at="spec id 2#21",
+            ),
+        ],
+        "sub 3",
+        "spec id 3",
+        [],
+        id="multiple miss",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                updated_at="11",
+                spec_id_updated_at="spec id 1#11",
+            ),
+            factory.PackageStorageFactory(
+                sub="sub 2",
+                updated_at="21",
+                spec_id_updated_at="spec id 2#21",
+            ),
+        ],
+        "sub 1",
+        "spec id 1",
+        [0],
+        id="multiple first hit",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                updated_at="11",
+                spec_id_updated_at="spec id 1#11",
+            ),
+            factory.PackageStorageFactory(
+                sub="sub 2",
+                updated_at="21",
+                spec_id_updated_at="spec id 2#21",
+            ),
+        ],
+        "sub 2",
+        "spec id 2",
+        [1],
+        id="multiple second hit",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                updated_at="11",
+                spec_id_updated_at="spec id 1#11",
+            ),
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                updated_at="21",
+                spec_id_updated_at="spec id 1#21",
+            ),
+        ],
+        "sub 1",
+        "spec id 1",
+        [0, 1],
+        id="multiple hit",
+    ),
+    pytest.param(
+        [
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                updated_at="11",
+                version="version 1",
+                spec_id_updated_at="spec id 1#11",
+            ),
+            factory.PackageStorageFactory(
+                sub="sub 1",
+                updated_at="21",
+                version="version 1",
+                spec_id_updated_at="spec id 1#21",
+            ),
+        ],
+        "sub 1",
+        "spec id 1",
+        [0],
+        id="multiple hit duplicate version",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "items, sub, spec_id, expected_spec_idx_list",
+    PACKAGE_STORAGE_LIST_SPEC_VERSIONS_TESTS,
+)
+def test_package_storage_list_spec_versions(
+    items, sub, spec_id, expected_spec_idx_list
+):
+    """
+    GIVEN items in the database and sub and spec id
+    WHEN list_spec_versions is called on PackageStorage with the sub and spec id
+    THEN the expected spec ids are returned.
+    """
+    for item in items:
+        item.save()
+
+    returned_spec_infos = models.PackageStorage.list_spec_versions(
+        sub=sub, spec_id=spec_id
+    )
+
+    expected_spec_info = list(
+        map(
+            models.PackageStorage.item_to_spec_info,
+            map(lambda idx: items[idx], expected_spec_idx_list),
+        )
+    )
+    assert returned_spec_infos == expected_spec_info
