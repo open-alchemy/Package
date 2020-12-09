@@ -24,7 +24,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/SpecId"
+                  $ref: "#/components/schemas/SpecInfo"
         401:
           description: Unauthorized
           content:
@@ -252,3 +252,30 @@ components:
     SpecVersion:
       description: The version of an OpenAPI specification
       type: string
+    SpecTitle:
+      description: The title of an OpenAPI specification
+      type: string
+    SpecDescription:
+      description: The description of an OpenAPI specification
+      type: string
+    SpecModelCount:
+      description: The number of models in an OpenAPI specification
+      type: integer
+    SpecInfo:
+      description: Information about a an OpenAPI specification
+      type: object
+      properties:
+        spec_id:
+          $ref: "#/components/schemas/SpecId"
+        version:
+          $ref: "#/components/schemas/SpecVersion"
+        title:
+          $ref: "#/components/schemas/SpecTitle"
+        description:
+          $ref: "#/components/schemas/SpecDescription"
+        model_count:
+          $ref: "#/components/schemas/SpecModelCount"
+      required:
+        - spec_id
+        - version
+        - model_count

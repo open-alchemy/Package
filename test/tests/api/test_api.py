@@ -137,9 +137,9 @@ def test_specs_create_get_delete(access_token, spec_id):
     with request.urlopen(test_request) as response:
         assert response.status == 200
         spec_str = response.read().decode()
-        assert '"Schema"' in spec_str
-        assert '"x-tablename"' in spec_str
-        assert '"schema"' in spec_str
+        assert "Schema:" in spec_str
+        assert "x-tablename:" in spec_str
+        assert ": schema" in spec_str
 
     # Delete the spec
     test_request = request.Request(
@@ -263,6 +263,6 @@ def test_specs_versions_create_get_delete(access_token, spec_id):
         assert response.status == 200
         spec_str = response.read().decode()
         assert version in spec_str
-        assert '"Schema"' in spec_str
-        assert '"x-tablename"' in spec_str
-        assert '"schema"' in spec_str
+        assert "Schema:" in spec_str
+        assert "x-tablename:" in spec_str
+        assert ": schema" in spec_str
