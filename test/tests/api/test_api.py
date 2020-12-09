@@ -88,7 +88,15 @@ def test_specs_create_get_delete(access_token, spec_id):
     assert exc.value.code == 400
 
     # Upload a spec that is valid
+    version = "version 1"
+    title = "title 1"
+    description = "description 1"
     spec = {
+        "info": {
+            "title": title,
+            "description": description,
+            "version": version,
+        },
         "components": {
             "schemas": {
                 "Schema": {
@@ -97,7 +105,7 @@ def test_specs_create_get_delete(access_token, spec_id):
                     "properties": {"id": {"type": "integer"}},
                 }
             }
-        }
+        },
     }
     spec_str = json.dumps(spec)
     test_request = request.Request(
@@ -126,7 +134,10 @@ def test_specs_create_get_delete(access_token, spec_id):
         assert len(returned_specs) == 1
         returned_spec = returned_specs[0]
         assert returned_spec["spec_id"] == spec_id
-        assert "version" in returned_spec
+        assert returned_spec["version"] == version
+        assert returned_spec["title"] == title
+        assert returned_spec["description"] == description
+        assert "updated_at" in returned_spec
 
     # Check that the spec can be retrieved
     test_request = request.Request(
@@ -242,6 +253,7 @@ def test_specs_versions_create_get_delete(access_token, spec_id):
         returned_spec = returned_specs[0]
         assert returned_spec["spec_id"] == spec_id
         assert returned_spec["version"] == version
+        assert "updated_at" in returned_spec
 
     # Check that the version is listed
     test_request = request.Request(
@@ -256,6 +268,7 @@ def test_specs_versions_create_get_delete(access_token, spec_id):
         returned_spec = returned_specs[0]
         assert returned_spec["spec_id"] == spec_id
         assert returned_spec["version"] == version
+        assert "updated_at" in returned_spec
 
     # Check that the spec can be retrieved
     test_request = request.Request(
