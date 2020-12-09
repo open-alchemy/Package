@@ -23,9 +23,13 @@ class PackageStorageFactory(factory.Factory):
 
     sub = factory.Sequence(lambda n: f"sub {n}")
     spec_id = factory.Sequence(package_store_calc_spec_id)
-    version = factory.Sequence(lambda n: f"version {n}")
     updated_at = factory.Sequence(package_store_calc_updated_at)
+
+    version = factory.Sequence(lambda n: f"version {n}")
+    title = factory.Sequence(lambda n: f"title {n}")
+    description = factory.Sequence(lambda n: f"description {n}")
     model_count = factory.Sequence(lambda n: (n + 1) * 10 + 2)
+
     updated_at_spec_id = factory.Sequence(
         lambda n: models.PackageStorage.calc_index_values(
             updated_at=package_store_calc_updated_at(n),

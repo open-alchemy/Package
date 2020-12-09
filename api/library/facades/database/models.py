@@ -71,9 +71,13 @@ class PackageStorage(models.Model):
 
     sub = attributes.UnicodeAttribute(hash_key=True)
     spec_id = attributes.UnicodeAttribute()
-    version = attributes.UnicodeAttribute()
     updated_at = attributes.UnicodeAttribute()
+
+    version = attributes.UnicodeAttribute()
+    title = attributes.UnicodeAttribute(null=True)
+    description = attributes.UnicodeAttribute(null=True)
     model_count = attributes.NumberAttribute()
+
     updated_at_spec_id = attributes.UnicodeAttribute(range_key=True)
     spec_id_updated_at = attributes.UnicodeAttribute()
 
