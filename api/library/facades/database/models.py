@@ -243,6 +243,7 @@ class PackageStorage(models.Model):
         """Convert item to dict with information about the spec."""
         spec_info: types.TSpecInfo = {
             "spec_id": item.spec_id,
+            "updated_at": int(item.updated_at),
             "version": item.version,
             "model_count": item.model_count,
         }
@@ -317,7 +318,10 @@ class PackageStorage(models.Model):
             cls.spec_id_updated_at.startswith(f"{spec_id}#"),
         )
         items_no_latest = filter(
-            lambda item: item.updated_at != cls.UPDATED_AT_LATEST, items
+            lambda item: not item.updated_at_spec_id.startswith(
+                f"{cls.UPDATED_AT_LATEST}#"
+            ),
+            items,
         )
 
         seen_versions = set()

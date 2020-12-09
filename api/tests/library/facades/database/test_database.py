@@ -158,15 +158,13 @@ def test_list_specs():
 
     spec_infos = database_instance.list_specs(sub=sub)
     assert len(spec_infos) == 1
-    assert spec_infos == [
-        {
-            "spec_id": spec_id_1,
-            "version": version_1,
-            "title": title,
-            "description": description,
-            "model_count": model_count_1,
-        }
-    ]
+    spec_info = spec_infos[0]
+    assert spec_info["spec_id"] == spec_id_1
+    assert spec_info["version"] == version_1
+    assert spec_info["title"] == title
+    assert spec_info["description"] == description
+    assert spec_info["model_count"] == model_count_1
+    assert "updated_at" in spec_info
 
     spec_id_2 = "spec id 2"
     version_2 = "version 2"
@@ -178,11 +176,11 @@ def test_list_specs():
     spec_infos = database_instance.list_specs(sub=sub)
     assert len(spec_infos) == 2
     assert spec_infos[0]["spec_id"] == spec_id_1
-    assert spec_infos[1] == {
-        "spec_id": spec_id_2,
-        "version": version_2,
-        "model_count": model_count_2,
-    }
+    spec_info = spec_infos[1]
+    assert spec_info["spec_id"] == spec_id_2
+    assert spec_info["version"] == version_2
+    assert spec_info["model_count"] == model_count_2
+    assert "updated_at" in spec_info
 
 
 def test_delete_specs():
@@ -246,15 +244,13 @@ def test_list_spec_versions(monkeypatch):
 
     spec_infos = database_instance.list_spec_versions(sub=sub, spec_id=spec_id)
     assert len(spec_infos) == 1
-    assert spec_infos == [
-        {
-            "spec_id": spec_id,
-            "version": version_1,
-            "title": title,
-            "description": description,
-            "model_count": model_count_1,
-        }
-    ]
+    spec_info = spec_infos[0]
+    assert spec_info["spec_id"] == spec_id
+    assert spec_info["version"] == version_1
+    assert spec_info["title"] == title
+    assert spec_info["description"] == description
+    assert spec_info["model_count"] == model_count_1
+    assert "updated_at" in spec_info
 
     mock_time.return_value = 2000000
     version_2 = "version 2"
@@ -266,8 +262,8 @@ def test_list_spec_versions(monkeypatch):
     spec_infos = database_instance.list_spec_versions(sub=sub, spec_id=spec_id)
     assert len(spec_infos) == 2
     assert spec_infos[0]["spec_id"] == spec_id
-    assert spec_infos[1] == {
-        "spec_id": spec_id,
-        "version": version_2,
-        "model_count": model_count_2,
-    }
+    spec_info = spec_infos[1]
+    assert spec_info["spec_id"] == spec_id
+    assert spec_info["version"] == version_2
+    assert spec_info["model_count"] == model_count_2
+    assert "updated_at" in spec_info

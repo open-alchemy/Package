@@ -620,6 +620,7 @@ def test_item_to_spec_info(title, description, expected_spec_info):
     expected_spec_info["spec_id"] = item.spec_id
     expected_spec_info["version"] = item.version
     expected_spec_info["model_count"] = item.model_count
+    expected_spec_info["updated_at"] = int(item.updated_at)
 
     spec_info = models.PackageStorage.item_to_spec_info(item)
 
@@ -767,6 +768,7 @@ PACKAGE_STORAGE_LIST_SPEC_VERSIONS_TESTS = [
                 sub="sub 1",
                 updated_at="11",
                 spec_id_updated_at="spec id 1#11",
+                updated_at_spec_id="11#spec id 1",
             )
         ],
         "sub 2",
@@ -780,6 +782,7 @@ PACKAGE_STORAGE_LIST_SPEC_VERSIONS_TESTS = [
                 sub="sub 1",
                 updated_at="11",
                 spec_id_updated_at="spec id 1#11",
+                updated_at_spec_id="11#spec id 1",
             )
         ],
         "sub 1",
@@ -791,8 +794,9 @@ PACKAGE_STORAGE_LIST_SPEC_VERSIONS_TESTS = [
         [
             factory.PackageStorageFactory(
                 sub="sub 1",
-                updated_at=models.PackageStorage.UPDATED_AT_LATEST,
+                updated_at="11",
                 spec_id_updated_at=f"spec id 1#{models.PackageStorage.UPDATED_AT_LATEST}",
+                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1",
             )
         ],
         "sub 1",
@@ -806,6 +810,7 @@ PACKAGE_STORAGE_LIST_SPEC_VERSIONS_TESTS = [
                 sub="sub 1",
                 updated_at="11",
                 spec_id_updated_at="spec id 1#11",
+                updated_at_spec_id="11#spec id 1",
             )
         ],
         "sub 1",
@@ -819,11 +824,13 @@ PACKAGE_STORAGE_LIST_SPEC_VERSIONS_TESTS = [
                 sub="sub 1",
                 updated_at="11",
                 spec_id_updated_at="spec id 1#11",
+                updated_at_spec_id="11#spec id 1",
             ),
             factory.PackageStorageFactory(
                 sub="sub 2",
                 updated_at="21",
                 spec_id_updated_at="spec id 2#21",
+                updated_at_spec_id="21#spec id 2",
             ),
         ],
         "sub 3",
@@ -837,11 +844,13 @@ PACKAGE_STORAGE_LIST_SPEC_VERSIONS_TESTS = [
                 sub="sub 1",
                 updated_at="11",
                 spec_id_updated_at="spec id 1#11",
+                updated_at_spec_id="11#spec id 1",
             ),
             factory.PackageStorageFactory(
                 sub="sub 2",
                 updated_at="21",
                 spec_id_updated_at="spec id 2#21",
+                updated_at_spec_id="21#spec id 2",
             ),
         ],
         "sub 1",
@@ -855,11 +864,13 @@ PACKAGE_STORAGE_LIST_SPEC_VERSIONS_TESTS = [
                 sub="sub 1",
                 updated_at="11",
                 spec_id_updated_at="spec id 1#11",
+                updated_at_spec_id="11#spec id 1",
             ),
             factory.PackageStorageFactory(
                 sub="sub 2",
                 updated_at="21",
                 spec_id_updated_at="spec id 2#21",
+                updated_at_spec_id="21#spec id 2",
             ),
         ],
         "sub 2",
@@ -873,11 +884,13 @@ PACKAGE_STORAGE_LIST_SPEC_VERSIONS_TESTS = [
                 sub="sub 1",
                 updated_at="11",
                 spec_id_updated_at="spec id 1#11",
+                updated_at_spec_id="11#spec id 1",
             ),
             factory.PackageStorageFactory(
                 sub="sub 1",
                 updated_at="21",
                 spec_id_updated_at="spec id 1#21",
+                updated_at_spec_id="21#spec id 1",
             ),
         ],
         "sub 1",
@@ -892,12 +905,14 @@ PACKAGE_STORAGE_LIST_SPEC_VERSIONS_TESTS = [
                 updated_at="11",
                 version="version 1",
                 spec_id_updated_at="spec id 1#11",
+                updated_at_spec_id="11#spec id 1",
             ),
             factory.PackageStorageFactory(
                 sub="sub 1",
                 updated_at="21",
                 version="version 1",
                 spec_id_updated_at="spec id 1#21",
+                updated_at_spec_id="21#spec id 1",
             ),
         ],
         "sub 1",

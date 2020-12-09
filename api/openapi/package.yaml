@@ -252,6 +252,9 @@ components:
     SpecVersion:
       description: The version of an OpenAPI specification
       type: string
+    SpecUpdatedAt:
+      description: The last time the OpenAPI specification was updated
+      type: integer
     SpecTitle:
       description: The title of an OpenAPI specification
       type: string
@@ -269,6 +272,8 @@ components:
           $ref: "#/components/schemas/SpecId"
         version:
           $ref: "#/components/schemas/SpecVersion"
+        updated_at:
+          $ref: "#/components/schemas/SpecUpdatedAt"
         title:
           $ref: "#/components/schemas/SpecTitle"
         description:

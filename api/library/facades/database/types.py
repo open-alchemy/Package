@@ -27,6 +27,7 @@ class TSpecInfo(_TSpecInfoBase, total=True):
 
     spec_id: TSpecId
     version: TVersion
+    updated_at: int
 
 
 TSpecInfoList = typing.List[TSpecInfo]

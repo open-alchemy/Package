@@ -27,9 +27,13 @@ def test_list_(_clean_package_storage_table):
 
     assert response.status_code == 200
     assert response.mimetype == "application/json"
-    assert json.loads(response.data.decode()) == [
-        {"spec_id": spec_id, "version": version, "model_count": model_count}
-    ]
+    spec_infos = json.loads(response.data.decode())
+    assert len(spec_infos) == 1
+    spec_info = spec_infos[0]
+    assert spec_info["spec_id"] == spec_id
+    assert spec_info["version"] == version
+    assert spec_info["model_count"] == model_count
+    assert "updated_at" in spec_info
 
 
 def test_list_miss(_clean_package_storage_table):
@@ -228,15 +232,15 @@ def test_put(monkeypatch, _clean_package_storage_table):
     assert '"schema"' in spec_str
 
     assert database.get_database().count_customer_models(sub=user) == 1
-    assert database.get_database().list_specs(sub=user) == [
-        {
-            "spec_id": spec_id,
-            "version": version,
-            "title": title,
-            "description": description,
-            "model_count": 1,
-        }
-    ]
+    spec_infos = database.get_database().list_specs(sub=user)
+    assert len(spec_infos) == 1
+    spec_info = spec_infos[0]
+    assert spec_info["spec_id"] == spec_id
+    assert spec_info["version"] == version
+    assert spec_info["title"] == title
+    assert spec_info["description"] == description
+    assert spec_info["model_count"] == 1
+    assert "updated_at" in spec_info
 
     assert response.status_code == 204
 

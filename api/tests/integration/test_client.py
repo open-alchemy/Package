@@ -19,7 +19,7 @@ def test_endpoint_options(client, path, method):
     WHEN OPTIONS {path} is called with the CORS Method and X-LANGUAGE Headers
     THEN Access-Control-Allow-Headers is returned with x-language.
     """
-    respose = client.options(
+    response = client.options(
         path,
         headers={
             "Access-Control-Request-Method": method,
@@ -27,9 +27,9 @@ def test_endpoint_options(client, path, method):
         },
     )
 
-    assert "Access-Control-Allow-Headers" in respose.headers
+    assert "Access-Control-Allow-Headers" in response.headers
     assert (
-        respose.headers["Access-Control-Allow-Headers"]
+        response.headers["Access-Control-Allow-Headers"]
         == config.get_env().access_control_allow_headers
     )
 
@@ -49,9 +49,9 @@ def test_get_unauthorized(client, url):
     WHEN GET url is called without the Authorization header
     THEN 401 is returned.
     """
-    respose = client.get(url)
+    response = client.get(url)
 
-    assert respose.status_code == 401
+    assert response.status_code == 401
 
 
 @pytest.mark.parametrize("url", ["/v1/specs/spec 1"])
@@ -61,9 +61,9 @@ def test_delete_unauthorized(client, url):
     WHEN DELETE url is called without the Authorization header
     THEN 401 is returned.
     """
-    respose = client.delete(url)
+    response = client.delete(url)
 
-    assert respose.status_code == 401
+    assert response.status_code == 401
 
 
 @pytest.mark.parametrize(
@@ -77,9 +77,9 @@ def test_put_unauthorized(client, url):
     """
     data = "spec 1"
 
-    respose = client.put(url, data=data)
+    response = client.put(url, data=data)
 
-    assert respose.status_code == 401
+    assert response.status_code == 401
 
 
 def test_specs_get(client, _clean_package_storage_table):
@@ -97,18 +97,22 @@ def test_specs_get(client, _clean_package_storage_table):
     )
     token = jwt.encode({"sub": sub}, "secret 1").decode()
 
-    respose = client.get("/v1/specs", headers={"Authorization": f"Bearer {token}"})
+    response = client.get("/v1/specs", headers={"Authorization": f"Bearer {token}"})
 
-    assert respose.status_code == 200
-    assert "Access-Control-Allow-Origin" in respose.headers
+    assert response.status_code == 200
+    assert "Access-Control-Allow-Origin" in response.headers
     assert (
-        respose.headers["Access-Control-Allow-Origin"]
+        response.headers["Access-Control-Allow-Origin"]
         == config.get_env().access_control_allow_origin
     )
 
-    assert json.loads(respose.data.decode()) == [
-        {"spec_id": spec_id, "version": version, "model_count": model_count}
-    ]
+    spec_infos = json.loads(response.data.decode())
+    assert len(spec_infos) == 1
+    spec_info = spec_infos[0]
+    assert spec_info["spec_id"] == spec_id
+    assert spec_info["version"] == version
+    assert spec_info["model_count"] == model_count
+    assert "updated_at" in spec_info
 
 
 def test_specs_spec_id_get(client, _clean_package_storage_table):
@@ -132,18 +136,18 @@ def test_specs_spec_id_get(client, _clean_package_storage_table):
     )
     token = jwt.encode({"sub": sub}, "secret 1").decode()
 
-    respose = client.get(
+    response = client.get(
         f"/v1/specs/{spec_id}", headers={"Authorization": f"Bearer {token}"}
     )
 
-    assert respose.status_code == 200
-    assert "Access-Control-Allow-Origin" in respose.headers
+    assert response.status_code == 200
+    assert "Access-Control-Allow-Origin" in response.headers
     assert (
-        respose.headers["Access-Control-Allow-Origin"]
+        response.headers["Access-Control-Allow-Origin"]
         == config.get_env().access_control_allow_origin
     )
 
-    assert "key: value" in respose.data.decode()
+    assert "key: value" in response.data.decode()
 
 
 def test_specs_spec_id_put(client, _clean_package_storage_table):
@@ -167,16 +171,16 @@ def test_specs_spec_id_put(client, _clean_package_storage_table):
     sub = "sub 1"
     token = jwt.encode({"sub": sub}, "secret 1").decode()
 
-    respose = client.put(
+    response = client.put(
         f"/v1/specs/{spec_id}",
         data=data,
         headers={"Authorization": f"Bearer {token}", "X-LANGUAGE": "JSON"},
     )
 
-    assert respose.status_code == 204
-    assert "Access-Control-Allow-Origin" in respose.headers
+    assert response.status_code == 204
+    assert "Access-Control-Allow-Origin" in response.headers
     assert (
-        respose.headers["Access-Control-Allow-Origin"]
+        response.headers["Access-Control-Allow-Origin"]
         == config.get_env().access_control_allow_origin
     )
 
@@ -206,14 +210,14 @@ def test_specs_spec_id_delete(client, _clean_package_storage_table):
     )
     token = jwt.encode({"sub": sub}, "secret 1").decode()
 
-    respose = client.delete(
+    response = client.delete(
         f"/v1/specs/{spec_id}", headers={"Authorization": f"Bearer {token}"}
     )
 
-    assert respose.status_code == 204
-    assert "Access-Control-Allow-Origin" in respose.headers
+    assert response.status_code == 204
+    assert "Access-Control-Allow-Origin" in response.headers
     assert (
-        respose.headers["Access-Control-Allow-Origin"]
+        response.headers["Access-Control-Allow-Origin"]
         == config.get_env().access_control_allow_origin
     )
 
@@ -239,20 +243,24 @@ def test_specs_spec_id_versions_get(client, _clean_package_storage_table):
     )
     token = jwt.encode({"sub": sub}, "secret 1").decode()
 
-    respose = client.get(
+    response = client.get(
         f"/v1/specs/{spec_id}/versions", headers={"Authorization": f"Bearer {token}"}
     )
 
-    assert respose.status_code == 200
-    assert "Access-Control-Allow-Origin" in respose.headers
+    assert response.status_code == 200
+    assert "Access-Control-Allow-Origin" in response.headers
     assert (
-        respose.headers["Access-Control-Allow-Origin"]
+        response.headers["Access-Control-Allow-Origin"]
         == config.get_env().access_control_allow_origin
     )
 
-    assert json.loads(respose.data.decode()) == [
-        {"spec_id": spec_id, "version": version, "model_count": model_count}
-    ]
+    spec_infos = json.loads(response.data.decode())
+    assert len(spec_infos) == 1
+    spec_info = spec_infos[0]
+    assert spec_info["spec_id"] == spec_id
+    assert spec_info["version"] == version
+    assert spec_info["model_count"] == model_count
+    assert "updated_at" in spec_info
 
 
 def test_specs_spec_id_version_version_get(client):
@@ -274,19 +282,19 @@ def test_specs_spec_id_version_version_get(client):
     )
     token = jwt.encode({"sub": sub}, "secret 1").decode()
 
-    respose = client.get(
+    response = client.get(
         f"/v1/specs/{spec_id}/versions/{version}",
         headers={"Authorization": f"Bearer {token}"},
     )
 
-    assert respose.status_code == 200
-    assert "Access-Control-Allow-Origin" in respose.headers
+    assert response.status_code == 200
+    assert "Access-Control-Allow-Origin" in response.headers
     assert (
-        respose.headers["Access-Control-Allow-Origin"]
+        response.headers["Access-Control-Allow-Origin"]
         == config.get_env().access_control_allow_origin
     )
 
-    assert "key: value" in respose.data.decode()
+    assert "key: value" in response.data.decode()
 
 
 def test_specs_spec_id_versions_version_put(client, _clean_package_storage_table):
@@ -311,16 +319,16 @@ def test_specs_spec_id_versions_version_put(client, _clean_package_storage_table
     sub = "sub 1"
     token = jwt.encode({"sub": sub}, "secret 1").decode()
 
-    respose = client.put(
+    response = client.put(
         f"/v1/specs/{spec_id}/versions/{version}",
         data=data,
         headers={"Authorization": f"Bearer {token}", "X-LANGUAGE": "JSON"},
     )
 
-    assert respose.status_code == 204
-    assert "Access-Control-Allow-Origin" in respose.headers
+    assert response.status_code == 204
+    assert "Access-Control-Allow-Origin" in response.headers
     assert (
-        respose.headers["Access-Control-Allow-Origin"]
+        response.headers["Access-Control-Allow-Origin"]
         == config.get_env().access_control_allow_origin
     )
 
