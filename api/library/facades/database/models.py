@@ -196,7 +196,7 @@ class PackageStorage(models.Model):
             sub=sub,
             spec_id=spec_id,
             version=version,
-            updated_at=updated_at_latest,
+            updated_at=updated_at,
             title=title,
             description=description,
             model_count=model_count,

@@ -201,9 +201,15 @@ def test_package_storage_create_update_item_empty(
     assert item.description == description
     assert isinstance(item.model_count, int)
     assert item.model_count == model_count
-    assert item.updated_at == models.PackageStorage.UPDATED_AT_LATEST
-    assert item.updated_at_spec_id == f"{item.updated_at}#{item.spec_id}"
-    assert item.spec_id_updated_at == f"{item.spec_id}#{item.updated_at}"
+    assert int(item.updated_at) == pytest.approx(time.time(), abs=10)
+    assert (
+        item.updated_at_spec_id
+        == f"{models.PackageStorage.UPDATED_AT_LATEST}#{item.spec_id}"
+    )
+    assert (
+        item.spec_id_updated_at
+        == f"{item.spec_id}#{models.PackageStorage.UPDATED_AT_LATEST}"
+    )
 
     items = list(models.PackageStorage.scan())
     assert len(items) == 2
@@ -252,7 +258,7 @@ def test_package_storage_create_update_item_single():
     [item] = items
     assert item.sub == sub
     assert item.spec_id == spec_id
-    assert item.updated_at == models.PackageStorage.UPDATED_AT_LATEST
+    assert int(item.updated_at) == pytest.approx(time.time(), abs=10)
 
     items = list(models.PackageStorage.scan())
     assert len(items) == 3
