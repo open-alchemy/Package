@@ -53,6 +53,11 @@ def test_unauthorized(test_request):
         request.urlopen(test_request)
     assert exc.value.code == 401
 
+    test_request.headers["Authorization"] = "Bearer invalid"
+    with pytest.raises(error.HTTPError) as exc:
+        request.urlopen(test_request)
+    assert exc.value.code == 401
+
 
 def test_specs_create_get_delete(access_token, spec_id):
     """
@@ -117,7 +122,11 @@ def test_specs_create_get_delete(access_token, spec_id):
 
     with request.urlopen(test_request) as response:
         assert response.status == 200
-        assert json.loads(response.read().decode()) == [spec_id]
+        returned_specs = json.loads(response.read().decode())
+        assert len(returned_specs) == 1
+        returned_spec = returned_specs[0]
+        assert returned_spec["spec_id"] == spec_id
+        assert "version" in returned_spec
 
     # Check that the spec can be retrieved
     test_request = request.Request(
@@ -228,7 +237,11 @@ def test_specs_versions_create_get_delete(access_token, spec_id):
 
     with request.urlopen(test_request) as response:
         assert response.status == 200
-        assert json.loads(response.read().decode()) == [spec_id]
+        returned_specs = json.loads(response.read().decode())
+        assert len(returned_specs) == 1
+        returned_spec = returned_specs[0]
+        assert returned_spec["spec_id"] == spec_id
+        assert returned_spec["version"] == version
 
     # Check that the version is listed
     test_request = request.Request(
@@ -248,4 +261,8 @@ def test_specs_versions_create_get_delete(access_token, spec_id):
 
     with request.urlopen(test_request) as response:
         assert response.status == 200
-        assert yaml.safe_load(response.read().decode()) == spec
+        spec_str = response.read().decode()
+        assert version in spec_str
+        assert '"Schema"' in spec_str
+        assert '"x-tablename"' in spec_str
+        assert '"schema"' in spec_str
