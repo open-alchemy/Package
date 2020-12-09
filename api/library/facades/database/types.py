@@ -141,3 +141,20 @@ class TDatabase(typing.Protocol):
 
         """
         ...
+
+    @staticmethod
+    def list_spec_versions(*, sub: TSub, spec_id: TSpecId) -> TSpecInfoList:
+        """
+        List all available versions for a spec for a customer.
+
+        Filters for a customer and for updated_at_spec_id to start with latest.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+            spec_id: Unique identifier for the spec for a package.
+
+        Returns:
+            List of information for all versions of a spec for the customer.
+
+        """
+        ...

@@ -126,3 +126,22 @@ class Database:
 
         """
         models.PackageStorage.delete_spec(sub=sub, spec_id=spec_id)
+
+    @staticmethod
+    def list_spec_versions(
+        *, sub: types.TSub, spec_id: types.TSpecId
+    ) -> types.TSpecInfoList:
+        """
+        List all available versions for a spec for a customer.
+
+        Filters for a customer and for updated_at_spec_id to start with latest.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+            spec_id: Unique identifier for the spec for a package.
+
+        Returns:
+            List of information for all versions of a spec for the customer.
+
+        """
+        return models.PackageStorage.list_spec_versions(sub=sub, spec_id=spec_id)

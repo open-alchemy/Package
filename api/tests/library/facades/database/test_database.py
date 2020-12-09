@@ -1,5 +1,8 @@
 """Tests for database facade."""
 
+import time
+from unittest import mock
+
 import pytest
 
 from library.facades import database
@@ -209,3 +212,61 @@ def test_delete_specs():
     assert database_instance.count_customer_models(sub=sub) == 0
     with pytest.raises(database.exceptions.NotFoundError):
         database_instance.get_latest_spec_version(sub=sub, spec_id=spec_id)
+
+
+def test_list_spec_versions(monkeypatch):
+    """
+    GIVEN sub, spec id, version and model count
+    WHEN create_update_spec is called with the spec info and list_spec_versions is
+        called
+    THEN all specs for the customer are returned.
+    """
+    mock_time = mock.MagicMock()
+    monkeypatch.setattr(time, "time", mock_time)
+    sub = "sub 1"
+    database_instance = database.get_database()
+
+    assert database_instance.list_specs(sub=sub) == []
+
+    mock_time.return_value = 1000000
+    spec_id = "spec id 1"
+    version_1 = "version 1"
+    title = "title 1"
+    description = "description 1"
+    model_count_1 = 1
+    database_instance.create_update_spec(
+        sub=sub,
+        spec_id=spec_id,
+        version=version_1,
+        model_count=model_count_1,
+        title=title,
+        description=description,
+    )
+
+    spec_infos = database_instance.list_spec_versions(sub=sub, spec_id=spec_id)
+    assert len(spec_infos) == 1
+    assert spec_infos == [
+        {
+            "spec_id": spec_id,
+            "version": version_1,
+            "title": title,
+            "description": description,
+            "model_count": model_count_1,
+        }
+    ]
+
+    mock_time.return_value = 2000000
+    version_2 = "version 2"
+    model_count_2 = 2
+    database_instance.create_update_spec(
+        sub=sub, spec_id=spec_id, version=version_2, model_count=model_count_2
+    )
+
+    spec_infos = database_instance.list_spec_versions(sub=sub, spec_id=spec_id)
+    assert len(spec_infos) == 2
+    assert spec_infos[0]["spec_id"] == spec_id
+    assert spec_infos[1] == {
+        "spec_id": spec_id,
+        "version": version_2,
+        "model_count": model_count_2,
+    }

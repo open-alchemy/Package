@@ -306,6 +306,7 @@ class PackageStorage(models.Model):
 
         Args:
             sub: Unique identifier for a cutsomer.
+            spec_id: Unique identifier for the spec for a package.
 
         Returns:
             List of information for all versions of a spec for the customer.
