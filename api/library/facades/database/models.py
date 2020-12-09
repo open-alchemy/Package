@@ -323,15 +323,4 @@ class PackageStorage(models.Model):
             ),
             items,
         )
-
-        seen_versions = set()
-
-        def de_duplicate_version(item: "PackageStorage") -> bool:
-            """Check for duplicate versions."""
-            if item.version in seen_versions:
-                return False
-            seen_versions.add(item.version)
-            return True
-
-        unique_version_items = filter(de_duplicate_version, items_no_latest)
-        return list(map(cls.item_to_spec_info, unique_version_items))
+        return list(map(cls.item_to_spec_info, items_no_latest))

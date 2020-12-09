@@ -917,7 +917,7 @@ PACKAGE_STORAGE_LIST_SPEC_VERSIONS_TESTS = [
         ],
         "sub 1",
         "spec id 1",
-        [0],
+        [0, 1],
         id="multiple hit duplicate version",
     ),
 ]
