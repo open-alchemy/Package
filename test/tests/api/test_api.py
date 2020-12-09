@@ -251,7 +251,11 @@ def test_specs_versions_create_get_delete(access_token, spec_id):
 
     with request.urlopen(test_request) as response:
         assert response.status == 200
-        assert json.loads(response.read().decode()) == [version]
+        returned_specs = json.loads(response.read().decode())
+        assert len(returned_specs) == 1
+        returned_spec = returned_specs[0]
+        assert returned_spec["spec_id"] == spec_id
+        assert returned_spec["version"] == version
 
     # Check that the spec can be retrieved
     test_request = request.Request(

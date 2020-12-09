@@ -224,7 +224,7 @@ def test_specs_spec_id_delete(client, _clean_package_storage_table):
     assert database.get_database().count_customer_models(sub=sub) == 0
 
 
-def test_specs_spec_id_versions_get(client):
+def test_specs_spec_id_versions_get(client, _clean_package_storage_table):
     """
     GIVEN database and storage with a single spec
     WHEN GET /v1/specs/{spec_id}/versions is called with the Authorization header
@@ -233,8 +233,9 @@ def test_specs_spec_id_versions_get(client):
     sub = "sub 1"
     spec_id = "spec id 1"
     version = "version 1"
-    storage.get_storage_facade().create_update_spec(
-        user=sub, spec_id=spec_id, version=version, spec_str="spec str 1"
+    model_count = 1
+    database.get_database().create_update_spec(
+        sub=sub, spec_id=spec_id, version=version, model_count=model_count
     )
     token = jwt.encode({"sub": sub}, "secret 1").decode()
 
@@ -249,7 +250,9 @@ def test_specs_spec_id_versions_get(client):
         == config.get_env().access_control_allow_origin
     )
 
-    assert json.loads(respose.data.decode()) == [version]
+    assert json.loads(respose.data.decode()) == [
+        {"spec_id": spec_id, "version": version, "model_count": model_count}
+    ]
 
 
 def test_specs_spec_id_version_version_get(client):

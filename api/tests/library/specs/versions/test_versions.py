@@ -7,24 +7,27 @@ from library.specs import versions
 from library.facades import storage, server, database
 
 
-def test_list_():
+def test_list_(_clean_package_storage_table):
     """
-    GIVEN user, spec id and storage with a single spec
+    GIVEN user, spec id and database with a single spec
     WHEN list_ is called with the user and spec id
     THEN the version of the spec is returned.
     """
     user = "user 1"
     spec_id = "spec id 1"
     version = "version 1"
-    storage.get_storage_facade().create_update_spec(
-        user=user, spec_id=spec_id, version=version, spec_str="spec str 1"
+    model_count = 1
+    database.get_database().create_update_spec(
+        sub=user, spec_id=spec_id, version=version, model_count=model_count
     )
 
     response = versions.list_(user=user, spec_id=spec_id)
 
     assert response.status_code == 200
     assert response.mimetype == "application/json"
-    assert json.loads(response.data.decode()) == [version]
+    assert json.loads(response.data.decode()) == [
+        {"spec_id": spec_id, "version": version, "model_count": model_count}
+    ]
 
 
 def test_list_not_found():
@@ -43,27 +46,27 @@ def test_list_not_found():
     assert spec_id in response.data.decode()
 
 
-def test_list_storage_error(monkeypatch):
+def test_list_database_error(monkeypatch):
     """
-    GIVEN user, spec id and storage that raises a StorageError
+    GIVEN user, spec id and database that raises a databaseError
     WHEN list_ is called with the user and spec id
     THEN 500 is returned.
     """
     user = "user 1"
     spec_id = "spec id 1"
-    mock_storage_get_spec_versions = mock.MagicMock()
-    mock_storage_get_spec_versions.side_effect = storage.exceptions.StorageError
+    mock_database_list_spec_versions = mock.MagicMock()
+    mock_database_list_spec_versions.side_effect = database.exceptions.DatabaseError
     monkeypatch.setattr(
-        storage.get_storage_facade(),
-        "get_spec_versions",
-        mock_storage_get_spec_versions,
+        database.get_database(),
+        "list_spec_versions",
+        mock_database_list_spec_versions,
     )
 
     response = versions.list_(user=user, spec_id=spec_id)
 
     assert response.status_code == 500
     assert response.mimetype == "text/plain"
-    assert "storage" in response.data.decode()
+    assert "database" in response.data.decode()
 
 
 def test_get():

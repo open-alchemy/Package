@@ -219,17 +219,18 @@ def test_list_spec_versions(monkeypatch):
     GIVEN sub, spec id, version and model count
     WHEN create_update_spec is called with the spec info and list_spec_versions is
         called
-    THEN all specs for the customer are returned.
+    THEN all specs for the customer are returned or NotFoundError is raised.
     """
     mock_time = mock.MagicMock()
     monkeypatch.setattr(time, "time", mock_time)
     sub = "sub 1"
+    spec_id = "spec id 1"
     database_instance = database.get_database()
 
-    assert database_instance.list_specs(sub=sub) == []
+    with pytest.raises(database.exceptions.NotFoundError):
+        database_instance.list_spec_versions(sub=sub, spec_id=spec_id)
 
     mock_time.return_value = 1000000
-    spec_id = "spec id 1"
     version_1 = "version 1"
     title = "title 1"
     description = "description 1"

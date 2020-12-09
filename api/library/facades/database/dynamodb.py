@@ -2,7 +2,7 @@
 
 import typing
 
-from . import models, types
+from . import models, types, exceptions
 
 
 class Database:
@@ -144,4 +144,7 @@ class Database:
             List of information for all versions of a spec for the customer.
 
         """
-        return models.PackageStorage.list_spec_versions(sub=sub, spec_id=spec_id)
+        spec_infos = models.PackageStorage.list_spec_versions(sub=sub, spec_id=spec_id)
+        if not spec_infos:
+            raise exceptions.NotFoundError(f"could not find spec id {spec_id}")
+        return spec_infos

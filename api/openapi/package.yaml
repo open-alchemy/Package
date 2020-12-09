@@ -132,7 +132,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/SpecVersion"
+                  $ref: "#/components/schemas/SpecInfo"
         401:
           description: Unauthorized
           content:
