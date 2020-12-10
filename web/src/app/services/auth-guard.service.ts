@@ -9,6 +9,8 @@ import { OAuthService } from 'angular-oauth2-oidc';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+  returnPathKey = 'signInComplete.ReturnPath';
+
   constructor(private oAuthService: OAuthService) {}
 
   canActivate(
@@ -22,7 +24,7 @@ export class AuthGuard implements CanActivate {
 
     if (!canActivate) {
       // Store the proposed path
-      sessionStorage.setItem('signInComplete.ReturnPath', state.url);
+      sessionStorage.setItem(this.returnPathKey, state.url);
 
       // Log the user in
       this.oAuthService.initLoginFlow();
