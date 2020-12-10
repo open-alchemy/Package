@@ -15,7 +15,7 @@ export class SignInCompleteComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.oAuthService.events
-      .pipe(filter((event) => event.type == 'token_received'))
+      .pipe(filter((event) => event.type === 'token_received'))
       .subscribe(() => {
         const returnPath = sessionStorage.getItem('signInComplete.ReturnPath');
         sessionStorage.removeItem('signInComplete.ReturnPath');
