@@ -43,5 +43,47 @@ describe('AuthGuard', () => {
       // AND noting was written into sessionStorage
       expect(sessionStorage.getItem(service.returnPathKey)).toBeNull();
     });
+
+    const parameters = [
+      {
+        description: 'no access token',
+        hasValidIdToken: true,
+        hasValidAccessToken: false,
+      },
+      {
+        description: 'no id token',
+        hasValidIdToken: false,
+        hasValidAccessToken: true,
+      },
+      {
+        description: 'no access nor id token',
+        hasValidIdToken: false,
+        hasValidAccessToken: true,
+      },
+    ].forEach(({ description, hasValidIdToken, hasValidAccessToken }) => {
+      describe(description, () => {
+        it('should init the login flow and store the current path', () => {
+          // GIVEN OAuthService that returns values for hasValidIdToken and hasValidAccessToken
+          oAuthServiceSpy.hasValidIdToken.and.returnValue(hasValidIdToken);
+          oAuthServiceSpy.hasValidAccessToken.and.returnValue(
+            hasValidAccessToken
+          );
+          const url = 'url 1';
+
+          // WHEN canActivate is called
+          const result = service.canActivate(MOCK_ACTIVATED_ROUTE_SNAPSHOT, {
+            url,
+            root: MOCK_ACTIVATED_ROUTE_SNAPSHOT,
+          });
+
+          // THEN true is returned
+          expect(result).toBeFalse();
+          // AND initLoginFlow is not called
+          expect(oAuthServiceSpy.initLoginFlow).toHaveBeenCalled();
+          // AND noting was written into sessionStorage
+          expect(sessionStorage.getItem(service.returnPathKey)).toEqual(url);
+        });
+      });
+    });
   });
 });
