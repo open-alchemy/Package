@@ -2,6 +2,8 @@ import { OAuthService } from 'angular-oauth2-oidc';
 
 import { AuthGuard } from './auth-guard.service';
 
+import { environment } from '../../environments/environment';
+
 const MOCK_ACTIVATED_ROUTE_SNAPSHOT = jasmine.createSpyObj(
   'ActivatedRouteSnapshot',
   ['params']
@@ -41,7 +43,9 @@ describe('AuthGuard', () => {
       // AND initLoginFlow is not called
       expect(oAuthServiceSpy.initLoginFlow).not.toHaveBeenCalled();
       // AND noting was written into sessionStorage
-      expect(sessionStorage.getItem(service.returnPathKey)).toBeNull();
+      expect(
+        sessionStorage.getItem(environment.signInCompleteReturnPathKey)
+      ).toBeNull();
     });
 
     const parameters = [
@@ -81,7 +85,9 @@ describe('AuthGuard', () => {
           // AND initLoginFlow is not called
           expect(oAuthServiceSpy.initLoginFlow).toHaveBeenCalled();
           // AND noting was written into sessionStorage
-          expect(sessionStorage.getItem(service.returnPathKey)).toEqual(url);
+          expect(
+            sessionStorage.getItem(environment.signInCompleteReturnPathKey)
+          ).toEqual(url);
         });
       });
     });

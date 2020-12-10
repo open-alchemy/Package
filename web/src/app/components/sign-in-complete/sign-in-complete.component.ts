@@ -1,29 +1,37 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { filter } from 'rxjs/operators';
 
-import { OAuthService, EventType } from 'angular-oauth2-oidc';
+import { OAuthService } from 'angular-oauth2-oidc';
+
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-sign-in-complete',
   templateUrl: './sign-in-complete.component.html',
   styleUrls: ['./sign-in-complete.component.css'],
 })
-export class SignInCompleteComponent implements AfterViewInit {
+export class SignInCompleteComponent implements OnInit {
   constructor(private router: Router, private oAuthService: OAuthService) {}
 
-  ngAfterViewInit(): void {
-    this.oAuthService.events
+  ngOnInit(): void {
+    const subscription = this.oAuthService.events
       .pipe(filter((event) => event.type === 'token_received'))
       .subscribe(() => {
-        const returnPath = sessionStorage.getItem('signInComplete.ReturnPath');
-        sessionStorage.removeItem('signInComplete.ReturnPath');
-        if (returnPath) {
-          this.router.navigate([returnPath]);
+        // Navigate back to stored url
+        let returnPath = sessionStorage.getItem(
+          environment.signInCompleteReturnPathKey
+        );
+        if (returnPath === null) {
+          returnPath = '';
         } else {
-          this.router.navigate(['']);
+          sessionStorage.removeItem(environment.signInCompleteReturnPathKey);
         }
+        this.router.navigate([returnPath]);
+
+        // Stop any other navigation
+        subscription.unsubscribe();
       });
   }
 }
