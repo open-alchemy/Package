@@ -1,0 +1,31 @@
+version: 2
+updates:
+  # Maintain Python dependencies for api.
+  - package-ecosystem: "pip"
+    directory: "api/"
+    schedule:
+      interval: "weekly"
+
+  # Maintain Python dependencies for test.
+  - package-ecosystem: "pip"
+    directory: "test/"
+    schedule:
+      interval: "weekly"
+
+  # Maintain npm dependencies for web.
+  - package-ecosystem: "npm"
+    directory: "web/"
+    schedule:
+      interval: "weekly"
+
+  # Maintain npm dependencies for infrastructure.
+  - package-ecosystem: "npm"
+    directory: "infrastructure/"
+    schedule:
+      interval: "weekly"
+
+  # Maintain dependencies for GitHub Actions.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
