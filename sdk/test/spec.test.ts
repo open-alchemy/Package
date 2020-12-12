@@ -139,6 +139,8 @@ describe('spec', () => {
           expect(config.headers['Authorization']).toEqual(
             `Bearer ${accessToken}`
           );
+          expect(config.headers).toHaveProperty('Content-Type');
+          expect(config.headers['Content-Type']).toEqual('text/plain');
           expect(config.headers).toHaveProperty('X-LANGUAGE');
           expect(config.headers['X-LANGUAGE']).toEqual(language);
 
@@ -173,6 +175,8 @@ describe('spec', () => {
           expect(config.headers['Authorization']).toEqual(
             `Bearer ${accessToken}`
           );
+          expect(config.headers).toHaveProperty('Content-Type');
+          expect(config.headers['Content-Type']).toEqual('text/plain');
           expect(config.headers).toHaveProperty('X-LANGUAGE');
           expect(config.headers['X-LANGUAGE']).toEqual(language);
 

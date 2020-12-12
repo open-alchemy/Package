@@ -65,15 +65,13 @@ describe('create spec', () => {
     await expect(specs.list({ accessToken })).resolves.toEqual([]);
 
     // Try to create invalid spec
-    await spec.put({
-      accessToken,
-      id: specId,
-      value: 'invalid',
-      language: 'JSON',
-    });
     await expect(
       spec.put({ accessToken, id: specId, value: 'invalid', language: 'JSON' })
-    ).rejects.toEqual(errors.SpecError);
+    ).rejects.toEqual(
+      new errors.SpecError(
+        'error whilst creating or updating the spec: "the spec is not valid, body must be valid JSON"'
+      )
+    );
 
     // Create valid spec
     const title = 'title 1';

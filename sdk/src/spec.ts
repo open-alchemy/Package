@@ -105,6 +105,7 @@ export async function put(params: IPutParams): Promise<void> {
     .put<void>(url, params.value, {
       headers: {
         Authorization: `Bearer ${params.accessToken}`,
+        'Content-Type': 'text/plain',
         'X-LANGUAGE': params.language,
       },
     })
