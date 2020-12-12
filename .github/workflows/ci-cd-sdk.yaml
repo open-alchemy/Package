@@ -67,6 +67,7 @@ jobs:
       - uses: actions/setup-node@v2.1.3
         with:
           node-version: 14.x
+          registry-url: "https://registry.npmjs.org"
       - name: cache node_modules
         id: cache-node_modules
         uses: actions/cache@v2
@@ -81,8 +82,9 @@ jobs:
       - name: publish
         working-directory: ./sdk
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
+          cat .npmrc
           npm publish --access public
       - name: upload artifacts that were released
         uses: actions/upload-artifact@v2
