@@ -156,14 +156,14 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.local/share/virtualenvs
-          key: ${{ runner.os }}-test-${{ hashFiles('test/Pipfile.lock') }}
+          key: ${{ runner.os }}-test-api-${{ hashFiles('test/api/Pipfile.lock') }}
       - name: install dependencies
-        working-directory: ./test
+        working-directory: ./test/api/
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
         run: |
           pipenv install --dev
       - name: Run tests
-        working-directory: ./test
+        working-directory: ./test/api/
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
