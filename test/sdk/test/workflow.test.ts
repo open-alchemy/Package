@@ -88,7 +88,7 @@ describe('create spec', () => {
       paramsBase: { id: specId },
     },
     {
-      description: 'without version',
+      description: 'with version',
       expectation: 'should create, retrieve and delete the spec as requested',
       paramsBase: { id: specId, version: VERSION },
     },
