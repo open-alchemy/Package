@@ -56,3 +56,53 @@ jobs:
         working-directory: ./sdk
         run: |
           npm run lint
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: cache node_modules
+        id: cache-node_modules
+        uses: actions/cache@v2
+        with:
+          path: sdk/node_modules
+          key: ${{ runner.os }}-sdk-${{ env.cache-name }}-${{ hashFiles('sdk/package-lock.json') }}
+      - name: install dependencies
+        working-directory: ./sdk
+        if: steps.cache-node_modules.outputs.cache-hit != 'true'
+        run: |
+          npm install
+      - name: run build
+        working-directory: ./sdk
+        run: |
+          npm run build
+      - name: upload artifacts for release
+        uses: actions/upload-artifact@v2
+        with:
+          name: sdk
+          path: sdk/dist/
+
+  publish:
+    runs-on: ubuntu-latest
+    needs:
+      - test
+      - lint
+      - build
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: retrieve api deployment package
+        uses: actions/download-artifact@v2
+        with:
+          name: sdk
+          path: sdk/dist/
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          package: ./sdk/package.json
