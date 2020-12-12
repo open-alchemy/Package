@@ -87,7 +87,9 @@ jobs:
           echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}
           registry=https://registry.npmjs.org/
           always-auth=true' > .npmrc
-          npm publish --access public
+          PUBLISHED_VERSION=$(npm view "@open-alchemy/package-sdk" dist-tags.latest)
+          PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
+          [[ "$PACKAGE_VERSION" == "$PACKAGE_VERSION" ]] || npm publish --access public
       - name: upload artifacts that were released
         uses: actions/upload-artifact@v2
         with:
