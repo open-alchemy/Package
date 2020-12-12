@@ -1,5 +1,7 @@
 # OpenAlchemy Package SDK
 
+An SDK for interacting with the OpenAlchemy package service.
+
 ## Getting Started
 
 To list all available specs:
