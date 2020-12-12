@@ -12,7 +12,7 @@ describe('decodeResponse', () => {
       description: 'not base64',
       expectation: 'should return the string',
       value: 'value{} 1',
-      expectedValue: 'value{} 1',
+      expectedValue: '"value{} 1"',
     },
   ].forEach(({ description, expectation, value, expectedValue }) => {
     describe(description, () => {

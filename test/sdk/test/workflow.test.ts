@@ -95,7 +95,7 @@ describe('create spec', () => {
         },
       },
     };
-    expect(
+    await expect(
       spec.put({
         accessToken,
         id: specId,
