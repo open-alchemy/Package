@@ -101,8 +101,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: sdk
-          path: dist/
-      - uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
-          package: ./sdk/package.json
+          path: sdk/dist/
+      - name: publish
+        working-directory: ./sdk
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm publish --access public
