@@ -3,6 +3,27 @@ import assert from 'assert';
 import AWS from 'aws-sdk';
 import { specs, spec, errors } from '@open-alchemy/package-sdk';
 
+const VERSION = 'version 1';
+const TITLE = 'title 1';
+const DESCRIPTION = 'description 1';
+const SPEC_VALUE = {
+  info: {
+    title: TITLE,
+    description: DESCRIPTION,
+    version: VERSION,
+  },
+  components: {
+    schemas: {
+      Schema: {
+        type: 'object',
+        'x-tablename': 'schema',
+        properties: { id: { type: 'integer' } },
+      },
+    },
+  },
+};
+const SPEC_VALUE_STRING = JSON.stringify(SPEC_VALUE);
+
 describe('create spec', () => {
   let accessToken: string;
   const specId = 'sdk spec id 1';
@@ -60,46 +81,77 @@ describe('create spec', () => {
     await spec.delete_({ accessToken, id: specId });
   });
 
-  test('should create the spec as requested', async () => {
-    // Check that the specs are empty
-    await expect(specs.list({ accessToken })).resolves.toEqual([]);
+  [
+    {
+      description: 'without version',
+      expectation: 'should create, retrieve and delete the spec as requested',
+      paramsBase: { id: specId },
+    },
+    {
+      description: 'without version',
+      expectation: 'should create, retrieve and delete the spec as requested',
+      paramsBase: { id: specId, version: VERSION },
+    },
+  ].forEach(({ description, expectation, paramsBase }) => {
+    describe(description, () => {
+      test(expectation, async () => {
+        // Check that the specs are empty
+        await expect(specs.list({ accessToken })).resolves.toEqual([]);
 
-    // Try to create invalid spec
-    await expect(
-      spec.put({ accessToken, id: specId, value: 'invalid', language: 'JSON' })
-    ).rejects.toEqual(
-      new errors.SpecError(
-        'error whilst creating or updating the spec: "the spec is not valid, body must be valid JSON"'
-      )
-    );
+        // Try to create invalid spec
+        await expect(
+          spec.put({
+            ...paramsBase,
+            accessToken,
+            value: 'invalid',
+            language: 'JSON',
+          })
+        ).rejects.toBeInstanceOf(errors.SpecError);
 
-    // Create valid spec
-    const title = 'title 1';
-    const description = 'title 1';
-    const version = 'version 1';
-    const specValue = {
-      info: {
-        title: title,
-        description: description,
-        version: version,
-      },
-      components: {
-        schemas: {
-          Schema: {
-            type: 'object',
-            'x-tablename': 'schema',
-            properties: { id: { type: 'integer' } },
-          },
-        },
-      },
-    };
-    await expect(
-      spec.put({
-        accessToken,
-        id: specId,
-        value: JSON.stringify(specValue),
-        language: 'JSON',
-      })
-    ).resolves.toEqual(undefined);
+        // Create valid spec
+        await expect(
+          spec.put({
+            ...paramsBase,
+            accessToken,
+            value: SPEC_VALUE_STRING,
+            language: 'JSON',
+          })
+        ).resolves.toEqual(undefined);
+
+        // Check that the spec is now listed
+        const returnedSpecInfos = await specs.list({ accessToken });
+        expect(returnedSpecInfos.length).toEqual(1);
+        const returnedSpecInfo = returnedSpecInfos[0];
+        expect(returnedSpecInfo.spec_id).toEqual(specId);
+        expect(returnedSpecInfo.version).toEqual(VERSION);
+        expect(returnedSpecInfo.title).toEqual(TITLE);
+        expect(returnedSpecInfo.description).toEqual(DESCRIPTION);
+        expect(returnedSpecInfo.model_count).toEqual(1);
+        expect(returnedSpecInfo.updated_at).toBeDefined();
+
+        // Check that the spec can be retrieved
+        const returnedSpecValue = await spec.get({
+          ...paramsBase,
+          accessToken,
+        });
+        expect(returnedSpecValue).toContain(VERSION);
+        expect(returnedSpecValue).toContain(TITLE);
+        expect(returnedSpecValue).toContain(DESCRIPTION);
+        expect(returnedSpecValue).toContain('Schema:');
+        expect(returnedSpecValue).toContain('x-tablename:');
+        expect(returnedSpecValue).toContain(': schema');
+
+        // Delete the spec
+        await spec.delete_({ id: specId, accessToken });
+
+        // Check that the spec can no longer be retrieved
+        await expect(
+          spec.get({ id: specId, accessToken })
+        ).rejects.toBeInstanceOf(errors.SpecError);
+
+        // Check that the specs are empty
+        await expect(specs.list({ accessToken })).resolves.toEqual([]);
+      });
+    });
   });
 });
