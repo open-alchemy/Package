@@ -24,6 +24,12 @@ updates:
     schedule:
       interval: "weekly"
 
+  # Maintain npm dependencies for sdk.
+  - package-ecosystem: "npm"
+    directory: "sdk/"
+    schedule:
+      interval: "weekly"
+
   # Maintain dependencies for GitHub Actions.
   - package-ecosystem: "github-actions"
     directory: "/"

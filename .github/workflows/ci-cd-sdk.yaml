@@ -1,0 +1,58 @@
+name: CI-CD for the OpenAlchemy Package SDK
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/ci-cd-sdk.yaml"
+      - "sdk/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: cache node_modules
+        id: cache-node_modules
+        uses: actions/cache@v2
+        with:
+          path: sdk/node_modules
+          key: ${{ runner.os }}-sdk-${{ env.cache-name }}-${{ hashFiles('sdk/package-lock.json') }}
+      - name: install dependencies
+        working-directory: ./sdk
+        if: steps.cache-node_modules.outputs.cache-hit != 'true'
+        run: |
+          npm install
+      - name: run tests
+        working-directory: ./sdk
+        run: |
+          npm run test:ci
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: cache node_modules
+        id: cache-node_modules
+        uses: actions/cache@v2
+        with:
+          path: sdk/node_modules
+          key: ${{ runner.os }}-sdk-${{ env.cache-name }}-${{ hashFiles('sdk/package-lock.json') }}
+      - name: install dependencies
+        working-directory: ./sdk
+        if: steps.cache-node_modules.outputs.cache-hit != 'true'
+        run: |
+          npm install
+      - name: run linting
+        working-directory: ./sdk
+        run: |
+          npm run lint
