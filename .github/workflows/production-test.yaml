@@ -39,3 +39,35 @@ jobs:
           TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
         run: |
           pipenv run test
+
+  sdk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up node
+        uses: actions/setup-node@v2.1.3
+        with:
+          node-version: 14.x
+      - name: cache node_modules
+        id: cache-node_modules
+        uses: actions/cache@v2
+        with:
+          path: test/sdk/node_modules
+          key: ${{ runner.os }}-test-sdk-${{ env.cache-name }}-${{ hashFiles('test/sdk/package-lock.json') }}
+      - name: install dependencies
+        working-directory: ./test/sdk/
+        if: steps.cache-node_modules.outputs.cache-hit != 'true'
+        run: |
+          npm install
+      - name: Run tests
+        working-directory: ./test/sdk/
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-1"
+          USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+        run: |
+          npm run test
