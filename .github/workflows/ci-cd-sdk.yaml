@@ -87,7 +87,6 @@ jobs:
           echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}
           registry=https://registry.npmjs.org/
           always-auth=true' > .npmrc
-          cat .npmrc
           npm publish --access public
       - name: upload artifacts that were released
         uses: actions/upload-artifact@v2
