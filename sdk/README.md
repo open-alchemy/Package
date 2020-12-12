@@ -34,7 +34,3 @@ const specVersions = await spec.getVersions({
   id: 'employee',
 });
 ```
-
-## Publishing to NPM
-
-We recommend using [np](https://github.com/sindresorhus/np).
