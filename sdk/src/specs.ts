@@ -3,6 +3,7 @@ import axios from 'axios';
 import { SpecInfo } from './openapi/models';
 
 import { SpecsError } from './errors';
+import { decodeResponse } from './helpers';
 
 interface IListParams {
   accessToken: string;
@@ -21,9 +22,8 @@ export async function list(params: IListParams): Promise<SpecInfo[]> {
       headers: { Authorization: `Bearer ${params.accessToken}` },
     })
     .catch(error => {
-      throw new SpecsError(
-        `error whilst loading the specs: ${atob(error.response.data)}`
-      );
+      let message = decodeResponse(error.response.data);
+      throw new SpecsError(`error whilst loading the specs: ${message}`);
     });
   return response.data;
 }

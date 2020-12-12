@@ -60,14 +60,20 @@ describe('create spec', () => {
     await spec.delete_({ accessToken, id: specId });
   });
 
-  test('should create the spec as requested', () => {
+  test('should create the spec as requested', async () => {
     // Check that the specs are empty
-    expect(specs.list({ accessToken })).resolves.toEqual([]);
+    await expect(specs.list({ accessToken })).resolves.toEqual([]);
 
     // Try to create invalid spec
-    expect(
-      spec.put({ accessToken, id: specId, value: 'invalid' })
-    ).rejects.toBeInstanceOf(errors.SpecError);
+    await spec.put({
+      accessToken,
+      id: specId,
+      value: 'invalid',
+      language: 'JSON',
+    });
+    await expect(
+      spec.put({ accessToken, id: specId, value: 'invalid', language: 'JSON' })
+    ).rejects.toEqual(errors.SpecError);
 
     // Create valid spec
     const title = 'title 1';
@@ -90,7 +96,12 @@ describe('create spec', () => {
       },
     };
     expect(
-      spec.put({ accessToken, id: specId, value: JSON.stringify(specValue) })
+      spec.put({
+        accessToken,
+        id: specId,
+        value: JSON.stringify(specValue),
+        language: 'JSON',
+      })
     ).resolves.toEqual(undefined);
   });
 });
