@@ -13,8 +13,10 @@ export async function list(params: IListParams): Promise<SpecInfo[]> {
     .get<SpecInfo[]>('https://package.api.openalchemy.io/v1/specs', {
       headers: { Authorization: `Bearer ${params.accessToken}` },
     })
-    .catch(() => {
-      throw new SpecsError('something went wrong whilst loading the specs');
+    .catch(error => {
+      throw new SpecsError(
+        `error whilst loading the specs: ${error.response.data}`
+      );
     });
   return response.data;
 }

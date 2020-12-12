@@ -11,3 +11,10 @@ export class SpecsError extends BaseError {
     this.name = 'SpecsError';
   }
 }
+
+export class SpecError extends BaseError {
+  constructor(message: string) {
+    super(message);
+    this.name = 'SpecError';
+  }
+}

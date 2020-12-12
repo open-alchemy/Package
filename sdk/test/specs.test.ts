@@ -18,7 +18,7 @@ describe('specs', () => {
       const responseData = [{ key: 'value' }];
       mockAdaptor
         .onGet('https://package.api.openalchemy.io/v1/specs')
-        .replyOnce(200, [{ key: 'value' }]);
+        .replyOnce(200, responseData);
 
       // WHEN list is called
       const returnedSpecsPromise = list({ accessToken });
@@ -30,16 +30,17 @@ describe('specs', () => {
     test('should throw error if a 400 error is returned', async () => {
       // GIVE mocked axios that returns 200
       const accessToken = 'token 1';
+      const message = 'message 1';
       mockAdaptor
         .onGet('https://package.api.openalchemy.io/v1/specs')
-        .replyOnce(400, 'some error');
+        .replyOnce(400, message);
 
       // WHEN list is called
       const returnedSpecsPromise = list({ accessToken });
 
       // THEN the specs are returned
       const expectedError = new SpecsError(
-        'something went wrong whilst loading the specs'
+        `error whilst loading the specs: ${message}`
       );
       expect(returnedSpecsPromise).rejects.toEqual(expectedError);
     });
