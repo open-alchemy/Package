@@ -1,6 +1,7 @@
-export const sum = (a: number, b: number) => {
-  if ('development' === process.env.NODE_ENV) {
-    console.log('boop');
-  }
-  return a + b;
-};
+/* eslint-disable prettier/prettier */
+
+export * as specs from './specs';
+export * as spec from './spec';
+export * as errors from './errors';
+
+/* eslint-enable prettier/prettier */

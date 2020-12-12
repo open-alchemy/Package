@@ -8,6 +8,13 @@ interface IListParams {
   accessToken: string;
 }
 
+/**
+ * List all available specs
+ *
+ * Throws SpecsError if anything goes wrong whilst listing the specs
+ *
+ * @param params.accessToken The access token for the package service
+ */
 export async function list(params: IListParams): Promise<SpecInfo[]> {
   const response = await axios
     .get<SpecInfo[]>('https://package.api.openalchemy.io/v1/specs', {
