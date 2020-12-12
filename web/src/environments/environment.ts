@@ -5,6 +5,14 @@
 export const environment = {
   production: false,
   signInCompleteReturnPathKey: 'signInComplete.ReturnPath',
+  package: {
+    url: 'https://package.api.openalchemy.io',
+    paths: {
+      specs: () => '/specs',
+      specsSpecId: (specId: string) => `/specs/${specId}`,
+      specsSpecIdVersions: (specId: string) => `/specs/${specId}/versions`,
+    },
+  },
 };
 
 /*
