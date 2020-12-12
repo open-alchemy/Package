@@ -5,7 +5,6 @@ import { filter } from 'rxjs/operators';
 
 import { OAuthService } from 'angular-oauth2-oidc';
 
-import { SpecInfo } from '../openapi/models';
 import { isNotNullUndefined } from '../helpers/filters';
 
 @Injectable({ providedIn: 'root' })
