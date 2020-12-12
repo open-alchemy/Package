@@ -23,12 +23,15 @@ const employeeSpec = await spec.get({
   id: 'employee',
   version: 'version 1',
 });
+// Create or update a spec
 await spec.put({
   accessToken,
   id: 'employee',
   specValue: '<an OpenAlchemy OpenAPI Spec>',
 });
+// Delete a spec
 await spec.delete({ accessToken, id: 'employee' });
+// List the versions of a spec
 const specVersions = await spec.getVersions({
   accessToken,
   id: 'employee',
