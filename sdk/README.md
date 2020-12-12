@@ -2,6 +2,9 @@
 
 An SDK for interacting with the OpenAlchemy package service.
 
+For API based interactions check here:
+<https://package.api.openalchemy.io/v1/ui/>
+
 ## Getting Started
 
 To list all available specs:
