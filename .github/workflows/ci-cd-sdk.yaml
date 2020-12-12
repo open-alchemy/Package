@@ -107,4 +107,8 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
+          PUBLISHED_VERSION=npm view "@open-alchemy/package-sdk" dist-tags.latest
+          CURRENT_VERSION=node -p -e "require('./package.json').version"
+          echo $PUBLISHED_VERSION
+          echo $CURRENT_VERSION
           npm publish --access public
