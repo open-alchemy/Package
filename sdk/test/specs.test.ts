@@ -31,7 +31,7 @@ describe('specs', () => {
       const returnedSpecsPromise = list({ accessToken });
 
       // THEN the specs are returned
-      expect(returnedSpecsPromise).resolves.toEqual(responseData);
+      await expect(returnedSpecsPromise).resolves.toEqual(responseData);
     });
 
     test('should throw error if a 400 error is returned', async () => {
@@ -49,7 +49,7 @@ describe('specs', () => {
       const expectedError = new SpecsError(
         `error whilst loading the specs: ${message}`
       );
-      expect(returnedSpecsPromise).rejects.toEqual(expectedError);
+      await expect(returnedSpecsPromise).rejects.toEqual(expectedError);
     });
   });
 });

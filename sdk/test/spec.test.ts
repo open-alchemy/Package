@@ -32,7 +32,7 @@ describe('spec', () => {
       const returnedSpecPromise = get({ accessToken, id: specId });
 
       // THEN the spec value is returned
-      expect(returnedSpecPromise).resolves.toEqual(responseData);
+      await expect(returnedSpecPromise).resolves.toEqual(responseData);
     });
 
     test('should return the spec value for a version when 200 is returned', async () => {
@@ -58,7 +58,7 @@ describe('spec', () => {
       const returnedSpecPromise = get({ accessToken, id: specId, version });
 
       // THEN the spec value is returned
-      expect(returnedSpecPromise).resolves.toEqual(responseData);
+      await expect(returnedSpecPromise).resolves.toEqual(responseData);
     });
 
     test('should throw error if a 400 error is returned', async () => {
@@ -77,7 +77,7 @@ describe('spec', () => {
       const expectedError = new SpecError(
         `error whilst loading the spec: ${message}`
       );
-      expect(returnedSpecPromise).rejects.toEqual(expectedError);
+      await expect(returnedSpecPromise).rejects.toEqual(expectedError);
     });
   });
 
@@ -102,7 +102,7 @@ describe('spec', () => {
       const returnedSpecPromise = getVersions({ accessToken, id: specId });
 
       // THEN the spec versions are returned
-      expect(returnedSpecPromise).resolves.toEqual(responseData);
+      await expect(returnedSpecPromise).resolves.toEqual(responseData);
     });
 
     test('should throw error if a 400 error is returned', async () => {
@@ -121,7 +121,7 @@ describe('spec', () => {
       const expectedError = new SpecError(
         `error whilst loading the versions for the spec: ${message}`
       );
-      expect(returnedSpecPromise).rejects.toEqual(expectedError);
+      await expect(returnedSpecPromise).rejects.toEqual(expectedError);
     });
   });
 
@@ -154,7 +154,7 @@ describe('spec', () => {
       });
 
       // THEN the promise resolves
-      expect(returnedSpecPromise).resolves.toEqual(undefined);
+      await expect(returnedSpecPromise).resolves.toEqual(undefined);
     });
 
     test('should create or update specific version of a spec spec when 200 is returned', async () => {
@@ -189,7 +189,7 @@ describe('spec', () => {
       });
 
       // THEN the promise resolves
-      expect(returnedSpecPromise).resolves.toEqual(undefined);
+      await expect(returnedSpecPromise).resolves.toEqual(undefined);
     });
 
     test('should throw error if a 400 error is returned', async () => {
@@ -215,7 +215,7 @@ describe('spec', () => {
       const expectedError = new SpecError(
         `error whilst creating or updating the spec: ${message}`
       );
-      expect(returnedSpecPromise).rejects.toEqual(expectedError);
+      await expect(returnedSpecPromise).rejects.toEqual(expectedError);
     });
   });
 
@@ -239,7 +239,7 @@ describe('spec', () => {
       const returnedSpecPromise = delete_({ accessToken, id: specId });
 
       // THEN the promise resolves
-      expect(returnedSpecPromise).resolves.toEqual(undefined);
+      await expect(returnedSpecPromise).resolves.toEqual(undefined);
     });
 
     test('should throw error if a 400 error is returned', async () => {
@@ -258,7 +258,7 @@ describe('spec', () => {
       const expectedError = new SpecError(
         `error whilst deleting the spec: ${message}`
       );
-      expect(returnedSpecPromise).rejects.toEqual(expectedError);
+      await expect(returnedSpecPromise).rejects.toEqual(expectedError);
     });
   });
 });
