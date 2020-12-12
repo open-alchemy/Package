@@ -17,6 +17,7 @@
     "test:coverage": "tsdx test --coverage",
     "test:ci": "tsdx test --coverage",
     "lint": "tsdx lint",
+    "prepare": "tsdx build",
     "size": "size-limit",
     "analyze": "size-limit --why",
     "generate:specs": "openapi-typescript ../api/openapi/package.yaml -o src/openapi/package.ts"
