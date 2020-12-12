@@ -131,6 +131,7 @@ describe('spec', () => {
       const accessToken = 'token 1';
       const specId = 'spec id 1';
       const specValue = 'spec value 1';
+      const language = 'JSON';
       mockAdaptor
         .onPut(`https://package.api.openalchemy.io/v1/specs/${specId}`)
         .replyOnce(config => {
@@ -138,6 +139,8 @@ describe('spec', () => {
           expect(config.headers['Authorization']).toEqual(
             `Bearer ${accessToken}`
           );
+          expect(config.headers).toHaveProperty('X-LANGUAGE');
+          expect(config.headers['X-LANGUAGE']).toEqual(language);
 
           return [204];
         });
@@ -147,6 +150,7 @@ describe('spec', () => {
         accessToken,
         id: specId,
         value: specValue,
+        language,
       });
 
       // THEN the promise resolves
@@ -159,6 +163,7 @@ describe('spec', () => {
       const specId = 'spec id 1';
       const specVersion = 'version 1';
       const specValue = 'spec value 1';
+      const language = 'JSON';
       mockAdaptor
         .onPut(
           `https://package.api.openalchemy.io/v1/specs/${specId}/versions/${specVersion}`
@@ -168,6 +173,8 @@ describe('spec', () => {
           expect(config.headers['Authorization']).toEqual(
             `Bearer ${accessToken}`
           );
+          expect(config.headers).toHaveProperty('X-LANGUAGE');
+          expect(config.headers['X-LANGUAGE']).toEqual(language);
 
           return [204];
         });
@@ -178,6 +185,7 @@ describe('spec', () => {
         id: specId,
         value: specValue,
         version: specVersion,
+        language,
       });
 
       // THEN the promise resolves
@@ -190,6 +198,7 @@ describe('spec', () => {
       const specId = 'spec id 1';
       const specValue = 'spec value 1';
       const message = 'message 1';
+      const language = 'JSON';
       mockAdaptor
         .onPut(`https://package.api.openalchemy.io/v1/specs/${specId}`)
         .replyOnce(400, btoa(message));
@@ -199,6 +208,7 @@ describe('spec', () => {
         accessToken,
         id: specId,
         value: specValue,
+        language,
       });
 
       // THEN the expected error is thrown

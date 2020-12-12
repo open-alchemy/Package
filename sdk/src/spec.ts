@@ -84,6 +84,7 @@ interface IPutParams {
   accessToken: string;
   id: SpecId;
   value: SpecValue;
+  language: 'JSON' | 'YAML';
   version?: SpecVersion;
 }
 
@@ -95,6 +96,7 @@ interface IPutParams {
  * @param params.accessToken The access token for the package service
  * @param params.id Unique identifier for the spec
  * @param params.value The value of the spec
+ * @param params.language The language the spec is in
  * @param params.version (optional) Version for the spec
  */
 export async function put(params: IPutParams): Promise<void> {
@@ -102,7 +104,10 @@ export async function put(params: IPutParams): Promise<void> {
 
   await axios
     .put<void>(url, params.value, {
-      headers: { Authorization: `Bearer ${params.accessToken}` },
+      headers: {
+        Authorization: `Bearer ${params.accessToken}`,
+        'X-LANGUAGE': params.language,
+      },
     })
     .catch(error => {
       throw new SpecError(
