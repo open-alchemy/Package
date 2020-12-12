@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "0.1.0",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -14,31 +14,14 @@
     "start": "tsdx watch",
     "build": "tsdx build",
     "test": "tsdx test",
-    "test:coverage": "tsdx test --coverage",
-    "test:ci": "tsdx test --coverage",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "size": "size-limit",
-    "analyze": "size-limit --why",
-    "generate:specs": "openapi-typescript ../api/openapi/package.yaml -o src/openapi/package.ts"
+    "analyze": "size-limit --why"
   },
   "husky": {
     "hooks": {
       "pre-commit": "tsdx lint"
-    }
-  },
-  "jest": {
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "index.ts",
-      "errors.ts"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 100,
-        "functions": 100,
-        "lines": 100
-      }
     }
   },
   "prettier": {
@@ -47,30 +30,30 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "@open-alchemy/package-sdk",
+  "name": "sdk",
   "author": "David Andersson",
-  "module": "dist/package-sdk.esm.js",
+  "module": "dist/sdk.esm.js",
   "size-limit": [
     {
-      "path": "dist/package-sdk.cjs.production.min.js",
+      "path": "dist/sdk.cjs.production.min.js",
       "limit": "10 KB"
     },
     {
-      "path": "dist/package-sdk.esm.js",
+      "path": "dist/sdk.esm.js",
       "limit": "10 KB"
     }
   ],
   "devDependencies": {
     "@size-limit/preset-small-lib": "^4.9.1",
-    "axios-mock-adapter": "^1.19.0",
+    "@types/jest": "^25.2.3",
     "husky": "^4.3.5",
-    "openapi-typescript": "^2.4.2",
     "size-limit": "^4.9.1",
     "tsdx": "^0.14.1",
     "tslib": "^2.0.3",
     "typescript": "^3.9.7"
   },
   "dependencies": {
-    "axios": "^0.21.0"
+    "@open-alchemy/package-sdk": "^1.0.2",
+    "aws-sdk": "^2.809.0"
   }
 }

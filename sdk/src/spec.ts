@@ -4,6 +4,19 @@ import { SpecId, SpecValue, SpecInfo, SpecVersion } from './openapi/models';
 
 import { SpecError } from './errors';
 
+interface ICalculateUrlParams {
+  id: SpecId;
+  version?: SpecVersion;
+}
+
+function calculateUrl(params: ICalculateUrlParams): string {
+  let url = `https://package.api.openalchemy.io/v1/specs/${params.id}`;
+  if (params.version) {
+    url = `${url}/versions/${params.version}`;
+  }
+  return url;
+}
+
 interface IGetParams {
   accessToken: string;
   id: SpecId;
@@ -17,13 +30,10 @@ interface IGetParams {
  *
  * @param params.accessToken The access token for the package service
  * @param params.id Unique identifier for the spec
- * @param params.version Version for the spec
+ * @param params.version (optional) Version for the spec
  */
 export async function get(params: IGetParams): Promise<SpecValue> {
-  let url = `https://package.api.openalchemy.io/v1/specs/${params.id}`;
-  if (params.version) {
-    url = `${url}/versions/${params.version}`;
-  }
+  let url = calculateUrl(params);
 
   const response = await axios
     .get<SpecValue>(url, {
@@ -31,7 +41,7 @@ export async function get(params: IGetParams): Promise<SpecValue> {
     })
     .catch(error => {
       throw new SpecError(
-        `error whilst loading the spec: ${error.response.data}`
+        `error whilst loading the spec: ${atob(error.response.data)}`
       );
     });
   return response.data;
@@ -62,7 +72,9 @@ export async function getVersions(
     )
     .catch(error => {
       throw new SpecError(
-        `error whilst loading the versions for the spec: ${error.response.data}`
+        `error whilst loading the versions for the spec: ${atob(
+          error.response.data
+        )}`
       );
     });
   return response.data;
@@ -72,6 +84,7 @@ interface IPutParams {
   accessToken: string;
   id: SpecId;
   value: SpecValue;
+  version?: SpecVersion;
 }
 
 /**
@@ -82,19 +95,20 @@ interface IPutParams {
  * @param params.accessToken The access token for the package service
  * @param params.id Unique identifier for the spec
  * @param params.value The value of the spec
+ * @param params.version (optional) Version for the spec
  */
 export async function put(params: IPutParams): Promise<void> {
+  let url = calculateUrl(params);
+
   await axios
-    .put<void>(
-      `https://package.api.openalchemy.io/v1/specs/${params.id}`,
-      params.value,
-      {
-        headers: { Authorization: `Bearer ${params.accessToken}` },
-      }
-    )
+    .put<void>(url, params.value, {
+      headers: { Authorization: `Bearer ${params.accessToken}` },
+    })
     .catch(error => {
       throw new SpecError(
-        `error whilst creating or updating the spec: ${error.response.data}`
+        `error whilst creating or updating the spec: ${atob(
+          error.response.data
+        )}`
       );
     });
   return;
@@ -120,7 +134,7 @@ export async function delete_(params: IDeleteParams): Promise<void> {
     })
     .catch(error => {
       throw new SpecError(
-        `error whilst deleting the spec: ${error.response.data}`
+        `error whilst deleting the spec: ${atob(error.response.data)}`
       );
     });
   return;

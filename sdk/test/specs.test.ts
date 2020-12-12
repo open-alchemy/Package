@@ -40,7 +40,7 @@ describe('specs', () => {
       const message = 'message 1';
       mockAdaptor
         .onGet('https://package.api.openalchemy.io/v1/specs')
-        .replyOnce(400, message);
+        .replyOnce(400, btoa(message));
 
       // WHEN list is called
       const returnedSpecsPromise = list({ accessToken });

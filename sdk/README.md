@@ -34,6 +34,13 @@ await spec.put({
   id: 'employee',
   specValue: '<an OpenAlchemy OpenAPI Spec>',
 });
+// Create or update specific version of a spec
+await spec.put({
+  accessToken,
+  id: 'employee',
+  specValue: '<an OpenAlchemy OpenAPI Spec>',
+  version: 'version 1',
+});
 // Delete a spec
 await spec.delete({ accessToken, id: 'employee' });
 // List the versions of a spec

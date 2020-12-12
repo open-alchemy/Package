@@ -22,7 +22,7 @@ export async function list(params: IListParams): Promise<SpecInfo[]> {
     })
     .catch(error => {
       throw new SpecsError(
-        `error whilst loading the specs: ${error.response.data}`
+        `error whilst loading the specs: ${atob(error.response.data)}`
       );
     });
   return response.data;
