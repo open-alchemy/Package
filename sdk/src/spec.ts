@@ -24,3 +24,26 @@ export async function get(params: IGetParams): Promise<SpecValue> {
     });
   return response.data;
 }
+
+interface IPutParams {
+  accessToken: string;
+  specId: SpecId;
+  specValue: SpecValue;
+}
+
+export async function put(params: IPutParams): Promise<void> {
+  await axios
+    .put<SpecValue>(
+      `https://package.api.openalchemy.io/v1/specs/${params.specId}`,
+      params.specValue,
+      {
+        headers: { Authorization: `Bearer ${params.accessToken}` },
+      }
+    )
+    .catch(error => {
+      throw new SpecError(
+        `error whilst creating or updating the spec: ${error.response.data}`
+      );
+    });
+  return;
+}
