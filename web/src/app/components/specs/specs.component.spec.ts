@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
 import { TestScheduler } from 'rxjs/testing';
@@ -20,6 +20,12 @@ class AppSpecsTableStubComponent {
   @Input() specInfos: SpecInfo[] = [];
 }
 
+@Component({ selector: 'app-specs-refresh-button', template: '' })
+class AppSpecsRefreshButtonStubComponent {
+  @Input() loading: boolean = true;
+  @Output() refreshEvent = new EventEmitter<void>();
+}
+
 describe('SpecsComponent', () => {
   let component: SpecsComponent;
   let fixture: ComponentFixture<SpecsComponent>;
@@ -33,7 +39,11 @@ describe('SpecsComponent', () => {
     ]);
 
     TestBed.configureTestingModule({
-      declarations: [SpecsComponent, AppSpecsTableStubComponent],
+      declarations: [
+        SpecsComponent,
+        AppSpecsTableStubComponent,
+        AppSpecsRefreshButtonStubComponent,
+      ],
       providers: [{ provide: PackageService, useValue: packageServiceSpy }],
     });
 

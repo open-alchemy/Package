@@ -5,6 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
 
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -21,6 +22,7 @@ import { AppComponent } from './app.component';
 import { SpecsComponent } from './components/specs/specs.component';
 import { SignInCompleteComponent } from './components/sign-in-complete/sign-in-complete.component';
 import { SpecsTableComponent } from './components/specs-table/specs-table.component';
+import { SpecsRefreshButtonComponent } from './components/specs-refresh-button/specs-refresh-button.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,7 @@ import { SpecsTableComponent } from './components/specs-table/specs-table.compon
     SpecsComponent,
     SignInCompleteComponent,
     SpecsTableComponent,
+    SpecsRefreshButtonComponent,
   ],
   imports: [
     BrowserModule,
@@ -41,6 +44,7 @@ import { SpecsTableComponent } from './components/specs-table/specs-table.compon
 
     MatProgressSpinnerModule,
     MatTableModule,
+    MatButtonModule,
   ],
   providers: [
     AuthGuard,

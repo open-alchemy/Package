@@ -17,6 +17,4 @@ export class SpecsTableComponent {
     'model_count',
   ];
   @Input() specInfos: SpecInfo[] = [];
-
-  constructor() {}
 }
