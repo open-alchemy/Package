@@ -1,16 +1,19 @@
 import { Action, createReducer, on } from '@ngrx/store';
 import { SpecInfo } from '@open-alchemy/package-sdk';
 
+export { SpecInfo };
+
 import * as PackageActions from './package.actions';
 
-export interface State {
-  specs: {
-    specInfos: SpecInfo[] | null;
-    success: boolean | null;
-    loading: boolean;
-  };
+export interface SpecsState {
+  specInfos: SpecInfo[] | null;
+  success: boolean | null;
+  loading: boolean;
 }
-export const initialState: State = {
+export interface PackageState {
+  specs: SpecsState;
+}
+export const initialState: PackageState = {
   specs: {
     specInfos: null,
     success: null,
@@ -18,7 +21,7 @@ export const initialState: State = {
   },
 };
 
-const packageReducer = createReducer(
+const _packageReducer = createReducer(
   initialState,
   on(PackageActions.specsComponentOnInit, (state) => ({
     ...state,
@@ -34,6 +37,9 @@ const packageReducer = createReducer(
   }))
 );
 
-export function reducer(state: State | undefined, action: Action) {
-  return packageReducer(state, action);
+export function packageReducer(
+  state: PackageState | undefined,
+  action: Action
+) {
+  return _packageReducer(state, action);
 }

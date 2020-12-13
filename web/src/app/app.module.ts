@@ -5,12 +5,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { SpecsService, SpecService } from '@open-alchemy/package-sdk';
 
 import { AppRoutingModule } from './app-routing.module';
 
 import { AuthGuard } from './services/auth-guard.service';
+import { packageReducer } from './services/package/package.reducer';
+import { PackageEffects } from './services/package/package.effects';
 
 import { AppComponent } from './app.component';
 import { SpecsComponent } from './components/specs/specs.component';
@@ -24,6 +28,9 @@ import { SignInCompleteComponent } from './components/sign-in-complete/sign-in-c
     BrowserAnimationsModule,
     HttpClientModule,
     OAuthModule.forRoot(),
+
+    StoreModule.forRoot({ package: packageReducer }),
+    EffectsModule.forRoot([PackageEffects]),
 
     MatProgressSpinnerModule,
   ],

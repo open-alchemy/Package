@@ -1,6 +1,6 @@
 import { SpecInfo } from '@open-alchemy/package-sdk';
 
-import { initialState, reducer } from './package.reducer';
+import { initialState, packageReducer } from './package.reducer';
 import * as PackageActions from './package.actions';
 
 const SPEC_INFOS: SpecInfo[] = [
@@ -11,7 +11,7 @@ const SPEC_INFOS: SpecInfo[] = [
   },
 ];
 
-describe('PackageReducer', () => {
+describe('packageReducer', () => {
   [
     {
       description: 'initial state: undefined, action: specs component on init',
@@ -120,7 +120,9 @@ describe('PackageReducer', () => {
     }) => {
       describe(description, () => {
         it(expectation, () => {
-          expect(reducer(initialState, action)).toEqual(expectedFinalState);
+          expect(packageReducer(initialState, action)).toEqual(
+            expectedFinalState
+          );
         });
       });
     }

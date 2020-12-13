@@ -184,6 +184,16 @@ describe('PackageEffects', () => {
                 .expectObservable(returnedActions)
                 .toBe(expectedMarbles, expectedValues);
             });
+
+            // AND specsService list$ has been called
+            expect(specsServiceSpy.list$).toHaveBeenCalledTimes(
+              specsServiceListReturnValues.length
+            );
+            if (specsServiceListReturnValues.length > 0) {
+              expect(specsServiceSpy.list$).toHaveBeenCalledWith({
+                accessToken,
+              });
+            }
           });
         });
       }
