@@ -25,6 +25,7 @@ import { SignInCompleteComponent } from './components/sign-in-complete/sign-in-c
 import { SpecsTableComponent } from './components/specs-table/specs-table.component';
 import { SpecsRefreshButtonComponent } from './components/specs-refresh-button/specs-refresh-button.component';
 import { SpecsCreateButtonComponent } from './components/specs-create-button/specs-create-button.component';
+import { SpecsManageSpecComponent } from './components/specs-manage-spec/specs-manage-spec.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { SpecsCreateButtonComponent } from './components/specs-create-button/spe
     SpecsTableComponent,
     SpecsRefreshButtonComponent,
     SpecsCreateButtonComponent,
+    SpecsManageSpecComponent,
   ],
   imports: [
     BrowserModule,
