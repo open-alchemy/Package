@@ -1,3 +1,4 @@
+/* istanbul ignore next */
 export const environment = {
   production: true,
   signInCompleteReturnPathKey: 'signInComplete.ReturnPath',
