@@ -21,7 +21,8 @@ export class PackageEffects {
     this.actions$.pipe(
       ofType(
         PackageActions.specsComponentOnInit.type,
-        PackageActions.specsComponentRefresh.type
+        PackageActions.specsComponentRefresh.type,
+        PackageActions.packageApiDeleteSpecsSpecIdSuccess.type
       ),
       switchMap(() =>
         this.specsService

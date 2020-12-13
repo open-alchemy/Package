@@ -8,6 +8,7 @@ export const specsComponentDeleteSpecId = createAction(
   '[specs component] delete spec id',
   props<{ specId: SpecId }>()
 );
+
 export const packageApiListSpecsSuccess = createAction(
   '[package api] list specs success',
   props<{ specInfos: SpecInfo[] }>()
