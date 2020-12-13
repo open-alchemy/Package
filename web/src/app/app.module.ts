@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { OAuthModule } from 'angular-oauth2-oidc';
+import { SpecsService, SpecService } from '@open-alchemy/package-sdk';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -26,7 +27,11 @@ import { SignInCompleteComponent } from './components/sign-in-complete/sign-in-c
 
     MatProgressSpinnerModule,
   ],
-  providers: [AuthGuard],
+  providers: [
+    AuthGuard,
+    { provide: SpecsService, useValue: new SpecsService() },
+    { provide: SpecService, useValue: new SpecService() },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

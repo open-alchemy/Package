@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { from, Observable } from 'rxjs';
 
 import { SpecId, SpecValue, SpecInfo, SpecVersion } from './openapi/models';
 
@@ -66,6 +67,10 @@ export class SpecService {
     return response.data;
   }
 
+  get$(params: IGetParams): Observable<SpecValue> {
+    return from(this.get(params));
+  }
+
   /**
    * Get the versions of a spec
    *
@@ -89,6 +94,10 @@ export class SpecService {
         );
       });
     return response.data;
+  }
+
+  getVersions$(params: IGetVersionsParams): Observable<SpecInfo[]> {
+    return from(this.getVersions(params));
   }
 
   /**
@@ -122,6 +131,10 @@ export class SpecService {
     return;
   }
 
+  put$(params: IPutParams): Observable<void> {
+    return from(this.put(params));
+  }
+
   /**
    * Delete a spec
    *
@@ -143,5 +156,9 @@ export class SpecService {
         throw new SpecError(`error whilst deleting the spec: ${message}`);
       });
     return;
+  }
+
+  delete$(params: IDeleteParams): Observable<void> {
+    return from(this.delete(params));
   }
 }

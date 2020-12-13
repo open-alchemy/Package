@@ -37,6 +37,24 @@ describe('SpecService', () => {
       await expect(returnedSpecPromise).resolves.toEqual(responseData);
     });
 
+    test('should return spec value when 200 is returned using the observable method', async () => {
+      // GIVE mocked axios that returns 200
+      const accessToken = 'token 1';
+      const specId = 'spec id 1';
+      const responseData = 'spec 1';
+      mockAdaptor
+        .onGet(`https://package.api.openalchemy.io/v1/specs/${specId}`)
+        .replyOnce(200, responseData);
+
+      // WHEN get is called
+      const returnedSpecPromise = service
+        .get$({ accessToken, id: specId })
+        .toPromise();
+
+      // THEN the spec value is returned
+      await expect(returnedSpecPromise).resolves.toEqual(responseData);
+    });
+
     test('should return the spec value for a version when 200 is returned', async () => {
       // GIVE mocked axios that returns 200
       const accessToken = 'token 1';
@@ -114,6 +132,27 @@ describe('SpecService', () => {
       await expect(returnedSpecPromise).resolves.toEqual(responseData);
     });
 
+    test('should return specs when 200 is returned using observables', async () => {
+      // GIVE mocked axios that returns 200
+      const accessToken = 'token 1';
+      const specId = 'spec id 1';
+      const responseData = [{ key: 'value' }];
+      mockAdaptor
+        .onGet(`https://package.api.openalchemy.io/v1/specs/${specId}/versions`)
+        .replyOnce(200, responseData);
+
+      // WHEN getVersions is called
+      const returnedSpecPromise = service
+        .getVersions$({
+          accessToken,
+          id: specId,
+        })
+        .toPromise();
+
+      // THEN the spec versions are returned
+      await expect(returnedSpecPromise).resolves.toEqual(responseData);
+    });
+
     test('should throw error if a 400 error is returned', async () => {
       // GIVE mocked axios that returns 400
       const accessToken = 'token 1';
@@ -166,6 +205,30 @@ describe('SpecService', () => {
         value: specValue,
         language,
       });
+
+      // THEN the promise resolves
+      await expect(returnedSpecPromise).resolves.toEqual(undefined);
+    });
+
+    test('should create or update spec when 200 is returned using observable', async () => {
+      // GIVE mocked axios that returns 200
+      const accessToken = 'token 1';
+      const specId = 'spec id 1';
+      const specValue = 'spec value 1';
+      const language = 'JSON';
+      mockAdaptor
+        .onPut(`https://package.api.openalchemy.io/v1/specs/${specId}`)
+        .replyOnce(204);
+
+      // WHEN put is called
+      const returnedSpecPromise = service
+        .put$({
+          accessToken,
+          id: specId,
+          value: specValue,
+          language,
+        })
+        .toPromise();
 
       // THEN the promise resolves
       await expect(returnedSpecPromise).resolves.toEqual(undefined);
@@ -253,6 +316,23 @@ describe('SpecService', () => {
 
       // WHEN delete is called
       const returnedSpecPromise = service.delete({ accessToken, id: specId });
+
+      // THEN the promise resolves
+      await expect(returnedSpecPromise).resolves.toEqual(undefined);
+    });
+
+    test('should return specs when 200 is returned', async () => {
+      // GIVE mocked axios that returns 200
+      const accessToken = 'token 1';
+      const specId = 'spec id 1';
+      mockAdaptor
+        .onDelete(`https://package.api.openalchemy.io/v1/specs/${specId}`)
+        .replyOnce(204);
+
+      // WHEN delete is called
+      const returnedSpecPromise = service
+        .delete$({ accessToken, id: specId })
+        .toPromise();
 
       // THEN the promise resolves
       await expect(returnedSpecPromise).resolves.toEqual(undefined);

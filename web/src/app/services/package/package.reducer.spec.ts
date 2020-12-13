@@ -1,9 +1,9 @@
-import { types } from '@open-alchemy/package-sdk';
+import { SpecInfo } from '@open-alchemy/package-sdk';
 
 import { initialState, reducer } from './package.reducer';
 import * as PackageActions from './package.actions';
 
-const SPEC_INFOS: types.SpecInfo[] = [
+const SPEC_INFOS: SpecInfo[] = [
   {
     spec_id: 'spec id 1',
     version: 'version 1',
