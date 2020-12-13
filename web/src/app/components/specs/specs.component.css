@@ -1,0 +1,22 @@
+:host {
+  display: grid;
+  grid-template-columns: 6fr 1fr 1fr;
+  grid-template-rows: 1fr 20fr;
+  height: 100vh;
+}
+
+#header {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 10px;
+}
+
+#refresh-button {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+#table {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
