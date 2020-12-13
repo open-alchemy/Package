@@ -1,7 +1,7 @@
 import { Action, createReducer, on } from '@ngrx/store';
 import { types } from '@open-alchemy/package-sdk';
 
-import * as PackageActions from './package.action';
+import * as PackageActions from './package.actions';
 
 export interface State {
   specs: {

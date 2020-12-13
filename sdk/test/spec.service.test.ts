@@ -1,14 +1,16 @@
 import axios from 'axios';
 import MockAdaptor from 'axios-mock-adapter';
 
-import { get, put, delete_, getVersions } from '../src/spec';
+import { SpecService } from '../src/spec.service';
 import { SpecError } from '../src/errors';
 
 describe('spec', () => {
   let mockAdaptor: MockAdaptor;
+  let service: SpecService;
 
   beforeEach(() => {
     mockAdaptor = new MockAdaptor(axios);
+    service = new SpecService();
   });
 
   describe('get', () => {
@@ -29,7 +31,7 @@ describe('spec', () => {
         });
 
       // WHEN get is called
-      const returnedSpecPromise = get({ accessToken, id: specId });
+      const returnedSpecPromise = service.get({ accessToken, id: specId });
 
       // THEN the spec value is returned
       await expect(returnedSpecPromise).resolves.toEqual(responseData);
@@ -55,7 +57,11 @@ describe('spec', () => {
         });
 
       // WHEN get is called
-      const returnedSpecPromise = get({ accessToken, id: specId, version });
+      const returnedSpecPromise = service.get({
+        accessToken,
+        id: specId,
+        version,
+      });
 
       // THEN the spec value is returned
       await expect(returnedSpecPromise).resolves.toEqual(responseData);
@@ -71,7 +77,7 @@ describe('spec', () => {
         .replyOnce(400, btoa(message));
 
       // WHEN get is called
-      const returnedSpecPromise = get({ accessToken, id: specId });
+      const returnedSpecPromise = service.get({ accessToken, id: specId });
 
       // THEN the expected error is thrown
       const expectedError = new SpecError(
@@ -99,7 +105,10 @@ describe('spec', () => {
         });
 
       // WHEN getVersions is called
-      const returnedSpecPromise = getVersions({ accessToken, id: specId });
+      const returnedSpecPromise = service.getVersions({
+        accessToken,
+        id: specId,
+      });
 
       // THEN the spec versions are returned
       await expect(returnedSpecPromise).resolves.toEqual(responseData);
@@ -115,7 +124,10 @@ describe('spec', () => {
         .replyOnce(400, btoa(message));
 
       // WHEN getVersions is called
-      const returnedSpecPromise = getVersions({ accessToken, id: specId });
+      const returnedSpecPromise = service.getVersions({
+        accessToken,
+        id: specId,
+      });
 
       // THEN the expected error is thrown
       const expectedError = new SpecError(
@@ -148,7 +160,7 @@ describe('spec', () => {
         });
 
       // WHEN put is called
-      const returnedSpecPromise = put({
+      const returnedSpecPromise = service.put({
         accessToken,
         id: specId,
         value: specValue,
@@ -184,7 +196,7 @@ describe('spec', () => {
         });
 
       // WHEN put is called
-      const returnedSpecPromise = put({
+      const returnedSpecPromise = service.put({
         accessToken,
         id: specId,
         value: specValue,
@@ -208,7 +220,7 @@ describe('spec', () => {
         .replyOnce(400, btoa(message));
 
       // WHEN put is called
-      const returnedSpecPromise = put({
+      const returnedSpecPromise = service.put({
         accessToken,
         id: specId,
         value: specValue,
@@ -240,7 +252,7 @@ describe('spec', () => {
         });
 
       // WHEN delete is called
-      const returnedSpecPromise = delete_({ accessToken, id: specId });
+      const returnedSpecPromise = service.delete({ accessToken, id: specId });
 
       // THEN the promise resolves
       await expect(returnedSpecPromise).resolves.toEqual(undefined);
@@ -256,7 +268,7 @@ describe('spec', () => {
         .replyOnce(400, btoa(message));
 
       // WHEN delete is called
-      const returnedSpecPromise = delete_({ accessToken, id: specId });
+      const returnedSpecPromise = service.delete({ accessToken, id: specId });
 
       // THEN the expected error is thrown
       const expectedError = new SpecError(
