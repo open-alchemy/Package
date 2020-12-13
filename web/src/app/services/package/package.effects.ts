@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
-import { map, catchError, switchMap } from 'rxjs/operators';
+import { map, catchError, switchMap, mergeMap } from 'rxjs/operators';
 
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { SpecsService } from '@open-alchemy/package-sdk';
+import { SpecsService, SpecService } from '@open-alchemy/package-sdk';
 import { OAuthService } from 'angular-oauth2-oidc';
 
 import * as PackageActions from './package.actions';
@@ -13,7 +13,8 @@ export class PackageEffects {
   constructor(
     private actions$: Actions,
     private oAuthService: OAuthService,
-    private specsService: SpecsService
+    private specsService: SpecsService,
+    private specService: SpecService
   ) {}
 
   listSpecs$ = createEffect(() =>
@@ -32,6 +33,25 @@ export class PackageEffects {
               PackageActions.packageApiListSpecsSuccess({ specInfos })
             ),
             catchError(() => of(PackageActions.packageApiListSpecsError()))
+          )
+      )
+    )
+  );
+
+  deleteSpecsSpecId$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(PackageActions.specsComponentDeleteSpecId),
+      mergeMap((action) =>
+        this.specService
+          .delete$({
+            accessToken: this.oAuthService.getAccessToken(),
+            id: action.specId,
+          })
+          .pipe(
+            map(() => PackageActions.packageApiDeleteSpecsSpecIdSuccess()),
+            catchError(() =>
+              of(PackageActions.packageApiDeleteSpecsSpecIdError())
+            )
           )
       )
     )

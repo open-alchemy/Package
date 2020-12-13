@@ -3,7 +3,7 @@ import { TestScheduler } from 'rxjs/testing';
 
 import { Action } from '@ngrx/store';
 import { OAuthService } from 'angular-oauth2-oidc';
-import { SpecsService, SpecInfo } from '@open-alchemy/package-sdk';
+import { SpecsService, SpecService, SpecInfo } from '@open-alchemy/package-sdk';
 
 import { PackageEffects } from './package.effects';
 import * as PackageActions from './package.actions';
@@ -28,6 +28,7 @@ describe('PackageEffects', () => {
   let effects: PackageEffects;
   let oAuthServiceSpy: jasmine.SpyObj<OAuthService>;
   let specsServiceSpy: jasmine.SpyObj<SpecsService>;
+  let specServiceSpy: jasmine.SpyObj<SpecService>;
   let testScheduler: TestScheduler;
 
   const accessToken = 'access token 1';
@@ -36,6 +37,7 @@ describe('PackageEffects', () => {
     oAuthServiceSpy = jasmine.createSpyObj('OAuthService', ['getAccessToken']);
     oAuthServiceSpy.getAccessToken.and.returnValue(accessToken);
     specsServiceSpy = jasmine.createSpyObj('SpecsService', ['list$']);
+    specServiceSpy = jasmine.createSpyObj('SpecService', ['delete$']);
 
     testScheduler = new TestScheduler((actual, expected) => {
       expect(actual).toEqual(expected);
@@ -100,12 +102,10 @@ describe('PackageEffects', () => {
         expectation: 'should return single error action actions',
         actionsMarbles: 'a',
         actionsValues: { a: PackageActions.specsComponentOnInit() },
-        specsServiceListReturnValues: [
-          { marbles: '-#|', values: { b: SPEC_INFOS_1 } },
-        ],
-        expectedMarbles: '-d',
+        specsServiceListReturnValues: [{ marbles: '-#|' }],
+        expectedMarbles: '-b',
         expectedValues: {
-          d: PackageActions.packageApiListSpecsError(),
+          b: PackageActions.packageApiListSpecsError(),
         },
       },
       {
@@ -191,7 +191,8 @@ describe('PackageEffects', () => {
               effects = new PackageEffects(
                 actions$,
                 oAuthServiceSpy,
-                specsServiceSpy
+                specsServiceSpy,
+                specServiceSpy
               );
               const returnedActions = effects.listSpecs$;
 
@@ -210,6 +211,169 @@ describe('PackageEffects', () => {
                 accessToken,
               });
             }
+          });
+        });
+      }
+    );
+  });
+
+  describe('deleteSpecsSpecId$', () => {
+    ([
+      {
+        description: 'empty actions',
+        expectation: 'should return empty actions',
+        actionsMarbles: '',
+        actionsValues: {},
+        specsServiceListReturnValues: [],
+        expectedMarbles: '',
+        expectedValues: {},
+        expectedCalls: [],
+      },
+      {
+        description: 'different action actions',
+        expectation: 'should return empty actions',
+        actionsMarbles: 'a',
+        actionsValues: { a: PackageActions.packageApiListSpecsError() },
+        specsServiceListReturnValues: [],
+        expectedMarbles: '',
+        expectedValues: {},
+        expectedCalls: [],
+      },
+      {
+        description:
+          'single specs component delete specs spec id action actions delete$ succeeds',
+        expectation: 'should return single success action actions',
+        actionsMarbles: 'a',
+        actionsValues: {
+          a: PackageActions.specsComponentDeleteSpecId({ specId: 'spec id 1' }),
+        },
+        specsServiceListReturnValues: [
+          { marbles: '-b|', values: { b: undefined } },
+        ],
+        expectedMarbles: '-b',
+        expectedValues: {
+          b: PackageActions.packageApiDeleteSpecsSpecIdSuccess(),
+        },
+        expectedCalls: [{ accessToken, id: 'spec id 1' }],
+      },
+      {
+        description:
+          'single specs component on init action actions delete$ throws error',
+        expectation: 'should return single error action actions',
+        actionsMarbles: 'a',
+        actionsValues: {
+          a: PackageActions.specsComponentDeleteSpecId({ specId: 'spec id 1' }),
+        },
+        specsServiceListReturnValues: [{ marbles: '-#|' }],
+        expectedMarbles: '-b',
+        expectedValues: {
+          b: PackageActions.packageApiDeleteSpecsSpecIdError(),
+        },
+        expectedCalls: [{ accessToken, id: 'spec id 1' }],
+      },
+      {
+        description:
+          'multiple specs component on init action actions delete$ returns before next',
+        expectation: 'should return multiple success action actions',
+        actionsMarbles: 'a--d',
+        actionsValues: {
+          a: PackageActions.specsComponentDeleteSpecId({ specId: 'spec id 1' }),
+          d: PackageActions.specsComponentDeleteSpecId({ specId: 'spec id 2' }),
+        },
+        specsServiceListReturnValues: [
+          { marbles: '-b|', values: { b: undefined } },
+          { marbles: '-e|', values: { e: undefined } },
+        ],
+        expectedMarbles: '-b--e',
+        expectedValues: {
+          b: PackageActions.packageApiDeleteSpecsSpecIdSuccess(),
+          e: PackageActions.packageApiDeleteSpecsSpecIdSuccess(),
+        },
+        expectedCalls: [
+          { accessToken, id: 'spec id 1' },
+          { accessToken, id: 'spec id 2' },
+        ],
+      },
+      {
+        description:
+          'multiple specs component on init action actions delete$ returns after next',
+        expectation: 'should return single success actions',
+        actionsMarbles: 'a--d',
+        actionsValues: {
+          a: PackageActions.specsComponentDeleteSpecId({ specId: 'spec id 1' }),
+          d: PackageActions.specsComponentDeleteSpecId({ specId: 'spec id 2' }),
+        },
+        specsServiceListReturnValues: [
+          { marbles: '-----f|', values: { f: undefined } },
+          { marbles: '-e|', values: { e: undefined } },
+        ],
+        expectedMarbles: '----ef',
+        expectedValues: {
+          e: PackageActions.packageApiDeleteSpecsSpecIdSuccess(),
+          f: PackageActions.packageApiDeleteSpecsSpecIdSuccess(),
+        },
+        expectedCalls: [
+          { accessToken, id: 'spec id 1' },
+          { accessToken, id: 'spec id 2' },
+        ],
+      },
+    ] as {
+      description: string;
+      expectation: string;
+      actionsMarbles: string;
+      actionsValues: { [key: string]: Action };
+      specsServiceListReturnValues: {
+        marbles: string;
+        values: { [key: string]: undefined };
+      }[];
+      expectedMarbles: string;
+      expectedValues: { [key: string]: Action };
+      expectedCalls: { accessToken: string; id: string }[];
+    }[]).forEach(
+      ({
+        description,
+        expectation,
+        actionsMarbles,
+        actionsValues,
+        specsServiceListReturnValues,
+        expectedMarbles,
+        expectedValues,
+        expectedCalls,
+      }) => {
+        describe(description, () => {
+          it(expectation, () => {
+            testScheduler.run((helpers) => {
+              // GIVEN actions
+              actions$ = helpers.cold(actionsMarbles, actionsValues);
+              // AND SpecsService delete that returns values
+              specServiceSpy.delete$.and.returnValues(
+                ...specsServiceListReturnValues.map(({ marbles, values }) =>
+                  helpers.cold(marbles, values)
+                )
+              );
+
+              // WHEN deleteSpecsSpecId$ is called
+              effects = new PackageEffects(
+                actions$,
+                oAuthServiceSpy,
+                specsServiceSpy,
+                specServiceSpy
+              );
+              const returnedActions = effects.deleteSpecsSpecId$;
+
+              // THEN the expected actions are returned
+              helpers
+                .expectObservable(returnedActions)
+                .toBe(expectedMarbles, expectedValues);
+            });
+
+            // AND specsService delete$ has been called
+            expect(specServiceSpy.delete$).toHaveBeenCalledTimes(
+              expectedCalls.length
+            );
+            expectedCalls.forEach((expectedCall) =>
+              expect(specServiceSpy.delete$).toHaveBeenCalledWith(expectedCall)
+            );
           });
         });
       }
