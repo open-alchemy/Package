@@ -4,6 +4,7 @@ import { By } from '@angular/platform-browser';
 
 import { TestScheduler } from 'rxjs/testing';
 import { map } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 import { SpecsComponent } from './specs.component';
 import { SpecInfo } from '../../services/package/types';
@@ -36,6 +37,7 @@ describe('SpecsComponent', () => {
     packageServiceSpy = jasmine.createSpyObj('PackageService', [
       'specs$',
       'specsComponentOnInit',
+      'specsComponentRefresh',
     ]);
 
     TestBed.configureTestingModule({
@@ -134,5 +136,63 @@ describe('SpecsComponent', () => {
           .toBe('ab', { a: false, b: true });
       });
     });
+
+    [
+      {
+        description: 'no emissions',
+        expectation: 'should not call specsComponentRefresh',
+        eventMarbles: '',
+        expectedCallCount: 0,
+      },
+      {
+        description: 'single emissions',
+        expectation: 'should call specsComponentRefresh once',
+        eventMarbles: 'a',
+        expectedCallCount: 1,
+      },
+      {
+        description: 'multiple emissions',
+        expectation: 'should call specsComponentRefresh multiple times',
+        eventMarbles: 'ab',
+        expectedCallCount: 2,
+      },
+    ].forEach(
+      ({ description, expectation, eventMarbles, expectedCallCount }) => {
+        describe(description, () => {
+          it(expectation, () => {
+            // GIVEN app-specs-refresh-button that emits
+            packageServiceSpy.specs$ = of({
+              specInfos: [],
+              loading: false,
+              success: null,
+            });
+            fixture.detectChanges();
+            const refreshButtonDebugElement = fixture.debugElement.query(
+              By.directive(AppSpecsRefreshButtonStubComponent)
+            );
+            const refreshButtonComponent = refreshButtonDebugElement.injector.get(
+              AppSpecsRefreshButtonStubComponent
+            );
+
+            testScheduler.run((helpers) => {
+              // WHEN emissions occur
+              helpers
+                .cold(eventMarbles)
+                .subscribe(() => refreshButtonComponent.refreshEvent.emit());
+            });
+
+            // THEN specsComponentRefresh has been called the expected number of times
+            expect(
+              packageServiceSpy.specsComponentRefresh
+            ).toHaveBeenCalledTimes(expectedCallCount);
+            if (expectedCallCount > 0) {
+              expect(
+                packageServiceSpy.specsComponentRefresh
+              ).toHaveBeenCalledWith();
+            }
+          });
+        });
+      }
+    );
   });
 });

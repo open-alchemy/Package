@@ -13,4 +13,8 @@ export class SpecsComponent implements OnInit {
   ngOnInit(): void {
     this.packageService.specsComponentOnInit();
   }
+
+  refreshButtonClick(): void {
+    this.packageService.specsComponentRefresh();
+  }
 }

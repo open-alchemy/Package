@@ -74,4 +74,21 @@ describe('PackageService', () => {
       });
     });
   });
+
+  describe('specsComponentRefresh', () => {
+    it('should dispatch specs component refresh action', () => {
+      testScheduler.run((helpers) => {
+        // GIVEN a trigger for specsComponentRefresh
+        helpers.cold('-b').subscribe(() => service.specsComponentRefresh());
+
+        // WHEN
+
+        // THEN store emits the expected actions
+        helpers.expectObservable(store.scannedActions$).toBe('ab', {
+          a: { type: '@ngrx/store/init' },
+          b: PackageActions.specsComponentRefresh(),
+        });
+      });
+    });
+  });
 });

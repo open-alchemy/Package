@@ -21,7 +21,11 @@ export class PackageService {
     this.specs$ = store.pipe(select(selectSpecs));
   }
 
-  specsComponentOnInit() {
+  specsComponentOnInit(): void {
     this.store.dispatch(PackageActions.specsComponentOnInit());
+  }
+
+  specsComponentRefresh(): void {
+    this.store.dispatch(PackageActions.specsComponentRefresh());
   }
 }

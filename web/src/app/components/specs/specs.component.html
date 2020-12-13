@@ -1,5 +1,5 @@
 <ng-container *ngIf="packageService.specs$ | async as specs">
-  <app-specs-refresh-button [loading]="specs.loading"></app-specs-refresh-button>
+  <app-specs-refresh-button [loading]="specs.loading" (refreshEvent)="refreshButtonClick()"></app-specs-refresh-button>
 
   <app-specs-table [specInfos]="specs.specInfos"></app-specs-table>
 </ng-container>
