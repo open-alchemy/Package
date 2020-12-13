@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
 
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -19,9 +20,15 @@ import { PackageEffects } from './services/package/package.effects';
 import { AppComponent } from './app.component';
 import { SpecsComponent } from './components/specs/specs.component';
 import { SignInCompleteComponent } from './components/sign-in-complete/sign-in-complete.component';
+import { SpecsTableComponent } from './components/specs-table/specs-table.component';
 
 @NgModule({
-  declarations: [AppComponent, SpecsComponent, SignInCompleteComponent],
+  declarations: [
+    AppComponent,
+    SpecsComponent,
+    SignInCompleteComponent,
+    SpecsTableComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -33,6 +40,7 @@ import { SignInCompleteComponent } from './components/sign-in-complete/sign-in-c
     EffectsModule.forRoot([PackageEffects]),
 
     MatProgressSpinnerModule,
+    MatTableModule,
   ],
   providers: [
     AuthGuard,

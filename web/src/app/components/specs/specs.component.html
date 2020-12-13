@@ -1,1 +1,4 @@
-<p>specs works!</p>
+<ng-container *ngIf="packageService.specs$ | async as specs">
+  {{ specs | json }}
+  <app-specs-table [specInfos]="specs.specInfos"></app-specs-table>
+</ng-container>
