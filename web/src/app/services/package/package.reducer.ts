@@ -27,6 +27,10 @@ const _packageReducer = createReducer(
     ...state,
     specs: { specInfos: null, success: null, loading: true },
   })),
+  on(PackageActions.specsComponentRefresh, (state) => ({
+    ...state,
+    specs: { specInfos: state.specs.specInfos, success: null, loading: true },
+  })),
   on(PackageActions.packageApiListSpecsSuccess, (state, action) => ({
     ...state,
     specs: { specInfos: action.specInfos, success: true, loading: false },

@@ -110,6 +110,29 @@ describe('packageReducer', () => {
         },
       },
     },
+    {
+      description:
+        'initial state: specs loaded, action: specs component refresh',
+      expectation:
+        'should set loading to true, success to null and leave the specs',
+      initialState: {
+        ...initialState,
+        specs: {
+          specInfos: SPEC_INFOS,
+          success: true,
+          loading: false,
+        },
+      },
+      action: PackageActions.specsComponentRefresh(),
+      expectedFinalState: {
+        ...initialState,
+        specs: {
+          specInfos: SPEC_INFOS,
+          success: null,
+          loading: true,
+        },
+      },
+    },
   ].forEach(
     ({
       description,
