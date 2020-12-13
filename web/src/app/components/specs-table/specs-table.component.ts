@@ -15,6 +15,7 @@ export class SpecsTableComponent {
     'version',
     'updated_at',
     'model_count',
+    'management',
   ];
   @Input() specInfos: SpecInfo[] = [];
 }
