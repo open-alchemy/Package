@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -47,6 +48,7 @@ import { SpecsCreateButtonComponent } from './components/specs-create-button/spe
     MatProgressSpinnerModule,
     MatTableModule,
     MatButtonModule,
+    MatIconModule,
   ],
   providers: [
     AuthGuard,
