@@ -41,7 +41,7 @@ export class PackageEffects {
 
   deleteSpecsSpecId$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(PackageActions.specsComponentDeleteSpecId),
+      ofType(PackageActions.specsComponentDeleteSpec),
       mergeMap((action) =>
         this.specService
           .delete$({

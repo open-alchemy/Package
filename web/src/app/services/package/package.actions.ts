@@ -4,8 +4,8 @@ import { SpecInfo, SpecId } from './types';
 
 export const specsComponentOnInit = createAction('[specs component] on init');
 export const specsComponentRefresh = createAction('[specs component] refresh');
-export const specsComponentDeleteSpecId = createAction(
-  '[specs component] delete spec id',
+export const specsComponentDeleteSpec = createAction(
+  '[specs component] delete spec',
   props<{ specId: SpecId }>()
 );
 

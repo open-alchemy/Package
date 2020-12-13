@@ -263,7 +263,7 @@ describe('PackageEffects', () => {
         expectation: 'should return single success action actions',
         actionsMarbles: 'a',
         actionsValues: {
-          a: PackageActions.specsComponentDeleteSpecId({ specId: 'spec id 1' }),
+          a: PackageActions.specsComponentDeleteSpec({ specId: 'spec id 1' }),
         },
         specsServiceListReturnValues: [
           { marbles: '-b|', values: { b: undefined } },
@@ -280,7 +280,7 @@ describe('PackageEffects', () => {
         expectation: 'should return single error action actions',
         actionsMarbles: 'a',
         actionsValues: {
-          a: PackageActions.specsComponentDeleteSpecId({ specId: 'spec id 1' }),
+          a: PackageActions.specsComponentDeleteSpec({ specId: 'spec id 1' }),
         },
         specsServiceListReturnValues: [{ marbles: '-#|' }],
         expectedMarbles: '-b',
@@ -295,8 +295,8 @@ describe('PackageEffects', () => {
         expectation: 'should return multiple success action actions',
         actionsMarbles: 'a--d',
         actionsValues: {
-          a: PackageActions.specsComponentDeleteSpecId({ specId: 'spec id 1' }),
-          d: PackageActions.specsComponentDeleteSpecId({ specId: 'spec id 2' }),
+          a: PackageActions.specsComponentDeleteSpec({ specId: 'spec id 1' }),
+          d: PackageActions.specsComponentDeleteSpec({ specId: 'spec id 2' }),
         },
         specsServiceListReturnValues: [
           { marbles: '-b|', values: { b: undefined } },
@@ -318,8 +318,8 @@ describe('PackageEffects', () => {
         expectation: 'should return single success actions',
         actionsMarbles: 'a--d',
         actionsValues: {
-          a: PackageActions.specsComponentDeleteSpecId({ specId: 'spec id 1' }),
-          d: PackageActions.specsComponentDeleteSpecId({ specId: 'spec id 2' }),
+          a: PackageActions.specsComponentDeleteSpec({ specId: 'spec id 1' }),
+          d: PackageActions.specsComponentDeleteSpec({ specId: 'spec id 2' }),
         },
         specsServiceListReturnValues: [
           { marbles: '-----f|', values: { f: undefined } },
