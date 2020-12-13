@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { from, of } from 'rxjs';
+import { of } from 'rxjs';
 import { map, catchError, switchMap } from 'rxjs/operators';
 
 import { Actions, createEffect, ofType } from '@ngrx/effects';
@@ -20,16 +20,16 @@ export class PackageEffects {
     this.actions$.pipe(
       ofType(PackageActions.specsComponentOnInit.type),
       switchMap(() =>
-        from(
-          this.specsService.list({
+        this.specsService
+          .list$({
             accessToken: this.oAuthService.getAccessToken(),
           })
-        ).pipe(
-          map((specInfos) =>
-            PackageActions.packageApiListSpecsSuccess({ specInfos })
-          ),
-          catchError(() => of(PackageActions.packageApiListSpecsError()))
-        )
+          .pipe(
+            map((specInfos) =>
+              PackageActions.packageApiListSpecsSuccess({ specInfos })
+            ),
+            catchError(() => of(PackageActions.packageApiListSpecsError()))
+          )
       )
     )
   );
