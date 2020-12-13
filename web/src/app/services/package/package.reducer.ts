@@ -21,7 +21,7 @@ export const initialState: PackageState = {
   },
 };
 
-const _packageReducer = createReducer(
+const packageReducerValue = createReducer(
   initialState,
   on(PackageActions.specsComponentOnInit, (state) => ({
     ...state,
@@ -45,5 +45,5 @@ export function packageReducer(
   state: PackageState | undefined,
   action: Action
 ) {
-  return _packageReducer(state, action);
+  return packageReducerValue(state, action);
 }

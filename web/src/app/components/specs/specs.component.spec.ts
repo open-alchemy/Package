@@ -10,9 +10,13 @@ import { SpecsComponent } from './specs.component';
 import { SpecInfo } from '../../services/package/types';
 import { PackageService } from '../../services/package/package.service';
 
+// Front end does not control names of properties
 const SPEC_INFO: SpecInfo = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   spec_id: 'spec id 1',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   version: 'version 1',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   model_count: 1,
 };
 
@@ -23,7 +27,7 @@ class AppSpecsTableStubComponent {
 
 @Component({ selector: 'app-specs-refresh-button', template: '' })
 class AppSpecsRefreshButtonStubComponent {
-  @Input() loading: boolean = true;
+  @Input() loading = true;
   @Output() refreshEvent = new EventEmitter<void>();
 }
 

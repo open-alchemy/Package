@@ -1,12 +1,19 @@
 import { SpecInfo } from '@open-alchemy/package-sdk';
 
-import { initialState, packageReducer } from './package.reducer';
+import {
+  initialState as packageInitialState,
+  packageReducer,
+} from './package.reducer';
 import * as PackageActions from './package.actions';
 
+// Front end does not control names of properties
 const SPEC_INFOS: SpecInfo[] = [
   {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     spec_id: 'spec id 1',
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     version: 'version 1',
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     model_count: 1,
   },
 ];
@@ -19,7 +26,7 @@ describe('packageReducer', () => {
       initialState: undefined,
       action: PackageActions.specsComponentOnInit(),
       expectedFinalState: {
-        ...initialState,
+        ...packageInitialState,
         specs: {
           specInfos: [],
           success: null,
@@ -30,10 +37,10 @@ describe('packageReducer', () => {
     {
       description: 'initial state: default, action: specs component on init',
       expectation: 'should set loading to true',
-      initialState,
+      initialState: packageInitialState,
       action: PackageActions.specsComponentOnInit(),
       expectedFinalState: {
-        ...initialState,
+        ...packageInitialState,
         specs: {
           specInfos: [],
           success: null,
@@ -46,7 +53,7 @@ describe('packageReducer', () => {
         'initial state: specs loaded, action: specs component on init',
       expectation: 'should set loading to true and clear specInfos and success',
       initialState: {
-        ...initialState,
+        ...packageInitialState,
         specs: {
           specInfos: SPEC_INFOS,
           success: true,
@@ -55,7 +62,7 @@ describe('packageReducer', () => {
       },
       action: PackageActions.specsComponentOnInit(),
       expectedFinalState: {
-        ...initialState,
+        ...packageInitialState,
         specs: {
           specInfos: [],
           success: null,
@@ -69,7 +76,7 @@ describe('packageReducer', () => {
       expectation:
         'should set loading to false, success to true and copy spec infos into state',
       initialState: {
-        ...initialState,
+        ...packageInitialState,
         specs: {
           specInfos: [],
           success: null,
@@ -80,7 +87,7 @@ describe('packageReducer', () => {
         specInfos: SPEC_INFOS,
       }),
       expectedFinalState: {
-        ...initialState,
+        ...packageInitialState,
         specs: {
           specInfos: SPEC_INFOS,
           success: true,
@@ -93,7 +100,7 @@ describe('packageReducer', () => {
         'initial state: specs loading, action: package api list specs error',
       expectation: 'should set loading to false, success to false',
       initialState: {
-        ...initialState,
+        ...packageInitialState,
         specs: {
           specInfos: [],
           success: null,
@@ -102,7 +109,7 @@ describe('packageReducer', () => {
       },
       action: PackageActions.packageApiListSpecsError(),
       expectedFinalState: {
-        ...initialState,
+        ...packageInitialState,
         specs: {
           specInfos: [],
           success: false,
@@ -116,7 +123,7 @@ describe('packageReducer', () => {
       expectation:
         'should set loading to true, success to null and leave the specs',
       initialState: {
-        ...initialState,
+        ...packageInitialState,
         specs: {
           specInfos: SPEC_INFOS,
           success: true,
@@ -125,7 +132,7 @@ describe('packageReducer', () => {
       },
       action: PackageActions.specsComponentRefresh(),
       expectedFinalState: {
-        ...initialState,
+        ...packageInitialState,
         specs: {
           specInfos: SPEC_INFOS,
           success: null,

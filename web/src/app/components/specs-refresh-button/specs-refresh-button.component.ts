@@ -6,7 +6,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./specs-refresh-button.component.css'],
 })
 export class SpecsRefreshButtonComponent {
-  @Input() loading: boolean = true;
+  @Input() loading = true;
   @Output() refreshEvent = new EventEmitter<void>();
 
   refresh(): void {

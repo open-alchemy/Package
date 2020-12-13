@@ -10,13 +10,6 @@ import * as PackageActions from './package.actions';
 
 @Injectable()
 export class PackageEffects {
-  constructor(
-    private actions$: Actions,
-    private oAuthService: OAuthService,
-    private specsService: SpecsService,
-    private specService: SpecService
-  ) {}
-
   listSpecs$ = createEffect(() =>
     this.actions$.pipe(
       ofType(
@@ -57,4 +50,11 @@ export class PackageEffects {
       )
     )
   );
+
+  constructor(
+    private actions$: Actions,
+    private oAuthService: OAuthService,
+    private specsService: SpecsService,
+    private specService: SpecService
+  ) {}
 }

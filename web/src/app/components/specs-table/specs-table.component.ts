@@ -8,6 +8,7 @@ import { SpecInfo } from '../../services/package/package.reducer';
   styleUrls: ['./specs-table.component.css'],
 })
 export class SpecsTableComponent {
+  @Input() specInfos: SpecInfo[] = [];
   displayedColumns: string[] = [
     'id',
     'title',
@@ -17,5 +18,4 @@ export class SpecsTableComponent {
     'model_count',
     'management',
   ];
-  @Input() specInfos: SpecInfo[] = [];
 }

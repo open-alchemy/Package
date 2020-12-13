@@ -10,7 +10,7 @@ import { SpecId } from '../../services/package/types';
 })
 export class SpecsManageSpecComponent {
   @Input() specId: SpecId | null = null;
-  deleteDisabled: boolean = false;
+  deleteDisabled = false;
 
   constructor(private packageService: PackageService) {}
 

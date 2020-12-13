@@ -13,17 +13,27 @@ class AppSpecsManageSpecStubComponent {
   @Input() specId: SpecId | null = null;
 }
 
+// Front end does not control names of properties
 const SPEC_INFO_1: SpecInfo = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   spec_id: 'spec id 1',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   version: 'version 1',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   model_count: 1,
 };
 const SPEC_INFO_2: SpecInfo = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   spec_id: 'spec id 2',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   version: 'version 2',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   title: 'title 2',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   description: 'description 2',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   updated_at: 2000000,
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   model_count: 2,
 };
 
