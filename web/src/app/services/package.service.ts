@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { OAuthService } from 'angular-oauth2-oidc';
+import { types, specs } from '@open-alchemy/package-sdk';
 
 import { isNotNullUndefined } from '../helpers/filters';
 
@@ -14,9 +15,9 @@ export class PackageService {
     private httpClient: HttpClient
   ) {}
 
-  private mSpecs$ = new BehaviorSubject<SpecInfo | null>(null);
+  private mSpecs$ = new BehaviorSubject<types.SpecInfo | null>(null);
 
-  specs$(): Observable<SpecInfo> {
+  specs$(): Observable<types.SpecInfo> {
     return this.mSpecs$.pipe(filter(isNotNullUndefined));
   }
 }
