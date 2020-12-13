@@ -75,7 +75,7 @@ describe('SpecsComponent', () => {
   describe('app-specs-table', () => {
     it('should pass the specs to app-specs-table', () => {
       testScheduler.run((helpers) => {
-        // GIVEN specs$ that initially is null and then has specs
+        // GIVEN specs$ that initially is empty and then has specs
         packageServiceSpy.specs$ = helpers.cold('ab', {
           a: { specInfos: [], loading: false, success: null },
           b: { specInfos: [SPEC_INFO], loading: false, success: null },
@@ -100,6 +100,38 @@ describe('SpecsComponent', () => {
         helpers
           .expectObservable(componentSpecInfos$)
           .toBe('ab', { a: [], b: [SPEC_INFO] });
+      });
+    });
+  });
+
+  describe('app-specs-refresh-button', () => {
+    it('should pass loading to app-specs-refresh-button', () => {
+      testScheduler.run((helpers) => {
+        // GIVEN specs$ that initially has loading false, then true
+        packageServiceSpy.specs$ = helpers.cold('ab', {
+          a: { specInfos: [], loading: false, success: null },
+          b: { specInfos: [], loading: true, success: null },
+        });
+
+        // WHEN changes are detected
+        fixture.detectChanges();
+
+        // THEN the loading is passed to app-specs-refresh-button
+        const componentLoading$ = helpers.cold('ab').pipe(
+          map(() => {
+            fixture.detectChanges();
+            const refreshButtonDebugElement = fixture.debugElement.query(
+              By.directive(AppSpecsRefreshButtonStubComponent)
+            );
+            const refreshButtonComponent = refreshButtonDebugElement.injector.get(
+              AppSpecsRefreshButtonStubComponent
+            );
+            return refreshButtonComponent.loading;
+          })
+        );
+        helpers
+          .expectObservable(componentLoading$)
+          .toBe('ab', { a: false, b: true });
       });
     });
   });
