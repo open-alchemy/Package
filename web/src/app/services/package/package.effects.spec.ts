@@ -80,6 +80,22 @@ describe('PackageEffects', () => {
       },
       {
         description:
+          'single specs component on refresh action actions list$ returns spec infos',
+        expectation: 'should return single success action actions',
+        actionsMarbles: 'a',
+        actionsValues: { a: PackageActions.specsComponentRefresh() },
+        specsServiceListReturnValues: [
+          { marbles: '-b|', values: { b: SPEC_INFOS_1 } },
+        ],
+        expectedMarbles: '-b',
+        expectedValues: {
+          b: PackageActions.packageApiListSpecsSuccess({
+            specInfos: SPEC_INFOS_1,
+          }),
+        },
+      },
+      {
+        description:
           'single specs component on init action actions list$ throws error',
         expectation: 'should return single error action actions',
         actionsMarbles: 'a',

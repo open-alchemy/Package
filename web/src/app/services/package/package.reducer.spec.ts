@@ -21,7 +21,7 @@ describe('packageReducer', () => {
       expectedFinalState: {
         ...initialState,
         specs: {
-          specInfos: null,
+          specInfos: [],
           success: null,
           loading: true,
         },
@@ -35,7 +35,7 @@ describe('packageReducer', () => {
       expectedFinalState: {
         ...initialState,
         specs: {
-          specInfos: null,
+          specInfos: [],
           success: null,
           loading: true,
         },
@@ -57,7 +57,7 @@ describe('packageReducer', () => {
       expectedFinalState: {
         ...initialState,
         specs: {
-          specInfos: null,
+          specInfos: [],
           success: null,
           loading: true,
         },
@@ -71,7 +71,7 @@ describe('packageReducer', () => {
       initialState: {
         ...initialState,
         specs: {
-          specInfos: null,
+          specInfos: [],
           success: null,
           loading: true,
         },
@@ -95,7 +95,7 @@ describe('packageReducer', () => {
       initialState: {
         ...initialState,
         specs: {
-          specInfos: null,
+          specInfos: [],
           success: null,
           loading: true,
         },
@@ -104,7 +104,7 @@ describe('packageReducer', () => {
       expectedFinalState: {
         ...initialState,
         specs: {
-          specInfos: null,
+          specInfos: [],
           success: false,
           loading: false,
         },

@@ -18,7 +18,10 @@ export class PackageEffects {
 
   listSpecs$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(PackageActions.specsComponentOnInit.type),
+      ofType(
+        PackageActions.specsComponentOnInit.type,
+        PackageActions.specsComponentRefresh.type
+      ),
       switchMap(() =>
         this.specsService
           .list$({

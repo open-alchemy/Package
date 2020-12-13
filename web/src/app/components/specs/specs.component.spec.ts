@@ -67,7 +67,7 @@ describe('SpecsComponent', () => {
       testScheduler.run((helpers) => {
         // GIVEN specs$ that initially is null and then has specs
         packageServiceSpy.specs$ = helpers.cold('ab', {
-          a: { specInfos: null, loading: false, success: null },
+          a: { specInfos: [], loading: false, success: null },
           b: { specInfos: [SPEC_INFO], loading: false, success: null },
         });
 
@@ -89,7 +89,7 @@ describe('SpecsComponent', () => {
         );
         helpers
           .expectObservable(componentSpecInfos$)
-          .toBe('ab', { a: null, b: [SPEC_INFO] });
+          .toBe('ab', { a: [], b: [SPEC_INFO] });
       });
     });
   });

@@ -6,7 +6,7 @@ export { SpecInfo };
 import * as PackageActions from './package.actions';
 
 export interface SpecsState {
-  specInfos: SpecInfo[] | null;
+  specInfos: SpecInfo[];
   success: boolean | null;
   loading: boolean;
 }
@@ -15,7 +15,7 @@ export interface PackageState {
 }
 export const initialState: PackageState = {
   specs: {
-    specInfos: null,
+    specInfos: [],
     success: null,
     loading: false,
   },
@@ -25,7 +25,7 @@ const _packageReducer = createReducer(
   initialState,
   on(PackageActions.specsComponentOnInit, (state) => ({
     ...state,
-    specs: { specInfos: null, success: null, loading: true },
+    specs: { specInfos: [], success: null, loading: true },
   })),
   on(PackageActions.specsComponentRefresh, (state) => ({
     ...state,
@@ -37,7 +37,7 @@ const _packageReducer = createReducer(
   })),
   on(PackageActions.packageApiListSpecsError, (state) => ({
     ...state,
-    specs: { specInfos: null, success: false, loading: false },
+    specs: { specInfos: [], success: false, loading: false },
   }))
 );
 
