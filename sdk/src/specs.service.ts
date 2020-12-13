@@ -10,8 +10,6 @@ interface IListParams {
 }
 
 export class SpecsService {
-  constructor() {}
-
   /**
    * List all available specs
    *

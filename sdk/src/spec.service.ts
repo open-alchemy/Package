@@ -43,8 +43,6 @@ interface IDeleteParams {
 }
 
 export class SpecService {
-  constructor() {}
-
   /**
    * Get the value of a spec
    *

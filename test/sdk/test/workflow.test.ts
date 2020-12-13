@@ -1,7 +1,11 @@
 import assert from 'assert';
 
 import AWS from 'aws-sdk';
-import { specs, spec, errors } from '@open-alchemy/package-sdk';
+import {
+  SpecsService,
+  SpecService,
+  SpecError,
+} from '@open-alchemy/package-sdk';
 
 const VERSION = 'version 1';
 const TITLE = 'title 1';
@@ -27,6 +31,8 @@ const SPEC_VALUE_STRING = JSON.stringify(SPEC_VALUE);
 describe('create spec', () => {
   let accessToken: string;
   const specId = 'sdk spec id 1';
+  let specsService: SpecsService;
+  let specService: SpecService;
 
   beforeAll(async () => {
     const awsRegion = process.env['AWS_DEFAULT_REGION'] || null;
@@ -77,8 +83,13 @@ describe('create spec', () => {
     accessToken = response.AuthenticationResult?.AccessToken;
   });
 
+  beforeEach(() => {
+    specsService = new SpecsService();
+    specService = new SpecService();
+  });
+
   afterEach(async () => {
-    await spec.delete_({ accessToken, id: specId });
+    await specService.delete({ accessToken, id: specId });
   });
 
   [
@@ -96,21 +107,21 @@ describe('create spec', () => {
     describe(description, () => {
       test(expectation, async () => {
         // Check that the specs are empty
-        await expect(specs.list({ accessToken })).resolves.toEqual([]);
+        await expect(specsService.list({ accessToken })).resolves.toEqual([]);
 
         // Try to create invalid spec
         await expect(
-          spec.put({
+          specService.put({
             ...paramsBase,
             accessToken,
             value: 'invalid',
             language: 'JSON',
           })
-        ).rejects.toBeInstanceOf(errors.SpecError);
+        ).rejects.toBeInstanceOf(SpecError);
 
         // Create valid spec
         await expect(
-          spec.put({
+          specService.put({
             ...paramsBase,
             accessToken,
             value: SPEC_VALUE_STRING,
@@ -119,7 +130,7 @@ describe('create spec', () => {
         ).resolves.toEqual(undefined);
 
         // Check that the spec is now listed
-        const returnedSpecInfos = await specs.list({ accessToken });
+        const returnedSpecInfos = await specsService.list({ accessToken });
         expect(returnedSpecInfos.length).toEqual(1);
         const returnedSpecInfo = returnedSpecInfos[0];
         expect(returnedSpecInfo.spec_id).toEqual(specId);
@@ -130,7 +141,7 @@ describe('create spec', () => {
         expect(returnedSpecInfo.updated_at).toBeDefined();
 
         // Check that the spec can be retrieved
-        const returnedSpecValue = await spec.get({
+        const returnedSpecValue = await specService.get({
           ...paramsBase,
           accessToken,
         });
@@ -142,15 +153,15 @@ describe('create spec', () => {
         expect(returnedSpecValue).toContain(': schema');
 
         // Delete the spec
-        await spec.delete_({ id: specId, accessToken });
+        await specService.delete({ id: specId, accessToken });
 
         // Check that the spec can no longer be retrieved
         await expect(
-          spec.get({ id: specId, accessToken })
-        ).rejects.toBeInstanceOf(errors.SpecError);
+          specService.get({ id: specId, accessToken })
+        ).rejects.toBeInstanceOf(SpecError);
 
         // Check that the specs are empty
-        await expect(specs.list({ accessToken })).resolves.toEqual([]);
+        await expect(specsService.list({ accessToken })).resolves.toEqual([]);
       });
     });
   });
