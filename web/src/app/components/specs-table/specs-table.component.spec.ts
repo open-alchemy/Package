@@ -3,7 +3,7 @@ import { DatePipe } from '@angular/common';
 
 import { MatTableModule } from '@angular/material/table';
 
-import { SpecInfo } from '../../services/package/package.reducer';
+import { SpecInfo } from '../../services/package/types';
 import { SpecsTableComponent } from './specs-table.component';
 
 const SPEC_INFO_1: SpecInfo = {
