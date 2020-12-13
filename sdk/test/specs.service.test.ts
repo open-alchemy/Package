@@ -36,6 +36,21 @@ describe('SpecsService', () => {
       await expect(returnedSpecsPromise).resolves.toEqual(responseData);
     });
 
+    test('should return specs when 200 is returned using observables', async () => {
+      // GIVE mocked axios that returns 200
+      const accessToken = 'token 1';
+      const responseData = [{ key: 'value' }];
+      mockAdaptor
+        .onGet('https://package.api.openalchemy.io/v1/specs')
+        .replyOnce(200, responseData);
+
+      // WHEN list is called
+      const returnedSpecsPromise = service.list$({ accessToken }).toPromise();
+
+      // THEN the specs are returned
+      await expect(returnedSpecsPromise).resolves.toEqual(responseData);
+    });
+
     test('should throw error if a 400 error is returned', async () => {
       // GIVE mocked axios that returns 200
       const accessToken = 'token 1';

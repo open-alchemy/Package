@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { from, Observable } from 'rxjs';
 
 import { SpecInfo } from './openapi/models';
 
@@ -27,5 +28,9 @@ export class SpecsService {
         throw new SpecsError(`error whilst loading the specs: ${message}`);
       });
     return response.data;
+  }
+
+  list$(params: IListParams): Observable<SpecInfo[]> {
+    return from(this.list(params));
   }
 }
