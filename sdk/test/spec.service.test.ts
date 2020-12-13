@@ -4,7 +4,7 @@ import MockAdaptor from 'axios-mock-adapter';
 import { SpecService } from '../src/spec.service';
 import { SpecError } from '../src/errors';
 
-describe('spec', () => {
+describe('SpecService', () => {
   let mockAdaptor: MockAdaptor;
   let service: SpecService;
 

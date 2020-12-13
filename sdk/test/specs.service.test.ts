@@ -1,14 +1,16 @@
 import axios from 'axios';
 import MockAdaptor from 'axios-mock-adapter';
 
-import { list } from '../src/specs';
+import { SpecsService } from '../src/specs.service';
 import { SpecsError } from '../src/errors';
 
-describe('specs', () => {
+describe('SpecsService', () => {
   let mockAdaptor: MockAdaptor;
+  let service: SpecsService;
 
   beforeEach(() => {
     mockAdaptor = new MockAdaptor(axios);
+    service = new SpecsService();
   });
 
   describe('list', () => {
@@ -28,7 +30,7 @@ describe('specs', () => {
         });
 
       // WHEN list is called
-      const returnedSpecsPromise = list({ accessToken });
+      const returnedSpecsPromise = service.list({ accessToken });
 
       // THEN the specs are returned
       await expect(returnedSpecsPromise).resolves.toEqual(responseData);
@@ -43,7 +45,7 @@ describe('specs', () => {
         .replyOnce(400, btoa(message));
 
       // WHEN list is called
-      const returnedSpecsPromise = list({ accessToken });
+      const returnedSpecsPromise = service.list({ accessToken });
 
       // THEN the specs are returned
       const expectedError = new SpecsError(

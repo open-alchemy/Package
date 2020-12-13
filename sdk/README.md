@@ -10,41 +10,43 @@ For API based interactions check here:
 To list all available specs:
 
 ```typescript
-import { specs } from '@open-alchemy/package-sdk';
+import { SpecsService } from '@open-alchemy/package-sdk';
 
-const allSpecs = await specs.list({ accessToken });
+const service = new SpecsService();
+const allSpecs = await service.list({ accessToken });
 ```
 
 To interact with a particular spec:
 
 ```typescript
-import { spec } from '@open-alchemy/package-sdk';
+import { SpecService } from '@open-alchemy/package-sdk';
 
+const service = new SpecService();
 // Get the value of a spec
-const employeeSpec = await spec.get({ accessToken, id: 'employee' });
+const employeeSpec = await service.get({ accessToken, id: 'employee' });
 // Get the value of a particular version of a spec
-const employeeSpec = await spec.get({
+const employeeSpec = await service.get({
   accessToken,
   id: 'employee',
   version: 'version 1',
 });
 // Create or update a spec
-await spec.put({
+await service.put({
   accessToken,
   id: 'employee',
   specValue: '<an OpenAlchemy OpenAPI Spec>',
 });
 // Create or update specific version of a spec
-await spec.put({
+await service.put({
   accessToken,
   id: 'employee',
   specValue: '<an OpenAlchemy OpenAPI Spec>',
   version: 'version 1',
 });
 // Delete a spec
-await spec.delete({ accessToken, id: 'employee' });
+await service.delete({ accessToken, id: 'employee' });
 // List the versions of a spec
-const specVersions = await spec.getVersions({
+const specVersions = await service.getVersions({
   accessToken,
   id: 'employee',
 });
