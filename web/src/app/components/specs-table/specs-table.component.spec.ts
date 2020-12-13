@@ -1,10 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component, Input } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { By } from '@angular/platform-browser';
 
 import { MatTableModule } from '@angular/material/table';
 
-import { SpecInfo } from '../../services/package/types';
+import { SpecInfo, SpecId } from '../../services/package/types';
 import { SpecsTableComponent } from './specs-table.component';
+
+@Component({ selector: 'app-specs-manage-spec', template: '' })
+class AppSpecsManageSpecStubComponent {
+  @Input() specId: SpecId | null = null;
+}
 
 const SPEC_INFO_1: SpecInfo = {
   spec_id: 'spec id 1',
@@ -26,7 +33,7 @@ describe('SpecsTableComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SpecsTableComponent],
+      declarations: [SpecsTableComponent, AppSpecsManageSpecStubComponent],
       imports: [MatTableModule],
     });
 
@@ -75,6 +82,15 @@ describe('SpecsTableComponent', () => {
     expect(tdInnerTexts).toContain(SPEC_INFO_1.spec_id);
     expect(tdInnerTexts).toContain(SPEC_INFO_1.version);
     expect(tdInnerTexts).toContain(SPEC_INFO_1.model_count.toString());
+    // AND the specId is passed to app-specs-manage-spec
+    const specsManageSpecDebugElement = fixture.debugElement.query(
+      By.directive(AppSpecsManageSpecStubComponent)
+    );
+    expect(specsManageSpecDebugElement).toBeTruthy();
+    const specsManageSpecComponent = specsManageSpecDebugElement.injector.get(
+      AppSpecsManageSpecStubComponent
+    );
+    expect(specsManageSpecComponent.specId).toEqual(SPEC_INFO_1.spec_id);
   });
 
   it('should only show a single row with optional values shown if a single spec is provided with optional values', () => {
@@ -105,6 +121,15 @@ describe('SpecsTableComponent', () => {
       )
     );
     expect(tdInnerTexts).toContain(SPEC_INFO_2.model_count.toString());
+    // AND the specId is passed to app-specs-manage-spec
+    const specsManageSpecDebugElement = fixture.debugElement.query(
+      By.directive(AppSpecsManageSpecStubComponent)
+    );
+    expect(specsManageSpecDebugElement).toBeTruthy();
+    const specsManageSpecComponent = specsManageSpecDebugElement.injector.get(
+      AppSpecsManageSpecStubComponent
+    );
+    expect(specsManageSpecComponent.specId).toEqual(SPEC_INFO_2.spec_id);
   });
 
   it('should only show a multiple rows if multiple specs are provided', () => {
@@ -125,5 +150,9 @@ describe('SpecsTableComponent', () => {
     expect(tds.length).toEqual(component.displayedColumns.length);
     tds = trs[2].querySelectorAll('td');
     expect(tds.length).toEqual(component.displayedColumns.length);
+    const specsManageSpecDebugElements = fixture.debugElement.queryAll(
+      By.directive(AppSpecsManageSpecStubComponent)
+    );
+    expect(specsManageSpecDebugElements.length).toEqual(2);
   });
 });
