@@ -1,6 +1,6 @@
 :host {
   display: grid;
-  grid-template-columns: 6fr 1fr 1fr;
+  grid-template-columns: 10fr 1fr 1fr;
   grid-template-rows: 1fr 20fr;
   height: 100vh;
 }
@@ -12,6 +12,11 @@
 }
 
 #refresh-button {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+#create-button {
   grid-column: 3;
   grid-row: 1;
 }

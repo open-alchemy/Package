@@ -27,6 +27,9 @@ class AppSpecsRefreshButtonStubComponent {
   @Output() refreshEvent = new EventEmitter<void>();
 }
 
+@Component({ selector: 'app-specs-create-button', template: '' })
+class AppSpecsCreateButtonStubComponent {}
+
 describe('SpecsComponent', () => {
   let component: SpecsComponent;
   let fixture: ComponentFixture<SpecsComponent>;
@@ -45,6 +48,7 @@ describe('SpecsComponent', () => {
         SpecsComponent,
         AppSpecsTableStubComponent,
         AppSpecsRefreshButtonStubComponent,
+        AppSpecsCreateButtonStubComponent,
       ],
       providers: [{ provide: PackageService, useValue: packageServiceSpy }],
     });
@@ -194,5 +198,28 @@ describe('SpecsComponent', () => {
         });
       }
     );
+  });
+
+  describe('app-specs-create-button', () => {
+    it('should create the component', () => {
+      // GIVEN specs$ that has something
+      packageServiceSpy.specs$ = of({
+        specInfos: [],
+        loading: false,
+        success: null,
+      });
+      fixture.detectChanges();
+
+      // WHEN
+
+      // THEN the app-specs-create-button exists
+      const createButtonDebugElement = fixture.debugElement.query(
+        By.directive(AppSpecsCreateButtonStubComponent)
+      );
+      const createButtonComponent = createButtonDebugElement.injector.get(
+        AppSpecsCreateButtonStubComponent
+      );
+      expect(createButtonComponent).toBeTruthy();
+    });
   });
 });

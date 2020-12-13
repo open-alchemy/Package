@@ -23,6 +23,7 @@ import { SpecsComponent } from './components/specs/specs.component';
 import { SignInCompleteComponent } from './components/sign-in-complete/sign-in-complete.component';
 import { SpecsTableComponent } from './components/specs-table/specs-table.component';
 import { SpecsRefreshButtonComponent } from './components/specs-refresh-button/specs-refresh-button.component';
+import { SpecsCreateButtonComponent } from './components/specs-create-button/specs-create-button.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { SpecsRefreshButtonComponent } from './components/specs-refresh-button/s
     SignInCompleteComponent,
     SpecsTableComponent,
     SpecsRefreshButtonComponent,
+    SpecsCreateButtonComponent,
   ],
   imports: [
     BrowserModule,
