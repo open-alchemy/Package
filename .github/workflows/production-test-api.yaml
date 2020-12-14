@@ -3,6 +3,7 @@ name: Periodic Production Tests for the OpenAlchemy Package Store API
 on:
   schedule:
     - cron: "0 1 * * *"
+  workflow_dispatch:
 
 jobs:
   api:
