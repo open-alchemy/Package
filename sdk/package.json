@@ -63,7 +63,7 @@
   "devDependencies": {
     "@size-limit/preset-small-lib": "^4.9.1",
     "axios-mock-adapter": "^1.19.0",
-    "husky": "^4.3.5",
+    "husky": "^4.3.6",
     "openapi-typescript": "^2.4.2",
     "size-limit": "^4.9.1",
     "tsdx": "^0.14.1",

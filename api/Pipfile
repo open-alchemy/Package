@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 connexion = {extras = ["swagger-ui"], version = "*"}
 flask-cors = "*"
-boto3 = "*"
+boto3 = "1.16.35"
 botocore = "*"
 serverless-wsgi = "*"
 pyjwt = "*"
@@ -17,7 +17,7 @@ openalchemy = "2.0.1"
 
 [dev-packages]
 black = "*"
-pytest = "*"
+pytest = "6.2.0"
 factory-boy = "*"
 
 [requires]
