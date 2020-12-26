@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "cda9f970582ba3d16f0e03dab06317dc06763f4fad02d7fd74e049fd67d7e6c8"
+            "sha256": "f8608c90dc3fa98e6177325f2d3eb059bb0aacb8a9b6d2232d5b0117552c9800"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -26,19 +26,19 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:75326882aa68e003452dcd8f0fcee0339ff63624115927fb71a6b5d15535ace5",
-                "sha256:bbe380ee554cfc998528320578ca2ec152aea3243dd8e82119bc644deb49ec6b"
+                "sha256:0bb2c3159b9f5e0df50430bf06a155bd7f27f480825b6374dde807d42360a668",
+                "sha256:a49b3ab4bfa2f6394ba60165cfc468410797dd410f32eed47e22f61451ee986e"
             ],
             "index": "pypi",
-            "version": "==1.16.40"
+            "version": "==1.16.43"
         },
         "botocore": {
             "hashes": [
-                "sha256:bb0e4cc5e364785ff8fc380d74ad57dec9857a4093608633616d0acfe84caadc",
-                "sha256:ebfa880ac8cb8132dc6657902bf546f52cf2c43278570f60c8f8a0f894556555"
+                "sha256:7398c900dbd4e3d61647269215396ea3e8082f494f3e7b65d9b6aca049c1d463",
+                "sha256:795a67338cadb0c3a45014a6c81659da6af623a4e973812f87a6f9d9fb7712e9"
             ],
             "index": "pypi",
-            "version": "==1.19.40"
+            "version": "==1.19.43"
         },
         "certifi": {
             "hashes": [
@@ -273,11 +273,11 @@
         },
         "openalchemy": {
             "hashes": [
-                "sha256:2f8a469c942fe4db3c16928ae57bc55cadc4d3bc8fb4a84b27372a4d7f4f174d",
-                "sha256:4a0e087621794483eea3c1859b16190bb4047e4020f91e37517763af3fc5a411"
+                "sha256:4b74ae1392d9cfa43ad8b33a4791ceca903108b7193ae53bf904d16cfec4336d",
+                "sha256:c06a5dfcca77879797543f5264989aa8c5d0fedd815cd48aa01bb016849e5221"
             ],
             "index": "pypi",
-            "version": "==2.0.1"
+            "version": "==2.1.0"
         },
         "openapi-spec-validator": {
             "hashes": [
@@ -297,11 +297,11 @@
         },
         "pyjwt": {
             "hashes": [
-                "sha256:5c6eca3c2940464d106b99ba83b00c6add741c9becaec087fb7ccdefea71350e",
-                "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"
+                "sha256:5c2ff2eb27d7e342dfc3cafcc16412781f06db2690fbef81922b0172598f085b",
+                "sha256:7a2b271c6dac2fda9e0c33d176c4253faba2c6c6b3a99c7f28a32c3c97522779"
             ],
             "index": "pypi",
-            "version": "==1.7.1"
+            "version": "==2.0.0"
         },
         "pynamodb": {
             "hashes": [
