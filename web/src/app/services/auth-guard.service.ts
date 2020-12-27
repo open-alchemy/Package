@@ -18,9 +18,8 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot
   ): boolean {
     // Check for valid tokens
-    const hasIdToken = this.oAuthService.hasValidIdToken();
     const hasAccessToken = this.oAuthService.hasValidAccessToken();
-    const canActivate = hasIdToken && hasAccessToken;
+    const canActivate = hasAccessToken;
 
     if (!canActivate) {
       // Store the proposed path

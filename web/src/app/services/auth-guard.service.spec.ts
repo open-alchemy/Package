@@ -28,8 +28,7 @@ describe('AuthGuard', () => {
 
   describe('canActivate', () => {
     it('it should return true if the token is present', () => {
-      // GIVEN OAuthService that returns true for hasValidIdToken and hasValidAccessToken
-      oAuthServiceSpy.hasValidIdToken.and.returnValue(true);
+      // GIVEN OAuthService that returns true for hasValidAccessToken
       oAuthServiceSpy.hasValidAccessToken.and.returnValue(true);
 
       // WHEN canActivate is called
@@ -48,27 +47,15 @@ describe('AuthGuard', () => {
       ).toBeNull();
     });
 
-    const parameters = [
+    [
       {
         description: 'no access token',
-        hasValidIdToken: true,
         hasValidAccessToken: false,
       },
-      {
-        description: 'no id token',
-        hasValidIdToken: false,
-        hasValidAccessToken: true,
-      },
-      {
-        description: 'no access nor id token',
-        hasValidIdToken: false,
-        hasValidAccessToken: true,
-      },
-    ].forEach(({ description, hasValidIdToken, hasValidAccessToken }) => {
+    ].forEach(({ description, hasValidAccessToken }) => {
       describe(description, () => {
         it('should init the login flow and store the current path', () => {
-          // GIVEN OAuthService that returns values for hasValidIdToken and hasValidAccessToken
-          oAuthServiceSpy.hasValidIdToken.and.returnValue(hasValidIdToken);
+          // GIVEN OAuthService that returns values and hasValidAccessToken
           oAuthServiceSpy.hasValidAccessToken.and.returnValue(
             hasValidAccessToken
           );

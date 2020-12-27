@@ -9,7 +9,6 @@ import { SignInCompleteComponent } from './components/sign-in-complete/sign-in-c
 const routes: Routes = [
   { path: '', redirectTo: 'specs', pathMatch: 'full' },
   { path: 'specs', component: SpecsComponent, canActivate: [AuthGuard] },
-  { path: 'specs/spec1', component: SpecsComponent, canActivate: [AuthGuard] },
   {
     path: 'sign-in-complete',
     component: SignInCompleteComponent,
