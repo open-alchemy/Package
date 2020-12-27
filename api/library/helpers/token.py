@@ -19,4 +19,4 @@ def decode(token: str) -> typing.Dict[str, typing.Any]:
 
     """
     # Assume that the token has already been verified
-    return jwt.decode(token, verify=False)
+    return jwt.decode(token, algorithms="RS256", options={"verify_signature": False})

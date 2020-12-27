@@ -95,7 +95,7 @@ def test_specs_get(client, _clean_package_storage_table):
     database.get_database().create_update_spec(
         sub=sub, spec_id=spec_id, version=version, model_count=model_count
     )
-    token = jwt.encode({"sub": sub}, "secret 1").decode()
+    token = jwt.encode({"sub": sub}, "secret 1")
 
     response = client.get("/v1/specs", headers={"Authorization": f"Bearer {token}"})
 
@@ -134,7 +134,7 @@ def test_specs_spec_id_get(client, _clean_package_storage_table):
         version=version,
         spec_str=json.dumps(spec, separators=(",", ":")),
     )
-    token = jwt.encode({"sub": sub}, "secret 1").decode()
+    token = jwt.encode({"sub": sub}, "secret 1")
 
     response = client.get(
         f"/v1/specs/{spec_id}", headers={"Authorization": f"Bearer {token}"}
@@ -169,7 +169,7 @@ def test_specs_spec_id_put(client, _clean_package_storage_table):
     )
     spec_id = "id 1"
     sub = "sub 1"
-    token = jwt.encode({"sub": sub}, "secret 1").decode()
+    token = jwt.encode({"sub": sub}, "secret 1")
 
     response = client.put(
         f"/v1/specs/{spec_id}",
@@ -208,7 +208,7 @@ def test_specs_spec_id_delete(client, _clean_package_storage_table):
         version=version,
         spec_str=json.dumps(spec, separators=(",", ":")),
     )
-    token = jwt.encode({"sub": sub}, "secret 1").decode()
+    token = jwt.encode({"sub": sub}, "secret 1")
 
     response = client.delete(
         f"/v1/specs/{spec_id}", headers={"Authorization": f"Bearer {token}"}
@@ -241,7 +241,7 @@ def test_specs_spec_id_versions_get(client, _clean_package_storage_table):
     database.get_database().create_update_spec(
         sub=sub, spec_id=spec_id, version=version, model_count=model_count
     )
-    token = jwt.encode({"sub": sub}, "secret 1").decode()
+    token = jwt.encode({"sub": sub}, "secret 1")
 
     response = client.get(
         f"/v1/specs/{spec_id}/versions", headers={"Authorization": f"Bearer {token}"}
@@ -280,7 +280,7 @@ def test_specs_spec_id_version_version_get(client):
         version=version,
         spec_str=json.dumps(spec, separators=(",", ":")),
     )
-    token = jwt.encode({"sub": sub}, "secret 1").decode()
+    token = jwt.encode({"sub": sub}, "secret 1")
 
     response = client.get(
         f"/v1/specs/{spec_id}/versions/{version}",
@@ -317,7 +317,7 @@ def test_specs_spec_id_versions_version_put(client, _clean_package_storage_table
     )
     spec_id = "id 1"
     sub = "sub 1"
-    token = jwt.encode({"sub": sub}, "secret 1").decode()
+    token = jwt.encode({"sub": sub}, "secret 1")
 
     response = client.put(
         f"/v1/specs/{spec_id}/versions/{version}",

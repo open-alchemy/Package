@@ -4,21 +4,21 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-connexion = {extras = ["swagger-ui"], version = "*"}
-flask-cors = "*"
+connexion = {extras = ["swagger-ui"], version = "2.7.0"}
+flask-cors = "3.0.9"
 boto3 = "1.16.35"
-botocore = "*"
-serverless-wsgi = "*"
-pyjwt = "*"
-cryptography = "*"
-pynamodb = "*"
-pyyaml = "*"
+botocore = "1.19.43"
+serverless-wsgi = "1.7.6"
+pyjwt = "2.0.0"
+cryptography = "3.3.1"
+pynamodb = "4.3.3"
+pyyaml = "5.3.1"
 openalchemy = "2.1.0"
 
 [dev-packages]
-black = "*"
+black = "20.8b1"
 pytest = "6.2.0"
-factory-boy = "*"
+factory-boy = "3.1.0"
 
 [requires]
 python_version = "3.9"
