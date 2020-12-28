@@ -19,8 +19,9 @@ jobs:
         uses: actions/cache@v2
         env:
           cache-name: cache-node-modules
-        with:
-          path: test/web/node_modules
+        with: |
+            test/web/node_modules
+            ~/.cache/Cypress
           key: ${{ runner.os }}-test-web-${{ env.cache-name }}-${{ hashFiles('test/web/package-lock.json') }}
       - name: install dependencies
         if: steps.cache-node_modules.outputs.cache-hit != 'true'
