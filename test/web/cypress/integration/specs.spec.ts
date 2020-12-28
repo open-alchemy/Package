@@ -34,7 +34,7 @@ describe('specs', () => {
   it('should load the page, load the created spec on refresh click, delete the spec on delete click', () => {
     // Load empty page
     cy.login();
-    cy.visit('http://localhost:4200/specs');
+    cy.visit('/specs');
     // should not have any rows
     cy.get('table')
       .find('tr')
