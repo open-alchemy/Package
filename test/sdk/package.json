@@ -49,8 +49,8 @@
   },
   "devDependencies": {
     "@size-limit/preset-small-lib": "^4.9.1",
-    "@types/jest": "^25.2.3",
-    "husky": "^4.3.5",
+    "@types/jest": "^26.0.19",
+    "husky": "^4.3.6",
     "size-limit": "^4.9.1",
     "tsdx": "^0.14.1",
     "tslib": "^2.0.3",
@@ -58,6 +58,6 @@
   },
   "dependencies": {
     "@open-alchemy/package-sdk": "^2.1.0",
-    "aws-sdk": "^2.809.0"
+    "aws-sdk": "^2.817.0"
   }
 }
