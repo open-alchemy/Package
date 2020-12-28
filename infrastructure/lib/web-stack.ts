@@ -34,7 +34,10 @@ export class WebStack extends cdk.Stack {
 
     // CloudFront
     const distribution = new cloudfront.Distribution(this, 'Distribution', {
-      defaultBehavior: { origin: new cloudfrontOrigins.S3Origin(bucket) },
+      defaultBehavior: {
+        origin: new cloudfrontOrigins.S3Origin(bucket),
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      },
       domainNames: [`${CONFIG.web.recordName}.${CONFIG.domainName}`],
       certificate,
       defaultRootObject: defaultObject,
