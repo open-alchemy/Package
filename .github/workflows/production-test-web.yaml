@@ -1,0 +1,41 @@
+name: Periodic Production Tests for the OpenAlchemy Package Store API
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up node
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 14.x
+      - name: cache node modules
+        id: cache-node_modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: test/web/node_modules
+          key: ${{ runner.os }}-test-web-${{ env.cache-name }}-${{ hashFiles('test/web/package-lock.json') }}
+      - name: install dependencies
+        if: steps.cache-node_modules.outputs.cache-hit != 'true'
+        working-directory: ./test/web
+        run: npm install
+      - name: run tests
+        working-directory: ./test/web
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+          USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          TEST_USERNAME: ${{ secrets.TEST_USERNAME_WEB }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD_WEB }}
+          CYPRESS_BASE_URL: https://package.openalchemy.io
+        run: |
+          npm run cypress:run
