@@ -67,7 +67,7 @@ class TSpecInfo:
 
 def process(*, spec_str: str, language: str) -> TSpecInfo:
     """
-    Checks that the spec is valid and calculates the version.
+    Check that the spec is valid and calculates the version.
 
     Args:
         spec_str: The string to process.

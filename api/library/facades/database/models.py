@@ -34,6 +34,8 @@ class SpecIdUpdatedAtIndex(indexes.LocalSecondaryIndex):
     """Local secondary index for querying based on spec_id."""
 
     class Meta:
+        """Meta class."""
+
         projection = indexes.AllProjection()
         index_name = config.get_env().package_database_index_name
 
@@ -73,6 +75,8 @@ class PackageStorage(models.Model):
     UPDATED_AT_LATEST = "latest"
 
     class Meta:
+        """Meta class."""
+
         table_name = config.get_env().package_database_table_name
 
         if config.get_env().stage == config.Stage.TEST:
