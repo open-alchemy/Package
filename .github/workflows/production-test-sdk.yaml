@@ -25,6 +25,7 @@ jobs:
         if: steps.cache-node_modules.outputs.cache-hit != 'true'
         run: |
           npm install
+          npm install ../helpers
       - name: Run tests
         working-directory: ./test/sdk/
         env:
