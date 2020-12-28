@@ -12,7 +12,7 @@ import * as route53Targets from '@aws-cdk/aws-route53-targets';
 import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
 import * as iam from '@aws-cdk/aws-iam';
 import * as s3 from '@aws-cdk/aws-s3';
-import * as sqs from '@aws-cdk/aws-sqs';
+import * as sns from '@aws-cdk/aws-sns';
 import * as s3Notifications from '@aws-cdk/aws-s3-notifications';
 
 import { ENVIRONMENT } from './environment';
@@ -28,12 +28,13 @@ export class ApiStack extends cdk.Stack {
     });
 
     // Notifications for object create
-    const queue = new sqs.Queue(this, 'Queue', {
-      queueName: CONFIG.storage.queueName,
+    const topic = new sns.Topic(this, 'Topic', {
+      displayName: CONFIG.storage.topicName,
+      topicName: CONFIG.storage.topicName,
     });
     bucket.addEventNotification(
       s3.EventType.OBJECT_CREATED,
-      new s3Notifications.SqsDestination(queue),
+      new s3Notifications.SnsDestination(topic),
       { suffix: '.json' }
     );
 

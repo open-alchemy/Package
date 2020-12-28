@@ -5,6 +5,9 @@ import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as codedeploy from '@aws-cdk/aws-codedeploy';
 import * as s3 from '@aws-cdk/aws-s3';
+import * as sns from '@aws-cdk/aws-sns';
+import * as sqs from '@aws-cdk/aws-sqs';
+import * as lambdaEventSources from '@aws-cdk/aws-lambda-event-sources';
 
 import { CONFIG } from './config';
 
@@ -18,6 +21,16 @@ export class BuildStack extends cdk.Stack {
       'PackageBucket',
       CONFIG.storage.bucketName
     );
+
+    // Configuration for lambda event source
+    const topicArn = cdk.Arn.format(
+      { resource: CONFIG.storage.topicName, service: 'sns' },
+      this
+    );
+    const topic = sns.Topic.fromTopicArn(this, 'Topic', topicArn);
+    const deadLetterQueue = new sqs.Queue(this, 'Queue', {
+      queueName: `${CONFIG.storage.topicName}-dead-letter`,
+    });
 
     // Lambda function
     const deploymentPackage = 'resources/build/deployment-package.zip';
@@ -55,5 +68,8 @@ export class BuildStack extends cdk.Stack {
     });
 
     // Add lambda trigger from bucket
+    func.addEventSource(
+      new lambdaEventSources.SnsEventSource(topic, { deadLetterQueue })
+    );
   }
 }
