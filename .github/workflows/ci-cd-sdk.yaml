@@ -128,7 +128,7 @@ jobs:
           AWS_DEFAULT_REGION: "us-east-1"
           USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
-          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          TEST_USERNAME: ${{ secrets.TEST_USERNAME_SDK }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD_SDK }}
         run: |
           npm run test
