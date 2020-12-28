@@ -1,0 +1,42 @@
+name: General code quality checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  staticNode:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        command:
+          - npx cspell "**"
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up node
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 14.x
+      - name: cache node_modules
+        id: cache-node_modules
+        uses: actions/cache@v2
+        with:
+          path: web/node_modules
+          key: ${{ runner.os }}-code-quality-static-${{ env.cache-name }}-${{ hashFiles('**/web/package-lock.json') }}
+      - name: install dependencies
+        if: steps.cache-node_modules.outputs.cache-hit != 'true'
+        run: npm install cspell
+      - name: run static code analyser
+        run: |
+          ${{ matrix.command }}
+
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pre-commit/action@v2.0.0

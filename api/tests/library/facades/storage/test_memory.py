@@ -166,10 +166,10 @@ LIST_TESTS = [
         id="multiple objects prefix no hit",
     ),
     pytest.param(
-        [("akey 1", "value 1"), ("bkey 1", "value 2")],
+        [("a key 1", "value 1"), ("b key 1", "value 2")],
         None,
         " 1",
-        ["akey 1", "bkey 1"],
+        ["a key 1", "b key 1"],
         id="multiple objects postfix all hit",
     ),
     pytest.param(

@@ -39,11 +39,11 @@ from library.facades import storage
             id="single key response suffix miss",
         ),
         pytest.param(
-            {"Contents": [{"Key": "akey 1"}, {"Key": "bkey 1"}]},
+            {"Contents": [{"Key": "a key 1"}, {"Key": "b key 1"}]},
             None,
             "key 1",
             "",
-            ["akey 1", "bkey 1"],
+            ["a key 1", "b key 1"],
             id="multiple key response suffix hit",
         ),
         pytest.param(

@@ -27,7 +27,22 @@
     "keyvalue",
     "classlist",
     "UNPATCHED",
-    "certificatemanager"
+    "certificatemanager",
+    "ngrx",
+    "oidc",
+    "OIDC",
+    "Andersson",
+    "Chainable",
+    "boto",
+    "pylint",
+    "botocore",
+    "stubber",
+    "zfill",
+    "dynalite",
+    "pynamo",
+    "pyjwt",
+    "pynamodb",
+    "Popen"
   ],
   "dictionaries": [
     "python",
@@ -51,6 +66,10 @@
     "**/Pipfile.lock",
     "**/package*.json",
     "**/login*.ts",
-    "**/tslint.json"
+    "**/tslint.json",
+    "**/app.component.ts",
+    "**/karma.conf.js",
+    "**/tsconfig.json",
+    "**/cypress/videos/**"
   ]
 }
