@@ -19,7 +19,7 @@ class _TSpecInfoBase(typing.TypedDict, total=False):
     """Optional information about a spec."""
 
     title: TTitle
-    descritpion: TDescription
+    description: TDescription
 
 
 class TSpecInfo(_TSpecInfoBase, total=True):
@@ -28,6 +28,7 @@ class TSpecInfo(_TSpecInfoBase, total=True):
     spec_id: TSpecId
     version: TVersion
     updated_at: int
+    model_count: int
 
 
 TSpecInfoList = typing.List[TSpecInfo]

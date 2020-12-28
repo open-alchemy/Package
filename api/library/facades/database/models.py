@@ -248,7 +248,7 @@ class PackageStorage(models.Model):
             "spec_id": item.spec_id,
             "updated_at": int(item.updated_at),
             "version": item.version,
-            "model_count": item.model_count,
+            "model_count": int(item.model_count),
         }
         if item.title is not None:
             spec_info["title"] = item.title

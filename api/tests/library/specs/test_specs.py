@@ -484,7 +484,7 @@ def test_delete_database_error(monkeypatch, _clean_package_storage_table):
     assert response.status_code == 204
 
 
-def test_delete_database_error(monkeypatch, _clean_package_storage_table):
+def test_delete_storage_error(monkeypatch, _clean_package_storage_table):
     """
     GIVEN database and storage that raises a StorageError with spec and user and spec
         id
