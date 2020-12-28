@@ -71,7 +71,7 @@
     "typescript": "^3.9.7"
   },
   "dependencies": {
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "rxjs": "^6.6.3"
   }
 }
