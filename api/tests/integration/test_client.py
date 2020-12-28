@@ -5,7 +5,7 @@ import json
 import jwt
 import pytest
 from library import config
-from library.facades import storage, database
+from library.facades import database, storage
 
 OPTIONS_TESTS = [
     pytest.param("/v1/specs/spec1", "PUT", id="/v1/specs/{spec-id}"),

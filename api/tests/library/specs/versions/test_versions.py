@@ -3,8 +3,8 @@
 import json
 from unittest import mock
 
+from library.facades import database, server, storage
 from library.specs import versions
-from library.facades import storage, server, database
 
 
 def test_list_(_clean_package_storage_table):

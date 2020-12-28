@@ -4,7 +4,6 @@ import time
 from unittest import mock
 
 import pytest
-
 from library.facades import database
 
 

@@ -1,7 +1,6 @@
 """tests for memory torage facade."""
 
 import pytest
-
 from library.facades import storage
 
 CLASSES = [pytest.param(storage.memory.Storage, id="memory")]

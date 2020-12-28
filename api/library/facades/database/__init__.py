@@ -1,8 +1,6 @@
 """Database facade."""
 
-from . import dynamodb
-from . import types
-from . import exceptions
+from . import dynamodb, exceptions, types
 
 
 def _construct_database() -> types.TDatabase:

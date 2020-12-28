@@ -4,9 +4,8 @@ import json
 from unittest import mock
 
 import pytest
-
 from library import specs
-from library.facades import storage, server, database
+from library.facades import database, server, storage
 
 
 def test_list_(_clean_package_storage_table):

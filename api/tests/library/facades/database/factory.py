@@ -1,7 +1,6 @@
 """Model factories."""
 
 import factory
-
 from library.facades.database import models
 
 

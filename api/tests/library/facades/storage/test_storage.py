@@ -1,7 +1,6 @@
 """Tests for the storage facade."""
 
 import pytest
-
 from library.facades import storage
 
 

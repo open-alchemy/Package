@@ -1,13 +1,12 @@
 """Database models."""
 
-import typing
 import time
-from pynamodb import models, attributes, indexes
+import typing
+
+from pynamodb import attributes, indexes, models
 
 from ... import config
-from . import exceptions
-from . import types
-
+from . import exceptions, types
 
 TPackageStoreSub = types.TSub
 TPackageStoreSpecId = types.TSpecId

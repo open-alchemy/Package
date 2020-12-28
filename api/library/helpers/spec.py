@@ -4,14 +4,12 @@ import dataclasses
 import json
 import typing
 
-from open_alchemy import build
 import open_alchemy
 import yaml
-from yaml import parser
-from yaml import scanner
+from open_alchemy import build
+from yaml import parser, scanner
 
 from .. import exceptions, types
-
 
 TSpec = typing.Dict[str, typing.Any]
 

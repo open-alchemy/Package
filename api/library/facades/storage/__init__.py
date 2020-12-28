@@ -1,11 +1,8 @@
 """Storage facade."""
 
-from . import exceptions
-from . import memory
-from . import s3
-from . import types
-from ... import types as library_types
 from ... import config
+from ... import types as library_types
+from . import exceptions, memory, s3, types
 
 
 def _construct_storage() -> types.TStorage:

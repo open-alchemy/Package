@@ -2,10 +2,10 @@
 
 import copy
 import json
-from urllib import request, error
+from urllib import error, request
 
-import yaml
 import pytest
+import yaml
 
 
 @pytest.mark.parametrize(

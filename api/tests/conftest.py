@@ -2,11 +2,10 @@
 
 import subprocess
 
-from pynamodb import connection, exceptions
 import pytest
-
 from library.facades import storage
 from library.facades.database import models
+from pynamodb import connection, exceptions
 
 
 @pytest.fixture(scope="session")

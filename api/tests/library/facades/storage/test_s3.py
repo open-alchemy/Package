@@ -4,7 +4,6 @@ from unittest import mock
 
 import pytest
 from botocore import stub
-
 from library.facades import storage
 
 

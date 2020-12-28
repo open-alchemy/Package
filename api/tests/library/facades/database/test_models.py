@@ -4,8 +4,7 @@ import time
 from unittest import mock
 
 import pytest
-
-from library.facades.database import models, exceptions
+from library.facades.database import exceptions, models
 
 from . import factory
 

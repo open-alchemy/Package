@@ -2,7 +2,7 @@
 
 import typing
 
-from . import models, types, exceptions
+from . import exceptions, models, types
 
 
 class Database:
