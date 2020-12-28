@@ -39,6 +39,8 @@
     "@aws-cdk/aws-route53-targets": "1.80.0",
     "@aws-cdk/aws-s3": "1.80.0",
     "@aws-cdk/aws-s3-deployment": "^1.80.0",
+    "@aws-cdk/aws-s3-notifications": "^1.80.0",
+    "@aws-cdk/aws-sqs": "^1.80.0",
     "@aws-cdk/core": "1.80.0",
     "source-map-support": "^0.5.16"
   },

@@ -12,6 +12,8 @@ import * as route53Targets from '@aws-cdk/aws-route53-targets';
 import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
 import * as iam from '@aws-cdk/aws-iam';
 import * as s3 from '@aws-cdk/aws-s3';
+import * as sqs from '@aws-cdk/aws-sqs';
+import * as s3Notifications from '@aws-cdk/aws-s3-notifications';
 
 import { ENVIRONMENT } from './environment';
 import { CONFIG } from './config';
@@ -24,6 +26,16 @@ export class ApiStack extends cdk.Stack {
     const bucket = new s3.Bucket(this, 'PackageBucket', {
       bucketName: CONFIG.storage.bucketName,
     });
+
+    // Notifications for object create
+    const queue = new sqs.Queue(this, 'Queue', {
+      queueName: CONFIG.storage.queueName,
+    });
+    bucket.addEventNotification(
+      s3.EventType.OBJECT_CREATED,
+      new s3Notifications.SqsDestination(queue),
+      { suffix: '.json' }
+    );
 
     // Database for the packages
     const table = new dynamodb.Table(this, 'Table', {

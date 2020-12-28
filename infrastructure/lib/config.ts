@@ -13,6 +13,7 @@ export const CONFIG = {
   },
   storage: {
     bucketName: `package-storage.${domainName}`,
+    queueName: 'package-storage-object-created-json',
   },
   database: {
     tableName: 'package-storage',
