@@ -1,4 +1,4 @@
 <ng-container *ngIf="specId">
-  <button mat-raised-button color="warn" [disabled]="deleteDisabled" (click)="deleteButtonClick()">Delete</button>
+  <button [attr.data-cy]="'delete-' + specId" mat-raised-button color="warn" [disabled]="deleteDisabled" (click)="deleteButtonClick()">Delete</button>
   <a mat-raised-button color="basic" href="https://editor.openalchemy.io/specs/{{ specId }}" target="_blank">Edit <mat-icon>open_in_new</mat-icon></a>
 </ng-container>
