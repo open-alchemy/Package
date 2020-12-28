@@ -23,8 +23,8 @@ export class SpecsService {
       .get<SpecInfo[]>('https://package.api.openalchemy.io/v1/specs', {
         headers: { Authorization: `Bearer ${params.accessToken}` },
       })
-      .catch(error => {
-        let message = decodeResponse(error.response.data);
+      .catch((error) => {
+        const message = decodeResponse(error.response.data);
         throw new SpecsError(`error whilst loading the specs: ${message}`);
       });
     return response.data;

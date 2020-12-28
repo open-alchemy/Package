@@ -20,7 +20,7 @@ describe('SpecsService', () => {
       const responseData = [{ key: 'value' }];
       mockAdaptor
         .onGet('https://package.api.openalchemy.io/v1/specs')
-        .replyOnce(config => {
+        .replyOnce((config) => {
           expect(config.headers).toHaveProperty('Authorization');
           expect(config.headers['Authorization']).toEqual(
             `Bearer ${accessToken}`

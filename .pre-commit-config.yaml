@@ -70,21 +70,17 @@ repos:
     hooks:
       - id: markdownlint-cli2
         language_version: system
-  # - repo: https://github.com/pre-commit/mirrors-eslint
-  #   rev: "v7.14.0"
-  #   hooks:
-  #     - id: eslint
-  #       files: \.ts$
-  #       types: [file]
-  #       args: ["--fix", "--ext .ts"]
-  #       additional_dependencies:
-  #         - eslint@7.14.0
-  #         - "@angular-eslint/eslint-plugin@0.8.0-beta.2"
-  #         - "@typescript-eslint/eslint-plugin@4.8.2"
-  #         - eslint-plugin-prettier@3.1.4
-  #         - prettier@2.2.1
-  #         - eslint-config-prettier@6.15.0
-  # - repo: https://github.com/Lucas-C/pre-commit-hooks-bandit
-  #   rev: v1.0.4
-  #   hooks:
-  #     - id: python-bandit-vulnerability-check
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: "v7.14.0"
+    hooks:
+      - id: eslint
+        files: \.ts$
+        types: [file]
+        args: ["--fix", "--ext .ts"]
+        additional_dependencies:
+          - eslint@7.14.0
+          - "@angular-eslint/eslint-plugin@0.8.0-beta.2"
+          - "@typescript-eslint/eslint-plugin@4.8.2"
+          - eslint-plugin-prettier@3.1.4
+          - prettier@2.2.1
+          - eslint-config-prettier@6.15.0

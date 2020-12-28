@@ -54,14 +54,14 @@ export class SpecService {
    * @param params.version (optional) Version for the spec
    */
   async get(params: IGetParams): Promise<SpecValue> {
-    let url = calculateUrl(params);
+    const url = calculateUrl(params);
 
     const response = await axios
       .get<SpecValue>(url, {
         headers: { Authorization: `Bearer ${params.accessToken}` },
       })
-      .catch(error => {
-        let message = decodeResponse(error.response.data);
+      .catch((error) => {
+        const message = decodeResponse(error.response.data);
         throw new SpecError(`error whilst loading the spec: ${message}`);
       });
     return response.data;
@@ -87,8 +87,8 @@ export class SpecService {
           headers: { Authorization: `Bearer ${params.accessToken}` },
         }
       )
-      .catch(error => {
-        let message = decodeResponse(error.response.data);
+      .catch((error) => {
+        const message = decodeResponse(error.response.data);
         throw new SpecError(
           `error whilst loading the versions for the spec: ${message}`
         );
@@ -112,7 +112,7 @@ export class SpecService {
    * @param params.version (optional) Version for the spec
    */
   async put(params: IPutParams): Promise<void> {
-    let url = calculateUrl(params);
+    const url = calculateUrl(params);
 
     await axios
       .put<void>(url, params.value, {
@@ -122,8 +122,8 @@ export class SpecService {
           'X-LANGUAGE': params.language,
         },
       })
-      .catch(error => {
-        let message = decodeResponse(error.response.data);
+      .catch((error) => {
+        const message = decodeResponse(error.response.data);
         throw new SpecError(
           `error whilst creating or updating the spec: ${message}`
         );
@@ -151,8 +151,8 @@ export class SpecService {
           headers: { Authorization: `Bearer ${params.accessToken}` },
         }
       )
-      .catch(error => {
-        let message = decodeResponse(error.response.data);
+      .catch((error) => {
+        const message = decodeResponse(error.response.data);
         throw new SpecError(`error whilst deleting the spec: ${message}`);
       });
     return;

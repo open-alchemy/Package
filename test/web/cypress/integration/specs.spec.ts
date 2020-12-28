@@ -36,9 +36,7 @@ describe('specs', () => {
     cy.login();
     cy.visit('/specs');
     // should not have any rows
-    cy.get('table')
-      .find('tr')
-      .should('have.length', 1);
+    cy.get('table').find('tr').should('have.length', 1);
 
     // Add spec to the database
     cy.createSpec(accessToken, SPEC_VALUE_STRING, ID);
@@ -46,9 +44,7 @@ describe('specs', () => {
     // Click refresh
     cy.get('[data-cy=refresh]').click();
     // Check that content exists
-    cy.get('table')
-      .find('tr')
-      .should('have.length', 2);
+    cy.get('table').find('tr').should('have.length', 2);
     cy.contains(VERSION).should('exist');
     cy.contains(TITLE).should('exist');
     cy.contains(DESCRIPTION).should('exist');
@@ -57,8 +53,6 @@ describe('specs', () => {
     // Click delete
     cy.get(`[data-cy=delete-${ID}]`).click();
     // Check that content no longer exists
-    cy.get('table')
-      .find('tr')
-      .should('have.length', 1);
+    cy.get('table').find('tr').should('have.length', 1);
   });
 });
