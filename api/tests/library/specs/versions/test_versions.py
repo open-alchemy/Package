@@ -95,7 +95,7 @@ def test_get():
     assert response.status_code == 200
     assert response.mimetype == "text/plain"
     assert f"version: {version}" in response.data.decode()
-    assert f"key: value" in response.data.decode()
+    assert "key: value" in response.data.decode()
 
 
 def test_get_storage_facade_error(monkeypatch):

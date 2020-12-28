@@ -409,7 +409,9 @@ PACKAGE_STORAGE_get_latest_spec_version_TESTS = [
                 sub="sub 1",
                 spec_id="spec id 1",
                 version="version 1",
-                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1",
+                updated_at_spec_id=(
+                    f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1"
+                ),
             )
         ],
         "sub 1",
@@ -423,13 +425,17 @@ PACKAGE_STORAGE_get_latest_spec_version_TESTS = [
                 sub="sub 1",
                 spec_id="spec id 1",
                 version="version 1",
-                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1",
+                updated_at_spec_id=(
+                    f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1"
+                ),
             ),
             factory.PackageStorageFactory(
                 sub="sub 2",
                 spec_id="spec id 2",
                 version="version 2",
-                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 2",
+                updated_at_spec_id=(
+                    f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 2"
+                ),
             ),
         ],
         "sub 1",
@@ -443,13 +449,17 @@ PACKAGE_STORAGE_get_latest_spec_version_TESTS = [
                 sub="sub 1",
                 spec_id="spec id 1",
                 version="version 1",
-                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1",
+                updated_at_spec_id=(
+                    f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1"
+                ),
             ),
             factory.PackageStorageFactory(
                 sub="sub 2",
                 spec_id="spec id 2",
                 version="version 2",
-                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 2",
+                updated_at_spec_id=(
+                    f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 2"
+                ),
             ),
         ],
         "sub 2",
@@ -486,7 +496,9 @@ PACKAGE_STORAGE_LIST_SPECS_TESTS = [
         [
             factory.PackageStorageFactory(
                 sub="sub 1",
-                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1",
+                updated_at_spec_id=(
+                    f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1"
+                ),
             )
         ],
         "sub 2",
@@ -509,7 +521,9 @@ PACKAGE_STORAGE_LIST_SPECS_TESTS = [
             factory.PackageStorageFactory(
                 sub="sub 1",
                 spec_id="spec id 1",
-                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1",
+                updated_at_spec_id=(
+                    f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1"
+                ),
             )
         ],
         "sub 1",
@@ -530,7 +544,9 @@ PACKAGE_STORAGE_LIST_SPECS_TESTS = [
             factory.PackageStorageFactory(
                 sub="sub 1",
                 spec_id="spec id 1",
-                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1",
+                updated_at_spec_id=(
+                    f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1"
+                ),
             ),
             factory.PackageStorageFactory(sub="sub 2", updated_at_spec_id="21#"),
         ],
@@ -544,7 +560,9 @@ PACKAGE_STORAGE_LIST_SPECS_TESTS = [
             factory.PackageStorageFactory(
                 sub="sub 2",
                 spec_id="spec id 2",
-                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 2",
+                updated_at_spec_id=(
+                    f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 2"
+                ),
             ),
         ],
         "sub 2",
@@ -556,12 +574,16 @@ PACKAGE_STORAGE_LIST_SPECS_TESTS = [
             factory.PackageStorageFactory(
                 sub="sub 1",
                 spec_id="spec id 1",
-                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1",
+                updated_at_spec_id=(
+                    f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1"
+                ),
             ),
             factory.PackageStorageFactory(
                 sub="sub 1",
                 spec_id="spec id 2",
-                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 2",
+                updated_at_spec_id=(
+                    f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 2"
+                ),
             ),
         ],
         "sub 1",
@@ -754,7 +776,7 @@ def test_package_storage_delete_spec(items, sub, spec_id, expected_item_count):
     for item in items:
         item.save()
 
-    returned_spec_ids = models.PackageStorage.delete_spec(sub=sub, spec_id=spec_id)
+    models.PackageStorage.delete_spec(sub=sub, spec_id=spec_id)
 
     assert len(list(models.PackageStorage.scan())) == expected_item_count
 
@@ -794,8 +816,12 @@ PACKAGE_STORAGE_LIST_SPEC_VERSIONS_TESTS = [
             factory.PackageStorageFactory(
                 sub="sub 1",
                 updated_at="11",
-                spec_id_updated_at=f"spec id 1#{models.PackageStorage.UPDATED_AT_LATEST}",
-                updated_at_spec_id=f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1",
+                spec_id_updated_at=(
+                    f"spec id 1#{models.PackageStorage.UPDATED_AT_LATEST}"
+                ),
+                updated_at_spec_id=(
+                    f"{models.PackageStorage.UPDATED_AT_LATEST}#spec id 1"
+                ),
             )
         ],
         "sub 1",

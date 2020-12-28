@@ -4,20 +4,22 @@ import factory
 from library.facades.database import models
 
 
-def package_store_calc_spec_id(n: int) -> str:
+def package_store_calc_spec_id(number: int) -> str:
     """Calculate the spec_id."""
-    return f"spec id {n}"
+    return f"spec id {number}"
 
 
-def package_store_calc_updated_at(n: int) -> str:
+def package_store_calc_updated_at(number: int) -> str:
     """Calculate the spec_id."""
-    return str((n + 1) * 10 + 1)
+    return str((number + 1) * 10 + 1)
 
 
 class PackageStorageFactory(factory.Factory):
     """Factory for PackageStorage model."""
 
     class Meta:
+        """Meta class."""
+
         model = models.PackageStorage
 
     sub = factory.Sequence(lambda n: f"sub {n}")

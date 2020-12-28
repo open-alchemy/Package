@@ -1,47 +1,52 @@
 <table mat-table [dataSource]="specInfos" class="mat-elevation-z8">
-
   <!-- Id Column -->
   <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef> Id </th>
-    <td mat-cell *matCellDef="let element"> {{element.spec_id}} </td>
+    <th mat-header-cell *matHeaderCellDef>Id</th>
+    <td mat-cell *matCellDef="let element">{{ element.spec_id }}</td>
   </ng-container>
 
   <!-- Title Column -->
   <ng-container matColumnDef="title">
-    <th mat-header-cell *matHeaderCellDef> Title </th>
-    <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+    <th mat-header-cell *matHeaderCellDef>Title</th>
+    <td mat-cell *matCellDef="let element">{{ element.title }}</td>
   </ng-container>
 
   <!-- Description Column -->
   <ng-container matColumnDef="description">
-    <th mat-header-cell *matHeaderCellDef> Description </th>
-    <td mat-cell *matCellDef="let element"> {{ element.description | slice:0:100}} </td>
+    <th mat-header-cell *matHeaderCellDef>Description</th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.description | slice: 0:100 }}
+    </td>
   </ng-container>
 
   <!-- Latest Version Column -->
   <ng-container matColumnDef="version">
-    <th mat-header-cell *matHeaderCellDef> Latest Version </th>
-    <td mat-cell *matCellDef="let element"> {{element.version}} </td>
+    <th mat-header-cell *matHeaderCellDef>Latest Version</th>
+    <td mat-cell *matCellDef="let element">{{ element.version }}</td>
   </ng-container>
 
   <!-- Last updated At Column -->
   <ng-container matColumnDef="updated_at">
-    <th mat-header-cell *matHeaderCellDef> Last updated At </th>
-    <td mat-cell *matCellDef="let element"> {{element.updated_at * 1000 | date:'medium'}} </td>
+    <th mat-header-cell *matHeaderCellDef>Last updated At</th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.updated_at * 1000 | date: "medium" }}
+    </td>
   </ng-container>
 
   <!-- Model Count Column -->
   <ng-container matColumnDef="model_count">
-    <th mat-header-cell *matHeaderCellDef> Model Count </th>
-    <td mat-cell *matCellDef="let element"> {{element.model_count}} </td>
+    <th mat-header-cell *matHeaderCellDef>Model Count</th>
+    <td mat-cell *matCellDef="let element">{{ element.model_count }}</td>
   </ng-container>
 
   <!-- Management Column -->
   <ng-container matColumnDef="management">
     <th mat-header-cell *matHeaderCellDef></th>
-    <td mat-cell *matCellDef="let element"> <app-specs-manage-spec [specId]="element.spec_id"></app-specs-manage-spec> </td>
+    <td mat-cell *matCellDef="let element">
+      <app-specs-manage-spec [specId]="element.spec_id"></app-specs-manage-spec>
+    </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>

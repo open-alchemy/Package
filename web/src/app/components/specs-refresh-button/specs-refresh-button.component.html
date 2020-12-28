@@ -1,1 +1,10 @@
-<button [attr.data-cy]="'refresh'" mat-raised-button color="secondary" [class.spinner]="loading" [disabled]="loading" (click)="refresh()">Refresh</button>
+<button
+  [attr.data-cy]="'refresh'"
+  mat-raised-button
+  color="secondary"
+  [class.spinner]="loading"
+  [disabled]="loading"
+  (click)="refresh()"
+>
+  Refresh
+</button>

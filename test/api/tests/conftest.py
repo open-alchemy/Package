@@ -1,5 +1,7 @@
 """Fixtures for the API."""
 
+# pylint: disable=redefined-outer-name
+
 import os
 from urllib import request
 

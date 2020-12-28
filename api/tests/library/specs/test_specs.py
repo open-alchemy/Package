@@ -61,7 +61,6 @@ def test_list_database_error(monkeypatch):
     THEN a 500 is returned.
     """
     user = "user 1"
-    spec_id = "spec id 1"
     mock_database_list_specs = mock.MagicMock()
     mock_database_list_specs.side_effect = database.exceptions.DatabaseError
     monkeypatch.setattr(
@@ -102,7 +101,7 @@ def test_get(_clean_package_storage_table):
     assert response.status_code == 200
     assert response.mimetype == "text/plain"
     assert f"version: {version}" in response.data.decode()
-    assert f"key: value" in response.data.decode()
+    assert "key: value" in response.data.decode()
 
 
 def test_get_database_error(_clean_package_storage_table, monkeypatch):

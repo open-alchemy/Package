@@ -1,11 +1,9 @@
 """Tests for the API."""
 
-import copy
 import json
 from urllib import error, request
 
 import pytest
-import yaml
 
 
 @pytest.mark.parametrize(

@@ -1,7 +1,5 @@
 """DynamoDB implementation of the database facade."""
 
-import typing
-
 from . import exceptions, models, types
 
 

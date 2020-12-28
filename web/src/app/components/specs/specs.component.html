@@ -1,6 +1,10 @@
 <ng-container *ngIf="packageService.specs$ | async as specs">
   <h1 id="header">Packages under Management</h1>
-  <app-specs-refresh-button id="refresh-button" [loading]="specs.loading" (refreshEvent)="refreshButtonClick()"></app-specs-refresh-button>
+  <app-specs-refresh-button
+    id="refresh-button"
+    [loading]="specs.loading"
+    (refreshEvent)="refreshButtonClick()"
+  ></app-specs-refresh-button>
   <app-specs-create-button id="create-button"></app-specs-create-button>
 
   <app-specs-table id="table" [specInfos]="specs.specInfos"></app-specs-table>
