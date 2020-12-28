@@ -8,6 +8,9 @@ export const CONFIG = {
     throttlingRateLimit: 100,
     additionalAllowHeaders: ['x-language'],
   },
+  web: {
+    recordName: 'package',
+  },
   storage: {
     bucketName: `package-storage.${domainName}`,
   },
