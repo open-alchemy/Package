@@ -61,3 +61,41 @@ jobs:
         working-directory: ./web
         run: |
           npm run lint
+
+  web-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: cache build
+        id: cache-build
+        uses: actions/cache@v2
+        with:
+          path: web/dist
+          key: ${{ runner.os }}-web-${{ env.cache-name }}-${{ hashFiles('web/**') }}
+      - name: set up node
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 14.x
+      - name: cache node_modules
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        id: cache-node_modules
+        uses: actions/cache@v2
+        with:
+          path: web/node_modules
+          key: ${{ runner.os }}-web-${{ env.cache-name }}-${{ hashFiles('web/package-lock.json') }}
+      - name: install dependencies
+        working-directory: ./web
+        if: steps.cache-build.outputs.cache-hit != 'true' && steps.cache-node_modules.outputs.cache-hit != 'true'
+        run: |
+          npm install
+      - name: build
+        working-directory: ./web
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: |
+          npm run build:prod
+      - name: upload artifacts for release
+        uses: actions/upload-artifact@v2
+        with:
+          name: web-artifacts
+          path: web/dist/editor/
