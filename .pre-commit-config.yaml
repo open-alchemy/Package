@@ -91,3 +91,4 @@ repos:
           - typescript@4.1.3
           - "@typescript-eslint/parser@4.11.0"
           - eslint-plugin-jsdoc@30.7.9
+          - eslint-plugin-import@2.22.1
