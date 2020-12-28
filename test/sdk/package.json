@@ -58,7 +58,6 @@
   },
   "dependencies": {
     "@open-alchemy/package-sdk": "^2.1.0",
-    "aws-sdk": "^2.809.0",
-    "helpers": "file:../helpers"
+    "aws-sdk": "^2.809.0"
   }
 }
