@@ -5,6 +5,7 @@ import json
 import pathlib
 import shutil
 import typing
+from urllib import parse
 
 
 def setup(directory: str) -> pathlib.Path:
@@ -36,13 +37,13 @@ class Notification:
     """
     The bucket and object key from the notification.
 
-    bucket: The bucket from the notification.
-    key: The object key from the notification.
+    bucket_name: The bucket from the notification.
+    object_key: The object key from the notification.
 
     """
 
-    bucket: str
-    key: str
+    bucket_name: str
+    object_key: str
 
 
 def parse_notification(notification: typing.Dict) -> Notification:
@@ -134,6 +135,11 @@ def parse_notification(notification: typing.Dict) -> Notification:
         f".{s3_object_key_key} "
         "is not a string, "
         f"{s3_object_key=}, {notification=}"
+    )
+
+    return Notification(
+        bucket_name=parse.unquote_plus(s3_bucket_name),
+        object_key=parse.unquote_plus(s3_object_key),
     )
 
 

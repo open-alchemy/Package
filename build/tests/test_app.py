@@ -292,3 +292,36 @@ def test_parse_event_error(event):
     """
     with pytest.raises(AssertionError):
         app.parse_event(event)
+
+
+def test_parse_event():
+    """
+    GIVEN lambda event
+    WHEN parse_event is called with the event
+    THEN the bucket name and object key are returned.
+    """
+    event = {
+        "Records": [
+            {
+                "Sns": {
+                    "Message": json.dumps(
+                        {
+                            "Records": [
+                                {
+                                    "s3": {
+                                        "bucket": {"name": "bucket+1"},
+                                        "object": {"key": "key+1"},
+                                    }
+                                }
+                            ]
+                        }
+                    )
+                }
+            }
+        ]
+    }
+
+    returned_notification = app.parse_event(event)
+
+    assert returned_notification.bucket_name == "bucket 1"
+    assert returned_notification.object_key == "key 1"
