@@ -1,7 +1,10 @@
 """Main function for lambda."""
 
+import dataclasses
+import json
 import pathlib
 import shutil
+import typing
 
 
 def setup(directory: str) -> pathlib.Path:
@@ -26,6 +29,173 @@ def setup(directory: str) -> pathlib.Path:
     assert not build_path.exists()
     build_path.mkdir()
     return build_path
+
+
+@dataclasses.dataclass
+class Notification:
+    """
+    The bucket and object key from the notification.
+
+    bucket: The bucket from the notification.
+    key: The object key from the notification.
+
+    """
+
+    bucket: str
+    key: str
+
+
+def parse_notification(notification: typing.Dict) -> Notification:
+    """
+    Parse a SNS notification.
+
+    Args:
+        notification: The information for the SNS notification.
+
+    Returns:
+        The bucket and object key from the notification.
+
+    """
+    records_key = "Records"
+    assert records_key in notification, f"{records_key} not in message, {notification=}"
+    records = notification[records_key]
+    assert isinstance(records, list), (
+        f"notification.{records_key} not list, " f"{records=}, {notification=}"
+    )
+
+    assert len(records) == 1, (
+        f"notification.{records_key} does not have 1 item, "
+        f"{records=}, {notification=}"
+    )
+    record = records[0]
+    assert isinstance(record, dict), (
+        f"notification.{records_key}[0] not dict, " f"{record=}, {notification=}"
+    )
+
+    s3_key = "s3"
+    assert s3_key in record, (
+        f"{s3_key} not in notification.{records_key}[0], " f"{record=}, {notification=}"
+    )
+    s3_value = record[s3_key]
+    assert isinstance(s3_value, dict), (
+        f"notification.{records_key}[0].{s3_key} is not a dict, "
+        f"{s3_value=}, {notification=}"
+    )
+
+    s3_bucket_key = "bucket"
+    assert s3_bucket_key in s3_value, (
+        f"{s3_bucket_key} not in "
+        f"notification.{records_key}[0].{s3_key}, "
+        f"{s3_value=}, {notification=}"
+    )
+    s3_bucket = s3_value[s3_bucket_key]
+    assert isinstance(s3_bucket, dict), (
+        f"notification.{records_key}[0].{s3_key}.{s3_bucket_key} "
+        "is not a dict, "
+        f"{s3_bucket=}, {notification=}"
+    )
+
+    s3_bucket_name_key = "name"
+    assert s3_bucket_name_key in s3_bucket, (
+        f"{s3_bucket_name_key} not in "
+        f"notification.{records_key}[0].{s3_key}.{s3_bucket_key}, "
+        f"{s3_bucket=}, {notification=}"
+    )
+    s3_bucket_name = s3_bucket[s3_bucket_name_key]
+    assert isinstance(s3_bucket_name, str), (
+        f"notification.{records_key}[0].{s3_key}.{s3_bucket_key}"
+        f".{s3_bucket_name_key} "
+        "is not a string, "
+        f"{s3_bucket_name=}, {notification=}"
+    )
+
+    s3_object_key = "object"
+    assert s3_object_key in s3_value, (
+        f"{s3_object_key} not in "
+        f"notification.{records_key}[0].{s3_key}, "
+        f"{s3_value=}, {notification=}"
+    )
+    s3_object = s3_value[s3_object_key]
+    assert isinstance(s3_object, dict), (
+        f"notification.{records_key}[0].{s3_key}.{s3_object_key} "
+        "is not a dict, "
+        f"{s3_object=}, {notification=}"
+    )
+
+    s3_object_key_key = "key"
+    assert s3_object_key_key in s3_object, (
+        f"{s3_object_key_key} not in "
+        f"notification.{records_key}[0].{s3_key}.{s3_object_key}, "
+        f"{s3_object=}, {notification=}"
+    )
+    s3_object_key = s3_object[s3_object_key_key]
+    assert isinstance(s3_object_key, str), (
+        f"notification.{records_key}[0].{s3_key}.{s3_object_key}"
+        f".{s3_object_key_key} "
+        "is not a string, "
+        f"{s3_object_key=}, {notification=}"
+    )
+
+
+def parse_event(event: typing.Dict) -> Notification:
+    """
+    Parse a lambda event.
+
+    Args:
+        event: The information for the lambda event.
+
+    Returns:
+        The bucket and object key from the notification.
+
+    """
+    assert isinstance(event, dict), f"event not dict, {event=}"
+
+    records_key = "Records"
+    assert records_key in event, f"{records_key} not in event, {event=}"
+    records = event[records_key]
+    assert isinstance(
+        records, list
+    ), f"event.{records_key} not list, {records=}, {event=}"
+
+    assert (
+        len(records) == 1
+    ), f"event.{records_key} does not have 1 item, {records=}, {event=}"
+    record = records[0]
+    assert isinstance(
+        record, dict
+    ), f"event.{records_key}[0] not dict, {record=}, {event=}"
+
+    sns_key = "Sns"
+    assert (
+        sns_key in record
+    ), f"{sns_key} not in event.{records_key}[0], {record=}, {event=}"
+    sns = record[sns_key]
+    assert isinstance(
+        sns, dict
+    ), f"event.{records_key}[0].{sns_key} is not a dict, {sns=}, {event=}"
+
+    message_key = "Message"
+    assert (
+        message_key in sns
+    ), f"{message_key} not in event.{records_key}[0].{sns_key}, {sns=}, {event=}"
+    message = sns[message_key]
+    assert isinstance(message, str), (
+        f"event.{records_key}[0].{sns_key}.{message_key} is not a string, "
+        f"{message=}, {event=}"
+    )
+
+    try:
+        decoded_message = json.loads(message)
+    except json.JSONDecodeError as exc:
+        raise AssertionError(
+            f"event.{records_key}[0].{sns_key}.{message_key} is not a valid JSON, "
+            f"{message=}, {event=}, {exc}"
+        ) from exc
+    assert isinstance(
+        decoded_message, dict
+    ), f"SNS message is not a dict, {decoded_message=}, {event=}"
+
+    return parse_notification(decoded_message)
 
 
 def main(event, context):
