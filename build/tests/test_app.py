@@ -7,6 +7,7 @@ from unittest import mock
 import app
 import library
 import pytest
+from botocore import stub
 
 
 def no_directory(_: pathlib.Path) -> None:
@@ -381,3 +382,59 @@ def test_upload_packages(monkeypatch):
     mock_upload_file.assert_any_call(
         bucket_name, packages[1].storage_location, str(packages[1].path)
     )
+
+
+SPEC_EXISTS_ERROR_TESTS = [
+    pytest.param(None, id="response not dict"),
+    pytest.param({}, id="response Contents missing"),
+    pytest.param({"Contents": None}, id="response Contents not list"),
+]
+
+
+@pytest.mark.parametrize("response", SPEC_EXISTS_ERROR_TESTS)
+def test_spec_exists_error(monkeypatch, response):
+    """
+    GIVEN monkeypatched list_objects_v2 that returns invalid response
+    WHEN spec_exists is called
+    THEN AssertionError is raised.
+    """
+    bucket_name = "bucket1"
+    object_key = "key 1"
+    notification = app.Notification(bucket_name=bucket_name, object_key=object_key)
+
+    mock_list_objects_v2 = mock.MagicMock()
+    mock_list_objects_v2.return_value = response
+    monkeypatch.setattr(app.S3_CLIENT, "list_objects_v2", mock_list_objects_v2)
+
+    with pytest.raises(AssertionError):
+        app.spec_exists(notification)
+
+
+@pytest.mark.parametrize(
+    "contents, expected_result",
+    [
+        pytest.param([], False, id="empty"),
+        pytest.param([{}, {}], False, id="multiple"),
+        pytest.param([{}], True, id="single item contents"),
+    ],
+)
+def test_spec_exists(contents, expected_result, stubbed_s3_client: stub.Stubber):
+    """
+    GIVEN notification and mocked S3 client that returns contents
+    WHEN spec_exists is called with the notification
+    THEN the expected result is returned.
+    """
+    bucket_name = "bucket1"
+    object_key = "key 1"
+    notification = app.Notification(bucket_name=bucket_name, object_key=object_key)
+
+    expected_params = {"Bucket": bucket_name, "Prefix": object_key}
+    stubbed_s3_client.add_response(
+        "list_objects_v2", {"Contents": contents}, expected_params
+    )
+    stubbed_s3_client.activate()
+
+    returned_result = app.spec_exists(notification)
+
+    stubbed_s3_client.assert_no_pending_responses()
+    assert returned_result == expected_result

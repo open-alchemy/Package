@@ -245,6 +245,34 @@ def upload_packages(notification: Notification, packages: library.PackageList) -
         )
 
 
+def spec_exists(notification: Notification) -> bool:
+    """
+    Check whether the spec exists.
+
+    Args:
+        notification: The SNS notification.
+
+    Returns:
+        Whether the spec file in the SNS notification exists.
+
+    """
+    response = S3_CLIENT.list_objects_v2(
+        Bucket=notification.bucket_name, Prefix=notification.object_key
+    )
+
+    assert isinstance(response, dict), f"response is not dict, {response=}"
+
+    contents_key = "Contents"
+    assert contents_key in response, f"{contents_key} not in response, {response=}"
+    contents = response[contents_key]
+
+    assert isinstance(
+        contents, list
+    ), f"response.{contents_key} is not dict, {contents=}, {response=}"
+
+    return len(contents) == 1
+
+
 def main(event, context):
     """Handle request."""
     print({"event": event, "context": context})  # allow-print
@@ -263,3 +291,6 @@ def main(event, context):
 
     upload_packages(notification, packages)
     print("finished uploading")  # allow-print
+
+    spec_exists_result = spec_exists(notification)
+    print({"spec_exists_result": spec_exists_result})  # allow-print
