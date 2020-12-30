@@ -236,7 +236,7 @@ def main(event, context):
     build_path = setup("/tmp")
     print({"build_path": build_path})  # allow-print
 
-    notification = parse_notification(event)
+    notification = parse_event(event)
     print({"notification": notification})  # allow-print
 
     spec_path = retrieve_spec(notification, build_path)
