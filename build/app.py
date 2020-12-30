@@ -233,7 +233,7 @@ def main(event, context):
     """Handle request."""
     print({"event": event, "context": context})  # allow-print
 
-    build_path = setup("tmp")
+    build_path = setup("/tmp")
     print({"build_path": build_path})  # allow-print
 
     notification = parse_notification(event)

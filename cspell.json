@@ -42,7 +42,8 @@
     "pynamo",
     "pyjwt",
     "pynamodb",
-    "Popen"
+    "Popen",
+    "SDIST"
   ],
   "dictionaries": [
     "python",
