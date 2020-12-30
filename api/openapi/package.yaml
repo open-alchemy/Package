@@ -220,6 +220,35 @@ paths:
             text/plain:
               schema:
                 type: string
+  /credentials/default:
+    get:
+      summary: Retrieve the default machine to machine credentials
+      operationId: library.credentials.get
+      responses:
+        200:
+          description: The default credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Credentials"
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+    delete:
+      summary: Delete the default machine to machine credentials
+      operationId: library.credentials.delete
+      responses:
+        204:
+          description: The default credentials have been deleted
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
 
 components:
   parameters:
@@ -284,3 +313,22 @@ components:
         - spec_id
         - version
         - model_count
+    PublicKey:
+      description: A public key for for machine to machine interactions.
+      type: string
+      pattern: ^pk_[a-zA-Z0-9]+$
+    SecretKey:
+      description: A secret key for machine to machine interactions.
+      type: string
+      pattern: ^sk_[a-zA-Z0-9]+$
+    Credentials:
+      description: Machine to machine credentials
+      type: object
+      properties:
+        public_key:
+          $ref: "#/components/schemas/PublicKey"
+        secret_key:
+          $ref: "#/components/schemas/SecretKey"
+      required:
+        - public_key
+        - secret_key
