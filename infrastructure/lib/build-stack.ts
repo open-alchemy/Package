@@ -50,6 +50,7 @@ export class BuildStack extends cdk.Stack {
         PACKAGE_STORAGE_BUCKET_NAME: CONFIG.storage.bucketName,
       },
       logRetention: logs.RetentionDays.ONE_WEEK,
+      timeout: cdk.Duration.minutes(1),
     });
     bucket.grantReadWrite(func);
     const version = new lambda.Version(

@@ -79,6 +79,7 @@ export class ApiStack extends cdk.Stack {
         PACKAGE_DATABASE_INDEX_NAME: CONFIG.database.indexName,
       },
       logRetention: logs.RetentionDays.ONE_WEEK,
+      timeout: cdk.Duration.seconds(10),
     });
     bucket.grantReadWrite(func);
     table.grantReadWriteData(func);
