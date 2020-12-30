@@ -59,7 +59,7 @@ enable=useless-suppression,print-statement
 #
 # Kubeflow disables string-interpolation because we are starting to use f
 # style strings
-disable=import-error,inherit-non-class,unsubscriptable-object,no-member
+disable=import-error,inherit-non-class,unsubscriptable-object,no-member,no-name-in-module
 
 
 [REPORTS]
