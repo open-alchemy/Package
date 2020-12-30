@@ -273,41 +273,33 @@ def spec_exists(notification: Notification) -> bool:
     return len(contents) == 1
 
 
-# def delete_packages_if_spec_deleted(
-#     spec_exists_result: bool, notification: Notification,
-#     packages: library.PackageList
-# ) -> None:
-#     """
-#     Conditionally delete the packages if the spec has been deleted.
+def delete_packages_if_spec_deleted(
+    spec_exists_result: bool, notification: Notification, packages: library.PackageList
+) -> None:
+    """
+    Conditionally delete the packages if the spec has been deleted.
 
-#     Args:
-#         spec_exists_result: The result of the check whether the spec exists.
-#         notification: The SNS notification.
-#         packages: The packages to delete.
+    Args:
+        spec_exists_result: The result of the check whether the spec exists.
+        notification: The SNS notification.
+        packages: The packages to delete.
 
-#     """
-#     if spec_exists_result:
-#         return
+    """
+    if spec_exists_result:
+        return
+
+    S3_CLIENT.delete_objects(
+        Bucket=notification.bucket_name,
+        Delete={"Objects": [{"Key": package.storage_location} for package in packages]},
+    )
 
 
-def main(event, context):
+def main(event, _context):
     """Handle request."""
-    print({"event": event, "context": context})  # allow-print
-
     build_path = setup("/tmp")
-    print({"build_path": build_path})  # allow-print
-
     notification = parse_event(event)
-    print({"notification": notification})  # allow-print
-
     spec_path = retrieve_spec(notification, build_path)
-    print({"spec_path": spec_path})  # allow-print
-
     packages = library.generate(notification.object_key, spec_path)
-    print({"packages": packages})  # allow-print
-
     upload_packages(notification, packages)
-    print("finished uploading")  # allow-print
-
     spec_exists_result = spec_exists(notification)
-    print({"spec_exists_result": spec_exists_result})  # allow-print
+    delete_packages_if_spec_deleted(spec_exists_result, notification, packages)

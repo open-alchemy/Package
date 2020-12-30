@@ -438,3 +438,65 @@ def test_spec_exists(contents, expected_result, stubbed_s3_client: stub.Stubber)
 
     stubbed_s3_client.assert_no_pending_responses()
     assert returned_result == expected_result
+
+
+@pytest.mark.parametrize(
+    "spec_exists_result, expected_call_count",
+    [
+        pytest.param(True, 0, id="spec exists"),
+        pytest.param(False, 1, id="spec not exists"),
+    ],
+)
+def test_delete_packages_if_spec_deleted_mocked(
+    spec_exists_result, expected_call_count, monkeypatch
+):
+    """
+    GIVEN monkeypatched delete_objects and spec exists result
+    WHEN delete_packages_if_spec_deleted is called
+    THEN delete_objects is called the expected number of times.
+    """
+    bucket_name = "bucket1"
+    object_key = "key 1"
+    notification = app.Notification(bucket_name=bucket_name, object_key=object_key)
+    packages = []
+
+    mock_delete_objects = mock.MagicMock()
+    monkeypatch.setattr(app.S3_CLIENT, "delete_objects", mock_delete_objects)
+
+    app.delete_packages_if_spec_deleted(spec_exists_result, notification, packages)
+
+    assert mock_delete_objects.call_count == expected_call_count
+
+
+def test_delete_packages_if_spec_deleted(stubbed_s3_client: stub.Stubber):
+    """
+    GIVEN notification, packages and mocked S3 client
+    WHEN delete_packages_if_spec_deleted is called with the notification and packages
+    THEN delete objects is called.
+    """
+    bucket_name = "bucket1"
+    object_key = "key 1"
+    notification = app.Notification(bucket_name=bucket_name, object_key=object_key)
+    packages = [
+        library.Package(
+            storage_location="storage location 1",
+            path=pathlib.Path("some/location1.tar.gz"),
+        ),
+        library.Package(
+            storage_location="storage location 2",
+            path=pathlib.Path("some/location2.tar.gz"),
+        ),
+    ]
+
+    expected_params = {
+        "Bucket": bucket_name,
+        "Delete": {
+            "Objects": [{"Key": package.storage_location} for package in packages]
+        },
+    }
+    stubbed_s3_client.add_response("delete_objects", {}, expected_params)
+    stubbed_s3_client.activate()
+
+    app.delete_packages_if_spec_deleted(False, notification, packages)
+
+    stubbed_s3_client.assert_no_pending_responses()
