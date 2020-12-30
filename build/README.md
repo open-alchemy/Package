@@ -96,7 +96,7 @@ the filename is passed as the filename used to retrieve the spec from S3.
 ### Uploading the generated files
 
 All generated files are uploaded to S3 using
-<https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Client.download_file>
+<https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Client.upload_file>
 where `Bucket` is retrieved from the SNS notification and the `Key` and
 `Filename` are read from the application output.
 

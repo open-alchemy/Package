@@ -5,6 +5,7 @@ import pathlib
 from unittest import mock
 
 import app
+import library
 import pytest
 
 
@@ -347,3 +348,36 @@ def test_retrieve_spec(tmp_path, monkeypatch):
     assert str(returned_path) == str(spec_path)
 
     mock_download_file.assert_called_once_with(bucket_name, object_key, str(spec_path))
+
+
+def test_upload_packages(monkeypatch):
+    """
+    GIVEN notification and packages
+    WHEN upload_packages is called with the notification and packages
+    THEN the packages are uploaded.
+    """
+    bucket_name = "bucket1"
+    object_key = "key 1"
+    notification = app.Notification(bucket_name=bucket_name, object_key=object_key)
+    packages = [
+        library.Package(
+            storage_location="storage location 1",
+            path=pathlib.Path("some/location1.tar.gz"),
+        ),
+        library.Package(
+            storage_location="storage location 2",
+            path=pathlib.Path("some/location2.tar.gz"),
+        ),
+    ]
+    mock_upload_file = mock.MagicMock()
+    monkeypatch.setattr(app.S3_CLIENT, "upload_file", mock_upload_file)
+
+    app.upload_packages(notification, packages)
+
+    assert mock_upload_file.call_count == 2
+    mock_upload_file.assert_any_call(
+        bucket_name, packages[0].storage_location, str(packages[0].path)
+    )
+    mock_upload_file.assert_any_call(
+        bucket_name, packages[1].storage_location, str(packages[1].path)
+    )

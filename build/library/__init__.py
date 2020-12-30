@@ -55,9 +55,10 @@ class Package:
     path: pathlib.Path
 
 
-def generate(
-    spec_storage_location: str, spec_path: pathlib.Path
-) -> typing.List[Package]:
+PackageList = typing.List[Package]
+
+
+def generate(spec_storage_location: str, spec_path: pathlib.Path) -> PackageList:
     """
     Generate the package for the spec.
 

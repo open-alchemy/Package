@@ -230,6 +230,21 @@ def retrieve_spec(notification: Notification, build_path: pathlib.Path) -> pathl
     return spec_path
 
 
+def upload_packages(notification: Notification, packages: library.PackageList) -> None:
+    """
+    Upload the packages to S3.
+
+    Args:
+        notification: The SNS notification.
+        packages: The packages to upload.
+
+    """
+    for package in packages:
+        S3_CLIENT.upload_file(
+            notification.bucket_name, package.storage_location, str(package.path)
+        )
+
+
 def main(event, context):
     """Handle request."""
     print({"event": event, "context": context})  # allow-print
@@ -245,3 +260,6 @@ def main(event, context):
 
     packages = library.generate(notification.object_key, spec_path)
     print({"packages": packages})  # allow-print
+
+    upload_packages(notification, packages)
+    print("finished uploading")  # allow-print
