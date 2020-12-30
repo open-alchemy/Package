@@ -3,6 +3,7 @@ import * as crypto from 'crypto';
 
 import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
+import * as logs from '@aws-cdk/aws-logs';
 import * as codedeploy from '@aws-cdk/aws-codedeploy';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as sns from '@aws-cdk/aws-sns';
@@ -48,6 +49,7 @@ export class BuildStack extends cdk.Stack {
         STAGE: 'PROD',
         PACKAGE_STORAGE_BUCKET_NAME: CONFIG.storage.bucketName,
       },
+      logRetention: logs.RetentionDays.ONE_WEEK,
     });
     bucket.grantReadWrite(func);
     const version = new lambda.Version(

@@ -3,6 +3,7 @@ import * as crypto from 'crypto';
 
 import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
+import * as logs from '@aws-cdk/aws-logs';
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import * as codedeploy from '@aws-cdk/aws-codedeploy';
 import * as cognito from '@aws-cdk/aws-cognito';
@@ -77,6 +78,7 @@ export class ApiStack extends cdk.Stack {
         PACKAGE_DATABASE_TABLE_NAME: CONFIG.database.tableName,
         PACKAGE_DATABASE_INDEX_NAME: CONFIG.database.indexName,
       },
+      logRetention: logs.RetentionDays.ONE_WEEK,
     });
     bucket.grantReadWrite(func);
     table.grantReadWriteData(func);
