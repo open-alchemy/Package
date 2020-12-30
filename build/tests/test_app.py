@@ -377,10 +377,10 @@ def test_upload_packages(monkeypatch):
 
     assert mock_upload_file.call_count == 2
     mock_upload_file.assert_any_call(
-        bucket_name, packages[0].storage_location, str(packages[0].path)
+        str(packages[0].path), bucket_name, packages[0].storage_location
     )
     mock_upload_file.assert_any_call(
-        bucket_name, packages[1].storage_location, str(packages[1].path)
+        str(packages[1].path), bucket_name, packages[1].storage_location
     )
 
 

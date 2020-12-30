@@ -241,7 +241,7 @@ def upload_packages(notification: Notification, packages: library.PackageList) -
     """
     for package in packages:
         S3_CLIENT.upload_file(
-            notification.bucket_name, package.storage_location, str(package.path)
+            str(package.path), notification.bucket_name, package.storage_location
         )
 
 
