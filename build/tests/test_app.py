@@ -2,6 +2,7 @@
 
 import json
 import pathlib
+from unittest import mock
 
 import app
 import pytest
@@ -325,3 +326,24 @@ def test_parse_event():
 
     assert returned_notification.bucket_name == "bucket 1"
     assert returned_notification.object_key == "key 1"
+
+
+def test_retrieve_spec(tmp_path, monkeypatch):
+    """
+    GIVEN notification, build path and stubbed s3 download_file
+    WHEN retrieve_spec is called
+    THEN download_file was called with the correct parameters and the expected path is
+        returned.
+    """
+    bucket_name = "bucket1"
+    object_key = "key 1"
+    notification = app.Notification(bucket_name=bucket_name, object_key=object_key)
+    spec_path = tmp_path / "spec.json"
+    mock_download_file = mock.MagicMock()
+    monkeypatch.setattr(app.S3_CLIENT, "download_file", mock_download_file)
+
+    returned_path = app.retrieve_spec(notification, tmp_path)
+
+    assert str(returned_path) == str(spec_path)
+
+    mock_download_file.assert_called_once_with(bucket_name, object_key, str(spec_path))

@@ -7,6 +7,10 @@ import shutil
 import typing
 from urllib import parse
 
+import boto3
+
+S3_CLIENT = boto3.client("s3")
+
 
 def setup(directory: str) -> pathlib.Path:
     """
@@ -204,6 +208,36 @@ def parse_event(event: typing.Dict) -> Notification:
     return parse_notification(decoded_message)
 
 
+def retrieve_spec(notification: Notification, build_path: pathlib.Path) -> pathlib.Path:
+    """
+    Retrieve the spec from s3.
+
+    Args:
+        notification: The SNS notification with the bucket name and object key.
+        build_path: The path where the build is done.
+
+    Returns:
+        The path to the spec file.
+
+    """
+    spec_path = build_path / "spec.json"
+    S3_CLIENT.download_file(
+        notification.bucket_name,
+        notification.object_key,
+        str(spec_path),
+    )
+    return spec_path
+
+
 def main(event, context):
     """Handle request."""
     print({"event": event, "context": context})  # allow-print
+
+    build_path = setup("tmp")
+    print({"build_path": build_path})  # allow-print
+
+    notification = parse_notification(event)
+    print({"notification": notification})  # allow-print
+
+    spec_path = retrieve_spec(notification, build_path)
+    print({"spec_path": spec_path})  # allow-print
