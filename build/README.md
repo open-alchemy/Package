@@ -47,8 +47,7 @@ This is how the input to the application is mapped to the arguments of
 The application returns a list of data classes with the following properties:
 
 - `storage_location`: the location where the package needs to be stored and
-- `filename`: the name of the file where the package can be read from the local
-  disk.
+- `path`: the path where the package can be read from the local disk.
 
 ## AWS
 
