@@ -8,6 +8,7 @@ import typing
 from urllib import parse
 
 import boto3
+import library
 
 S3_CLIENT = boto3.client("s3")
 
@@ -241,3 +242,6 @@ def main(event, context):
 
     spec_path = retrieve_spec(notification, build_path)
     print({"spec_path": spec_path})  # allow-print
+
+    packages = library.generate(notification.object_key, spec_path)
+    print({"packages": packages})  # allow-print
