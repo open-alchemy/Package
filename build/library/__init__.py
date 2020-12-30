@@ -77,15 +77,11 @@ def generate(spec_storage_location: str, spec_path: pathlib.Path) -> PackageList
         spec_path,
         location.spec_id,
         str(dist_path),
-        open_alchemy.PackageFormat.SDIST | open_alchemy.PackageFormat.WHEEL,
+        open_alchemy.PackageFormat.SDIST,
     )
 
     tar_gz_path = next(dist_path.glob("**/*.tar.gz"))
     tar_gz_storage_location = f"{location.sub}/{location.spec_id}/{tar_gz_path.name}"
     tar_gz_package = Package(storage_location=tar_gz_storage_location, path=tar_gz_path)
 
-    wheel_path = next(dist_path.glob("**/*.whl"))
-    wheel_storage_location = f"{location.sub}/{location.spec_id}/{wheel_path.name}"
-    wheel_package = Package(storage_location=wheel_storage_location, path=wheel_path)
-
-    return [tar_gz_package, wheel_package]
+    return [tar_gz_package]

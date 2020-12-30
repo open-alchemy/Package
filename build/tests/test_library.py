@@ -55,9 +55,9 @@ def test_generate(tmp_path):
 
     returned_packages = library.generate(spec_storage_location, spec_path)
 
-    assert len(returned_packages) == 2
+    assert len(returned_packages) == 1
     seen_suffixes: typing.Set[str] = set()
-    for package in returned_packages:
+    for package in returned_packages[:1]:
         assert package.path.exists()
         assert str(package.path).startswith(str(tmp_path))
         assert "spec.json" not in str(package.path)

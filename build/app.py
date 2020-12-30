@@ -273,6 +273,23 @@ def spec_exists(notification: Notification) -> bool:
     return len(contents) == 1
 
 
+# def delete_packages_if_spec_deleted(
+#     spec_exists_result: bool, notification: Notification,
+#     packages: library.PackageList
+# ) -> None:
+#     """
+#     Conditionally delete the packages if the spec has been deleted.
+
+#     Args:
+#         spec_exists_result: The result of the check whether the spec exists.
+#         notification: The SNS notification.
+#         packages: The packages to delete.
+
+#     """
+#     if spec_exists_result:
+#         return
+
+
 def main(event, context):
     """Handle request."""
     print({"event": event, "context": context})  # allow-print
