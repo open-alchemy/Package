@@ -416,3 +416,25 @@ class Credentials(models.Model):
             salt=salt,
         )
         item.save()
+
+    @classmethod
+    def get_credentials(
+        cls, *, sub: types.TSub, id_: types.TCredentialsId
+    ) -> typing.Optional[types.TCredentialsInfo]:
+        """
+        Retrieve credentials.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+            id_: Unique identifier for the credentials.
+
+        Returns:
+            Information about the credentials.
+
+        """
+        try:
+            item = cls.get(hash_key=sub, range_key=id_)
+        except cls.DoesNotExist:
+            return None
+
+        return cls.item_to_info(item)

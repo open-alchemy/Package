@@ -187,3 +187,51 @@ def test_item_to_info():
     assert spec_info["id"] == item.id
     assert spec_info["public_key"] == item.public_key
     assert spec_info["salt"] == item.salt
+
+
+GET_CREDENTIALS_TESTS = [
+    pytest.param(
+        factory.CredentialsFactory(sub="sub 1", id="id 1"),
+        "sub 2",
+        "id 2",
+        None,
+        id="sub id miss",
+    ),
+    pytest.param(
+        factory.CredentialsFactory(sub="sub 1", id="id 1"),
+        "sub 2",
+        "id 1",
+        None,
+        id="sub miss",
+    ),
+    pytest.param(
+        factory.CredentialsFactory(sub="sub 1", id="id 1"),
+        "sub 1",
+        "id 2",
+        None,
+        id="id miss",
+    ),
+    pytest.param(
+        factory.CredentialsFactory(
+            sub="sub 1", id="id 1", public_key="public key 1", salt=b"salt 1"
+        ),
+        "sub 1",
+        "id 1",
+        {"id": "id 1", "public_key": "public key 1", "salt": b"salt 1"},
+        id="hit",
+    ),
+]
+
+
+@pytest.mark.parametrize("item, sub, id_, expected_info", GET_CREDENTIALS_TESTS)
+def test_get_credentials(item, sub, id_, expected_info):
+    """
+    GIVEN database with item, sub and id
+    WHEN get_credentials is called with the sub and id
+    THEN the expected info is returned.
+    """
+    item.save()
+
+    returned_info = models.Credentials.get_credentials(sub=sub, id_=id_)
+
+    assert returned_info == expected_info
