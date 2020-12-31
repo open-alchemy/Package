@@ -82,7 +82,8 @@ Algorithm:
 
 1. calculate the `secret_key_hash` using the credential helper,
 1. check whether an entry exists using the `public_key` partition key and
-   `secret_key_hash` sort key for the `publicSecretKey` global secondary index
+   `secret_key_hash` sort key for the `publicKeySecretKeyHash` global secondary
+   index
 1. if it does not exist, return `None` and
 1. retrieve and return the `sub`.
 
