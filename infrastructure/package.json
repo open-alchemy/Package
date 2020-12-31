@@ -11,7 +11,8 @@
     "cdk": "cdk",
     "deploy:api": "cdk deploy PackageApiStack --require-approval never",
     "deploy:web": "cdk deploy PackageWebStack --require-approval never",
-    "deploy:build": "cdk deploy PackageBuildStack --require-approval never"
+    "deploy:build": "cdk deploy PackageBuildStack --require-approval never",
+    "deploy:database": "cdk deploy PackageDatabaseStack --require-approval never"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.80.0",
