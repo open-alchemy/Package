@@ -71,6 +71,8 @@
     "**/app.component.ts",
     "**/karma.conf.js",
     "**/tsconfig.json",
-    "**/cypress/videos/**"
+    "**/cypress/videos/**",
+    "**/pyproject.toml",
+    "**/poetry.toml"
   ]
 }
