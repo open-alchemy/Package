@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "OpenAlchemy.package-database"
+name = "open-alchemy.package-database"
 version = "0.1.0"
 description = "Facade for the OpenAlchemy package database"
 readme = "README.md"

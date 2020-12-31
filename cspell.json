@@ -72,7 +72,7 @@
     "**/karma.conf.js",
     "**/tsconfig.json",
     "**/cypress/videos/**",
-    "**/pyproject.toml",
+    "**/poetry.lock",
     "**/poetry.toml"
   ]
 }
