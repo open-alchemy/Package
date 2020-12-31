@@ -269,7 +269,7 @@ Algorithm:
 
 - `sub`: A string that is the partition key of the table.
 - `id`: A string that is the sort key of the table.
-- `public_key`: A string that is the partition key of the `publicSecretKey`
+- `public_key`: A string that is the partition key of the `publicKey`
   global secondary index.
 - `secret_key_hash`: Bytes.
 - `salt`: Bytes.

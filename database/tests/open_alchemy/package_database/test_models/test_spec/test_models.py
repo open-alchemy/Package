@@ -6,7 +6,7 @@ from unittest import mock
 import pytest
 from open_alchemy.package_database import exceptions, factory, models
 
-PACKAGE_STORAGE_COUNT_CUSTOMER_MODELS_TESTS = [
+COUNT_CUSTOMER_MODELS_TESTS = [
     pytest.param([], "sub 2", 0, id="empty"),
     pytest.param(
         [factory.SpecFactory(sub="sub 1")],
@@ -99,10 +99,8 @@ PACKAGE_STORAGE_COUNT_CUSTOMER_MODELS_TESTS = [
 ]
 
 
-@pytest.mark.parametrize(
-    "items, sub, expected_count", PACKAGE_STORAGE_COUNT_CUSTOMER_MODELS_TESTS
-)
-def test_package_storage_count_customer_models(items, sub, expected_count):
+@pytest.mark.parametrize("items, sub, expected_count", COUNT_CUSTOMER_MODELS_TESTS)
+def test_count_customer_models(items, sub, expected_count):
     """
     GIVEN items in the database and sub
     WHEN count_customer_models on Spec is called with the sub
@@ -139,9 +137,7 @@ def test_package_storage_count_customer_models(items, sub, expected_count):
         ),
     ],
 )
-def test_package_storage_create_update_item_empty(
-    sub, id_, version, title, description, model_count
-):
+def test_create_update_item_empty(sub, id_, version, title, description, model_count):
     """
     GIVEN empty database, sub, spec id, version, title, description and model count
     WHEN create_update_item is called on Spec with the sub, spec id, version
@@ -204,7 +200,7 @@ def test_package_storage_create_update_item_empty(
     assert len(items) == 2
 
 
-def test_package_storage_create_update_item_single():
+def test_create_update_item_single():
     """
     GIVEN database that has a different record and sub and spec id
     WHEN create_update_item is called on Spec with the sub, spec id
@@ -251,7 +247,7 @@ def test_package_storage_create_update_item_single():
     assert len(items) == 3
 
 
-def test_package_storage_create_update_item_update(monkeypatch):
+def test_create_update_item_update(monkeypatch):
     """
     GIVEN empty database a sub and spec id and multiple model count and versions
     WHEN create_update_item is called on Spec multiple times with the same
@@ -320,7 +316,7 @@ def test_package_storage_create_update_item_update(monkeypatch):
     assert len(items) == 3
 
 
-PACKAGE_STORAGE_get_latest_spec_version_NOT_FOUND_TESTS = [
+get_latest_spec_version_NOT_FOUND_TESTS = [
     pytest.param([], "sub 1", "spec id 1", id="empty"),
     pytest.param(
         [
@@ -361,10 +357,8 @@ PACKAGE_STORAGE_get_latest_spec_version_NOT_FOUND_TESTS = [
 ]
 
 
-@pytest.mark.parametrize(
-    "items, sub, id_", PACKAGE_STORAGE_get_latest_spec_version_NOT_FOUND_TESTS
-)
-def test_package_storage_get_latest_spec_version_not_found(items, sub, id_):
+@pytest.mark.parametrize("items, sub, id_", get_latest_spec_version_NOT_FOUND_TESTS)
+def test_get_latest_spec_version_not_found(items, sub, id_):
     """
     GIVEN items in the database and sub and spec id
     WHEN get_latest_spec_version is called on Spec with the sub and spec id
@@ -380,7 +374,7 @@ def test_package_storage_get_latest_spec_version_not_found(items, sub, id_):
     assert id_ in str(exc)
 
 
-PACKAGE_STORAGE_get_latest_spec_version_TESTS = [
+get_latest_spec_version_TESTS = [
     pytest.param(
         [
             factory.SpecFactory(
@@ -440,9 +434,9 @@ PACKAGE_STORAGE_get_latest_spec_version_TESTS = [
 
 @pytest.mark.parametrize(
     "items, sub, id_, expected_version",
-    PACKAGE_STORAGE_get_latest_spec_version_TESTS,
+    get_latest_spec_version_TESTS,
 )
-def test_package_storage_get_latest_spec_version(items, sub, id_, expected_version):
+def test_get_latest_spec_version(items, sub, id_, expected_version):
     """
     GIVEN items in the database and sub and spec id
     WHEN get_latest_spec_version is called on Spec with the sub and spec id
@@ -456,7 +450,7 @@ def test_package_storage_get_latest_spec_version(items, sub, id_, expected_versi
     assert returned_version == expected_version
 
 
-PACKAGE_STORAGE_LIST_SPECS_TESTS = [
+LIST_SPECS_TESTS = [
     pytest.param([], "sub 1", [], id="empty"),
     pytest.param(
         [
@@ -547,10 +541,8 @@ PACKAGE_STORAGE_LIST_SPECS_TESTS = [
 ]
 
 
-@pytest.mark.parametrize(
-    "items, sub, expected_idx_list", PACKAGE_STORAGE_LIST_SPECS_TESTS
-)
-def test_package_storage_list_specs(items, sub, expected_idx_list):
+@pytest.mark.parametrize("items, sub, expected_idx_list", LIST_SPECS_TESTS)
+def test_list_specs(items, sub, expected_idx_list):
     """
     GIVEN items in the database and sub
     WHEN list_specs is called on Spec with the sub
@@ -563,7 +555,7 @@ def test_package_storage_list_specs(items, sub, expected_idx_list):
 
     expected_spec_info = list(
         map(
-            models.Spec.item_to_spec_info,
+            models.Spec.item_to_info,
             map(lambda idx: items[idx], expected_idx_list),
         )
     )
@@ -585,7 +577,7 @@ def test_package_storage_list_specs(items, sub, expected_idx_list):
         ),
     ],
 )
-def test_item_to_spec_info(title, description, expected_spec_info):
+def test_item_to_info(title, description, expected_spec_info):
     """
     GIVEN title and description
     WHEN Spec is constructed with the title and description
@@ -597,12 +589,12 @@ def test_item_to_spec_info(title, description, expected_spec_info):
     expected_spec_info["model_count"] = item.model_count
     expected_spec_info["updated_at"] = int(item.updated_at)
 
-    spec_info = models.Spec.item_to_spec_info(item)
+    spec_info = models.Spec.item_to_info(item)
 
     assert spec_info == expected_spec_info
 
 
-PACKAGE_STORAGE_DELETE_SPEC_TESTS = [
+DELETE_SPEC_TESTS = [
     pytest.param([], "sub 1", "spec id 1", 0, id="empty"),
     pytest.param(
         [
@@ -718,10 +710,8 @@ PACKAGE_STORAGE_DELETE_SPEC_TESTS = [
 ]
 
 
-@pytest.mark.parametrize(
-    "items, sub, id_, expected_item_count", PACKAGE_STORAGE_DELETE_SPEC_TESTS
-)
-def test_package_storage_delete_spec(items, sub, id_, expected_item_count):
+@pytest.mark.parametrize("items, sub, id_, expected_item_count", DELETE_SPEC_TESTS)
+def test_delete_spec(items, sub, id_, expected_item_count):
     """
     GIVEN items in the database and sub and spec id
     WHEN delete_spec is called on Spec with the sub and spec id
@@ -735,7 +725,7 @@ def test_package_storage_delete_spec(items, sub, id_, expected_item_count):
     assert len(list(models.Spec.scan())) == expected_item_count
 
 
-PACKAGE_STORAGE_LIST_SPEC_VERSIONS_TESTS = [
+LIST_SPEC_VERSIONS_TESTS = [
     pytest.param([], "sub 1", "spec id 1", [], id="empty"),
     pytest.param(
         [
@@ -900,9 +890,9 @@ PACKAGE_STORAGE_LIST_SPEC_VERSIONS_TESTS = [
 
 @pytest.mark.parametrize(
     "items, sub, id_, expected_idx_list",
-    PACKAGE_STORAGE_LIST_SPEC_VERSIONS_TESTS,
+    LIST_SPEC_VERSIONS_TESTS,
 )
-def test_package_storage_list_spec_versions(items, sub, id_, expected_idx_list):
+def test_list_spec_versions(items, sub, id_, expected_idx_list):
     """
     GIVEN items in the database and sub and spec id
     WHEN list_spec_versions is called on Spec with the sub and spec id
@@ -915,7 +905,7 @@ def test_package_storage_list_spec_versions(items, sub, id_, expected_idx_list):
 
     expected_spec_info = list(
         map(
-            models.Spec.item_to_spec_info,
+            models.Spec.item_to_info,
             map(lambda idx: items[idx], expected_idx_list),
         )
     )

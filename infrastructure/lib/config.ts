@@ -26,7 +26,7 @@ export const CONFIG = {
     },
     credentials: {
       tableName: 'package.credentials',
-      globalSecondaryIndexName: 'publicKeySecretKeyHash',
+      globalSecondaryIndexName: 'publicKey',
     },
   },
 };

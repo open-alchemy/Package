@@ -230,19 +230,19 @@ class Spec(models.Model):
             ) from exc
 
     @staticmethod
-    def item_to_spec_info(item: "Spec") -> types.TSpecInfo:
+    def item_to_info(item: "Spec") -> types.TSpecInfo:
         """Convert item to dict with information about the spec."""
-        spec_info: types.TSpecInfo = {
+        info: types.TSpecInfo = {
             "id": item.id,
             "updated_at": int(item.updated_at),
             "version": item.version,
             "model_count": int(item.model_count),
         }
         if item.title is not None:
-            spec_info["title"] = item.title
+            info["title"] = item.title
         if item.description is not None:
-            spec_info["description"] = item.description
-        return spec_info
+            info["description"] = item.description
+        return info
 
     @classmethod
     def list_specs(cls, *, sub: types.TSub) -> types.TSpecInfoList:
@@ -260,7 +260,7 @@ class Spec(models.Model):
         """
         return list(
             map(
-                cls.item_to_spec_info,
+                cls.item_to_info,
                 cls.query(
                     sub,
                     cls.updated_at_id.startswith(f"{cls.UPDATED_AT_LATEST}#"),
@@ -310,4 +310,79 @@ class Spec(models.Model):
             lambda item: not item.updated_at_id.startswith(f"{cls.UPDATED_AT_LATEST}#"),
             items,
         )
-        return list(map(cls.item_to_spec_info, items_no_latest))
+        return list(map(cls.item_to_info, items_no_latest))
+
+
+class PublicKeyIndex(indexes.GlobalSecondaryIndex):
+    """Global secondary index for querying based on the public key."""
+
+    class Meta:
+        """Meta class."""
+
+        projection = indexes.AllProjection()
+        index_name = config.get().credentials_global_secondary_index_name
+
+        if config.get().stage == config.Stage.TEST:
+            host = "http://localhost:8000"
+            read_capacity_units = 1
+            write_capacity_units = 1
+
+    public_key = attributes.UnicodeAttribute(hash_key=True)
+
+
+class Credentials(models.Model):
+    """
+    Information about credentials.
+
+    Attrs:
+        sub: Unique identifier for a customer
+        id: Unique identifier for particular credentials
+
+        public_key: Public identifier for the credentials.
+        secret_key_hash: Value derived from the secret key that is safe to store.
+        salt: Random value used to generate the credentials.
+
+    """
+
+    class Meta:
+        """Meta class."""
+
+        table_name = config.get().specs_table_name
+
+        if config.get().stage == config.Stage.TEST:
+            host = "http://localhost:8000"
+
+    sub = attributes.UnicodeAttribute(hash_key=True)
+    id = attributes.UnicodeAttribute(range_key=True)
+
+    public_key = attributes.UnicodeAttribute()
+    secret_key_hash = attributes.BinaryAttribute()
+    salt = attributes.BinaryAttribute()
+
+    public_key_index = PublicKeyIndex()
+
+    @staticmethod
+    def item_to_info(item: "Credentials") -> types.TCredentialsInfo:
+        """Convert item to dict with information about the credentials."""
+        info: types.TCredentialsInfo = {
+            "id": item.id,
+            "public_key": item.public_key,
+            "salt": item.salt,
+        }
+        return info
+
+    @classmethod
+    def list_credentials(cls, *, sub: types.TSub) -> types.TCredentialsInfoList:
+        """
+        List all available credentials for a user.
+
+        Filters for a customer and returns all credentials.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+
+        Returns:
+            List of information for all credentials of the customer.
+
+        """
+        return list(map(cls.item_to_info, cls.query(sub)))

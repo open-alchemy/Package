@@ -45,3 +45,19 @@ class SpecFactory(factory.Factory):
             id_=spec_calc_id(n),
         ).id_updated_at
     )
+
+
+class CredentialsFactory(factory.Factory):
+    """Factory for Credentials model."""
+
+    class Meta:
+        """Meta class."""
+
+        model = models.Credentials
+
+    sub = factory.Sequence(lambda n: f"sub {n}")
+    id = factory.Sequence(lambda n: f"credentials id {n}")
+
+    public_key = factory.Sequence(lambda n: f"public key {n}")
+    secret_key_hash = factory.Sequence(lambda n: f"secret key hash {n}".encode())
+    salt = factory.Sequence(lambda n: f"salt {n}".encode())

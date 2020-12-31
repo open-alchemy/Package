@@ -70,3 +70,26 @@ def _clean_spec_table(_spec_table):
     with models.Spec.batch_write() as batch:
         for item in models.Spec.scan():
             batch.delete(item)
+
+
+@pytest.fixture(scope="session")
+def _credentials_table(_database):
+    """Create the package-storage table and empty it after every test."""
+    assert not models.Credentials.exists()
+    models.Credentials.create_table(
+        read_capacity_units=1,
+        write_capacity_units=1,
+        wait=True,
+    )
+
+    yield
+
+
+@pytest.fixture()
+def _clean_credentials_table(_credentials_table):
+    """Create the package-storage table and empty it after every test."""
+    yield
+
+    with models.Credentials.batch_write() as batch:
+        for item in models.Credentials.scan():
+            batch.delete(item)
