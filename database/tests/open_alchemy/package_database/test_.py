@@ -1,6 +1,6 @@
 """Placeholder tests."""
 
 
-def test_():
+def test_(_database):
     """Placeholder test."""
     assert True
