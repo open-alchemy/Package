@@ -1,4 +1,5 @@
 """Database models."""
+# pylint: disable=redefined-builtin
 
 import time
 import typing
@@ -7,54 +8,43 @@ from pynamodb import attributes, indexes, models
 
 from . import config, exceptions, types
 
-TPackageStoreSub = types.TSub
-TPackageStoreSpecId = types.TSpecId
-TPackageStoreUpdatedAt = types.TUpdatedAt
-
-TPackageStoreVersion = types.TVersion
-TPackageStoreTitle = types.TTitle
-TPackageStoreOptTitle = types.TOptTitle
-TPackageStoreDescription = types.TDescription
-TPackageStoreOptDescription = types.TOptDescription
-TPackageStoreModelCount = types.TModelCount
-
-TPackageStoreUpdatedAtSpecId = str
-TPackageStoreSpecIdUpdatedAt = str
+TSpecUpdatedAtSpecId = str
+TSpecSpecIdUpdatedAt = str
 
 
-class TPackageStoreIndexValues(typing.NamedTuple):
-    """The index values for PackageStore."""
+class TSpecIndexValues(typing.NamedTuple):
+    """The index values for Spec."""
 
-    updated_at_spec_id: TPackageStoreUpdatedAtSpecId
-    spec_id_updated_at: TPackageStoreSpecIdUpdatedAt
+    updated_at_id: TSpecUpdatedAtSpecId
+    id_updated_at: TSpecSpecIdUpdatedAt
 
 
 class SpecIdUpdatedAtIndex(indexes.LocalSecondaryIndex):
-    """Local secondary index for querying based on spec_id."""
+    """Local secondary index for querying based on id."""
 
     class Meta:
         """Meta class."""
 
         projection = indexes.AllProjection()
-        index_name = config.get_env().package_database_storage_index_name
+        index_name = config.get().specs_local_secondary_index_name
 
-        if config.get_env().stage == config.Stage.TEST:
+        if config.get().stage == config.Stage.TEST:
             host = "http://localhost:8000"
 
     sub = attributes.UnicodeAttribute(hash_key=True)
-    spec_id_updated_at = attributes.UnicodeAttribute(range_key=True)
+    id_updated_at = attributes.UnicodeAttribute(range_key=True)
 
 
-class PackageStorage(models.Model):
+class Spec(models.Model):
     """
-    Information about a package.
+    Information about a spec.
 
     Attrs:
         UPDATED_AT_LATEST: Constant for what to set updated_at to to indicate it is the
             latest record
 
         sub: Unique identifier for a customer
-        spec_id: Unique identifier for a spec for a package
+        id: Unique identifier for a spec for a package
         updated_at: The last time the spec version was updated in integer seconds since
             epoch stored as a string or 'latest' for the copy of the latest version of
             the spec.
@@ -64,10 +54,10 @@ class PackageStorage(models.Model):
         description: The description of a spec
         model_count: The number of 'x-tablename' and 'x-inherits' in a spec
 
-        updated_at_spec_id: Combination of 'updated_at' and 'spec_id' separeted with #
-        spec_id_updated_at: Combination of 'spec_id' and 'updated_at' separeted with #
+        updated_at_id: Combination of 'updated_at' and 'id' separeted with #
+        id_updated_at: Combination of 'id' and 'updated_at' separeted with #
 
-        spec_id_updated_at_index: Index for querying spec_id_updated_at efficiently
+        id_updated_at_index: Index for querying id_updated_at efficiently
 
     """
 
@@ -76,13 +66,13 @@ class PackageStorage(models.Model):
     class Meta:
         """Meta class."""
 
-        table_name = config.get_env().package_database_storage_table_name
+        table_name = config.get().specs_table_name
 
-        if config.get_env().stage == config.Stage.TEST:
+        if config.get().stage == config.Stage.TEST:
             host = "http://localhost:8000"
 
     sub = attributes.UnicodeAttribute(hash_key=True)
-    spec_id = attributes.UnicodeAttribute()
+    id = attributes.UnicodeAttribute()
     updated_at = attributes.UnicodeAttribute()
 
     version = attributes.UnicodeAttribute()
@@ -90,17 +80,17 @@ class PackageStorage(models.Model):
     description = attributes.UnicodeAttribute(null=True)
     model_count = attributes.NumberAttribute()
 
-    updated_at_spec_id = attributes.UnicodeAttribute(range_key=True)
-    spec_id_updated_at = attributes.UnicodeAttribute()
+    updated_at_id = attributes.UnicodeAttribute(range_key=True)
+    id_updated_at = attributes.UnicodeAttribute()
 
-    spec_id_updated_at_index = SpecIdUpdatedAtIndex()
+    id_updated_at_index = SpecIdUpdatedAtIndex()
 
     @classmethod
-    def count_customer_models(cls, *, sub: TPackageStoreSub) -> int:
+    def count_customer_models(cls, *, sub: types.TSub) -> int:
         """
         Count the number of models on the latest specs for a customer.
 
-        Filters for a particular customer and updated_at_spec_id to start with
+        Filters for a particular customer and updated_at_id to start with
         'latest#' and sums over model_count.
 
         Args:
@@ -116,57 +106,57 @@ class PackageStorage(models.Model):
                 lambda item: int(item.model_count),
                 cls.query(
                     sub,
-                    cls.updated_at_spec_id.startswith(f"{cls.UPDATED_AT_LATEST}#"),
+                    cls.updated_at_id.startswith(f"{cls.UPDATED_AT_LATEST}#"),
                 ),
             )
         )
 
     @classmethod
     def calc_index_values(
-        cls, *, updated_at: TPackageStoreUpdatedAt, spec_id: TPackageStoreSpecId
-    ) -> TPackageStoreIndexValues:
+        cls, *, updated_at: types.TSpecUpdatedAt, id: types.TSpecId
+    ) -> TSpecIndexValues:
         """
-        Calculate the updated_at_spec_id value.
+        Calculate the updated_at_id value.
 
         Args:
             updated_at: The value for updated_at
-            spec_id: The value for spec_id
+            id: The value for id
 
         Returns:
-            The value for updated_at_spec_id
+            The value for updated_at_id
 
         """
         # Zero pad updated_at if it is not latest
         if updated_at != cls.UPDATED_AT_LATEST:
             updated_at = updated_at.zfill(20)
 
-        return TPackageStoreIndexValues(
-            updated_at_spec_id=f"{updated_at}#{spec_id}",
-            spec_id_updated_at=f"{spec_id}#{updated_at}",
+        return TSpecIndexValues(
+            updated_at_id=f"{updated_at}#{id}",
+            id_updated_at=f"{id}#{updated_at}",
         )
 
     @classmethod
     def create_update_item(
         cls,
         *,
-        sub: TPackageStoreSub,
-        spec_id: TPackageStoreSpecId,
-        version: TPackageStoreVersion,
-        model_count: TPackageStoreModelCount,
-        title: TPackageStoreOptTitle = None,
-        description: TPackageStoreOptDescription = None,
+        sub: types.TSub,
+        id: types.TSpecId,
+        version: types.TSpecVersion,
+        model_count: types.TSpecModelCount,
+        title: types.TSpecTitle = None,
+        description: types.TSpecDescription = None,
     ) -> None:
         """
         Create or update an item.
 
         Creates or updates 2 items in the database. The updated_at attribute for the
         first is calculated based on seconds since epoch and for the second is set to
-        'latest'. Also computes the sort key updated_at_spec_id based on updated_at and
-        spec_id.
+        'latest'. Also computes the sort key updated_at_id based on updated_at and
+        id.
 
         Args:
             sub: Unique identifier for a cutsomer.
-            spec_id: Unique identifier for the spec for a package.
+            id: Unique identifier for the spec for a package.
             version: The version of the spec.
             model_count: The number of models in the spec.
             title: The title of a spec
@@ -175,53 +165,51 @@ class PackageStorage(models.Model):
         """
         # Write item
         updated_at = str(int(time.time()))
-        index_values = cls.calc_index_values(updated_at=updated_at, spec_id=spec_id)
+        index_values = cls.calc_index_values(updated_at=updated_at, id=id)
         item = cls(
             sub=sub,
-            spec_id=spec_id,
+            id=id,
             updated_at=updated_at,
             version=version,
             title=title,
             description=description,
             model_count=model_count,
-            updated_at_spec_id=index_values.updated_at_spec_id,
-            spec_id_updated_at=index_values.spec_id_updated_at,
+            updated_at_id=index_values.updated_at_id,
+            id_updated_at=index_values.id_updated_at,
         )
         item.save()
 
         # Write latest item
         updated_at_latest = cls.UPDATED_AT_LATEST
-        index_values_latest = cls.calc_index_values(
-            updated_at=updated_at_latest, spec_id=spec_id
-        )
+        index_values_latest = cls.calc_index_values(updated_at=updated_at_latest, id=id)
         item_latest = cls(
             sub=sub,
-            spec_id=spec_id,
+            id=id,
             version=version,
             updated_at=updated_at,
             title=title,
             description=description,
             model_count=model_count,
-            updated_at_spec_id=index_values_latest.updated_at_spec_id,
-            spec_id_updated_at=index_values_latest.spec_id_updated_at,
+            updated_at_id=index_values_latest.updated_at_id,
+            id_updated_at=index_values_latest.id_updated_at,
         )
         item_latest.save()
 
     @classmethod
     def get_latest_spec_version(
-        cls, *, sub: TPackageStoreSub, spec_id: TPackageStoreSpecId
-    ) -> TPackageStoreVersion:
+        cls, *, sub: types.TSub, id: types.TSpecId
+    ) -> types.TSpecVersion:
         """
         Get the latest version for a spec.
 
         Raises NotFoundError if the spec is not found in the database.
 
-        Calculates updated_at_spec_id by setting updated_at to latest and using the
-        spec_id. Tries to retrieve an item for a customer based on the sort key.
+        Calculates updated_at_id by setting updated_at to latest and using the
+        id. Tries to retrieve an item for a customer based on the sort key.
 
         Args:
             sub: Unique identifier for a cutsomer.
-            spec_id: Unique identifier for the spec for a package.
+            id: Unique identifier for the spec for a package.
 
         Returns:
             The latest version of the spec.
@@ -231,20 +219,20 @@ class PackageStorage(models.Model):
             item = cls.get(
                 hash_key=sub,
                 range_key=cls.calc_index_values(
-                    updated_at=cls.UPDATED_AT_LATEST, spec_id=spec_id
-                ).updated_at_spec_id,
+                    updated_at=cls.UPDATED_AT_LATEST, id=id
+                ).updated_at_id,
             )
             return item.version
         except cls.DoesNotExist as exc:
             raise exceptions.NotFoundError(
-                f"the spec {spec_id} does not exist for customer {sub}"
+                f"the spec {id} does not exist for customer {sub}"
             ) from exc
 
     @staticmethod
-    def item_to_spec_info(item: "PackageStorage") -> types.TSpecInfo:
+    def item_to_spec_info(item: "Spec") -> types.TSpecInfo:
         """Convert item to dict with information about the spec."""
         spec_info: types.TSpecInfo = {
-            "spec_id": item.spec_id,
+            "id": item.id,
             "updated_at": int(item.updated_at),
             "version": item.version,
             "model_count": int(item.model_count),
@@ -256,11 +244,11 @@ class PackageStorage(models.Model):
         return spec_info
 
     @classmethod
-    def list_specs(cls, *, sub: TPackageStoreSub) -> types.TSpecInfoList:
+    def list_specs(cls, *, sub: types.TSub) -> types.TSpecInfoList:
         """
         List all available specs for a customer.
 
-        Filters for a customer and for updated_at_spec_id to start with latest.
+        Filters for a customer and for updated_at_id to start with latest.
 
         Args:
             sub: Unique identifier for a cutsomer.
@@ -274,25 +262,23 @@ class PackageStorage(models.Model):
                 cls.item_to_spec_info,
                 cls.query(
                     sub,
-                    cls.updated_at_spec_id.startswith(f"{cls.UPDATED_AT_LATEST}#"),
+                    cls.updated_at_id.startswith(f"{cls.UPDATED_AT_LATEST}#"),
                 ),
             )
         )
 
     @classmethod
-    def delete_spec(
-        cls, *, sub: TPackageStoreSub, spec_id: TPackageStoreSpecId
-    ) -> None:
+    def delete_spec(cls, *, sub: types.TSub, id: types.TSpecId) -> None:
         """
         Delete a spec from the database.
 
         Args:
             sub: Unique identifier for a cutsomer.
-            spec_id: Unique identifier for the spec for a package.
+            id: Unique identifier for the spec for a package.
 
         """
-        items = cls.spec_id_updated_at_index.query(
-            sub, cls.spec_id_updated_at.startswith(f"{spec_id}#")
+        items = cls.id_updated_at_index.query(
+            sub, cls.id_updated_at.startswith(f"{id}#")
         )
         with cls.batch_write() as batch:
             for item in items:
@@ -300,29 +286,27 @@ class PackageStorage(models.Model):
 
     @classmethod
     def list_spec_versions(
-        cls, *, sub: TPackageStoreSub, spec_id: TPackageStoreSpecId
+        cls, *, sub: types.TSub, id: types.TSpecId
     ) -> types.TSpecInfoList:
         """
         List all available versions for a spec for a customer.
 
-        Filters for a customer and for updated_at_spec_id to start with latest.
+        Filters for a customer and for updated_at_id to start with latest.
 
         Args:
             sub: Unique identifier for a cutsomer.
-            spec_id: Unique identifier for the spec for a package.
+            id: Unique identifier for the spec for a package.
 
         Returns:
             List of information for all versions of a spec for the customer.
 
         """
-        items = cls.spec_id_updated_at_index.query(
+        items = cls.id_updated_at_index.query(
             sub,
-            cls.spec_id_updated_at.startswith(f"{spec_id}#"),
+            cls.id_updated_at.startswith(f"{id}#"),
         )
         items_no_latest = filter(
-            lambda item: not item.updated_at_spec_id.startswith(
-                f"{cls.UPDATED_AT_LATEST}#"
-            ),
+            lambda item: not item.updated_at_id.startswith(f"{cls.UPDATED_AT_LATEST}#"),
             items,
         )
         return list(map(cls.item_to_spec_info, items_no_latest))

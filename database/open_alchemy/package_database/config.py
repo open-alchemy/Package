@@ -37,7 +37,7 @@ class TConfig:
     credentials_global_secondary_index_name: str
 
 
-def _get_config() -> TConfig:
+def _get() -> TConfig:
     """Read the configuration variables."""
     stage_key = "STAGE"
     stage_str = os.getenv(stage_key, Stage.TEST.value)
@@ -62,10 +62,10 @@ def _get_config() -> TConfig:
     )
 
 
-_CONFIG = _get_config()
+_CONFIG = _get()
 
 
-def get_config() -> TConfig:
+def get() -> TConfig:
     """
     Get the value of configuration variables.
 

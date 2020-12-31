@@ -12,7 +12,7 @@ TSpecTitle = str
 TOptSpecTitle = typing.Optional[TSpecTitle]
 TSpecDescription = str
 TOptSpecDescription = typing.Optional[TSpecDescription]
-TUpdatedAt = str
+TSpecUpdatedAt = str
 TSpecModelCount = int
 
 TCredentialsId = str

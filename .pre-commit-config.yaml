@@ -35,6 +35,12 @@ repos:
         name: mypy (api)
         files: ^api/
       - id: mypy
+        name: mypy (build)
+        files: ^build/
+      - id: mypy
+        name: mypy (database)
+        files: ^database/
+      - id: mypy
         name: mypy (test api)
         files: ^test/api
   - repo: https://github.com/pre-commit/mirrors-pylint
