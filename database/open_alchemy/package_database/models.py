@@ -347,7 +347,7 @@ class Credentials(models.Model):
     class Meta:
         """Meta class."""
 
-        table_name = config.get().specs_table_name
+        table_name = config.get().credentials_table_name
 
         if config.get().stage == config.Stage.TEST:
             host = "http://localhost:8000"
@@ -386,3 +386,33 @@ class Credentials(models.Model):
 
         """
         return list(map(cls.item_to_info, cls.query(sub)))
+
+    @classmethod
+    def create_update_item(
+        cls,
+        *,
+        sub: types.TSub,
+        id_: types.TCredentialsId,
+        public_key: types.TCredentialsPublicKey,
+        secret_key_hash: types.TCredentialsSecretKeyHash,
+        salt: types.TCredentialsSalt,
+    ) -> None:
+        """
+        Create or update a spec.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+            id_: Unique identifier for the credentials.
+            public_key: Public identifier for the credentials.
+            secret_key_hash: Value derived from the secret key that is safe to store.
+            salt: Random value used to generate the credentials.
+
+        """
+        item = cls(
+            sub=sub,
+            id=id_,
+            public_key=public_key,
+            secret_key_hash=secret_key_hash,
+            salt=salt,
+        )
+        item.save()

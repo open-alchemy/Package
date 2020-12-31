@@ -48,6 +48,20 @@ class TSpecInfo(_TSpecInfoBase, total=True):
 TSpecInfoList = typing.List[TSpecInfo]
 
 
+class TCheckWouldExceedFreeTierReturn(typing.NamedTuple):
+    """
+    The return value of the free tier check.
+
+    Attrs:
+        result: Whether the free tier would be exceeded
+        reason: If the result is True, the reason that it would be
+
+    """
+
+    result: bool
+    reason: typing.Optional[str]
+
+
 class TCredentialsInfo(typing.TypedDict, total=True):
     """
     All information about particular credentials.
@@ -82,20 +96,6 @@ class CredentialsAuthInfo:
     sub: TSub
     secret_key_hash: TCredentialsSecretKeyHash
     salt: TCredentialsSalt
-
-
-class TCheckWouldExceedFreeTierReturn(typing.NamedTuple):
-    """
-    The return value of the free tier check.
-
-    Attrs:
-        result: Whether the free tier would be exceeded
-        reason: If the result is True, the reason that it would be
-
-    """
-
-    result: bool
-    reason: typing.Optional[str]
 
 
 class TDatabase(typing.Protocol):
@@ -233,7 +233,7 @@ class TDatabase(typing.Protocol):
         ...
 
     @staticmethod
-    def create_update_credentials(
+    def create_update_item(
         *,
         sub: TSub,
         id_: TCredentialsId,

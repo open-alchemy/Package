@@ -51,7 +51,7 @@ def _database():
 
 @pytest.fixture(scope="session")
 def _spec_table(_database):
-    """Create the package-storage table and empty it after every test."""
+    """Create the spec table and empty it after every test."""
     assert not models.Spec.exists()
     models.Spec.create_table(
         read_capacity_units=1,
@@ -64,7 +64,7 @@ def _spec_table(_database):
 
 @pytest.fixture()
 def _clean_spec_table(_spec_table):
-    """Create the package-storage table and empty it after every test."""
+    """Create the spec table and empty it after every test."""
     yield
 
     with models.Spec.batch_write() as batch:
@@ -74,7 +74,7 @@ def _clean_spec_table(_spec_table):
 
 @pytest.fixture(scope="session")
 def _credentials_table(_database):
-    """Create the package-storage table and empty it after every test."""
+    """Create the credentials table and empty it after every test."""
     assert not models.Credentials.exists()
     models.Credentials.create_table(
         read_capacity_units=1,
@@ -87,7 +87,7 @@ def _credentials_table(_database):
 
 @pytest.fixture()
 def _clean_credentials_table(_credentials_table):
-    """Create the package-storage table and empty it after every test."""
+    """Create the credentials table and empty it after every test."""
     yield
 
     with models.Credentials.batch_write() as batch:
