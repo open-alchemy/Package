@@ -37,7 +37,7 @@ class SpecIdUpdatedAtIndex(indexes.LocalSecondaryIndex):
         """Meta class."""
 
         projection = indexes.AllProjection()
-        index_name = config.get_env().package_database_index_name
+        index_name = config.get_env().package_database_storage_index_name
 
         if config.get_env().stage == config.Stage.TEST:
             host = "http://localhost:8000"
@@ -77,7 +77,7 @@ class PackageStorage(models.Model):
     class Meta:
         """Meta class."""
 
-        table_name = config.get_env().package_database_table_name
+        table_name = config.get_env().package_database_storage_table_name
 
         if config.get_env().stage == config.Stage.TEST:
             host = "http://localhost:8000"

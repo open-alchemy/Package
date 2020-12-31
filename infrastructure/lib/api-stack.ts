@@ -42,7 +42,7 @@ export class ApiStack extends cdk.Stack {
     // Database for the packages
     const table = new dynamodb.Table(this, 'Table', {
       partitionKey: { name: 'sub', type: dynamodb.AttributeType.STRING },
-      tableName: CONFIG.database.tableName,
+      tableName: CONFIG.database.storageTableName,
       sortKey: {
         name: 'updated_at_spec_id',
         type: dynamodb.AttributeType.STRING,
@@ -75,8 +75,8 @@ export class ApiStack extends cdk.Stack {
         ACCESS_CONTROL_ALLOW_ORIGIN: '*',
         ACCESS_CONTROL_ALLOW_HEADERS: 'x-language',
         PACKAGE_STORAGE_BUCKET_NAME: CONFIG.storage.bucketName,
-        PACKAGE_DATABASE_TABLE_NAME: CONFIG.database.tableName,
-        PACKAGE_DATABASE_INDEX_NAME: CONFIG.database.indexName,
+        PACKAGE_DATABASE_STORAGE_TABLE_NAME: CONFIG.database.storageTableName,
+        PACKAGE_DATABASE_STORAGE_INDEX_NAME: CONFIG.database.storageIndexName,
       },
       logRetention: logs.RetentionDays.ONE_WEEK,
       timeout: cdk.Duration.seconds(10),

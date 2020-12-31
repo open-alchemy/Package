@@ -16,7 +16,7 @@ export const CONFIG = {
     topicName: 'package-storage-object-created-json',
   },
   database: {
-    tableName: 'package-storage',
-    indexName: 'specIdUpdatedAt',
+    storageTableName: 'package-storage',
+    storageIndexName: 'specIdUpdatedAt',
   },
 };
