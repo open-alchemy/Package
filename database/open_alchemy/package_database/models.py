@@ -1,5 +1,4 @@
 """Database models."""
-# pylint: disable=redefined-builtin
 
 import time
 import typing
@@ -113,14 +112,14 @@ class Spec(models.Model):
 
     @classmethod
     def calc_index_values(
-        cls, *, updated_at: types.TSpecUpdatedAt, id: types.TSpecId
+        cls, *, updated_at: types.TSpecUpdatedAt, id_: types.TSpecId
     ) -> TSpecIndexValues:
         """
         Calculate the updated_at_id value.
 
         Args:
             updated_at: The value for updated_at
-            id: The value for id
+            id_: The value for id
 
         Returns:
             The value for updated_at_id
@@ -131,8 +130,8 @@ class Spec(models.Model):
             updated_at = updated_at.zfill(20)
 
         return TSpecIndexValues(
-            updated_at_id=f"{updated_at}#{id}",
-            id_updated_at=f"{id}#{updated_at}",
+            updated_at_id=f"{updated_at}#{id_}",
+            id_updated_at=f"{id_}#{updated_at}",
         )
 
     @classmethod
@@ -140,7 +139,7 @@ class Spec(models.Model):
         cls,
         *,
         sub: types.TSub,
-        id: types.TSpecId,
+        id_: types.TSpecId,
         version: types.TSpecVersion,
         model_count: types.TSpecModelCount,
         title: types.TSpecTitle = None,
@@ -156,7 +155,7 @@ class Spec(models.Model):
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id: Unique identifier for the spec for a package.
+            id_: Unique identifier for the spec for a package.
             version: The version of the spec.
             model_count: The number of models in the spec.
             title: The title of a spec
@@ -165,10 +164,10 @@ class Spec(models.Model):
         """
         # Write item
         updated_at = str(int(time.time()))
-        index_values = cls.calc_index_values(updated_at=updated_at, id=id)
+        index_values = cls.calc_index_values(updated_at=updated_at, id_=id_)
         item = cls(
             sub=sub,
-            id=id,
+            id=id_,
             updated_at=updated_at,
             version=version,
             title=title,
@@ -181,10 +180,12 @@ class Spec(models.Model):
 
         # Write latest item
         updated_at_latest = cls.UPDATED_AT_LATEST
-        index_values_latest = cls.calc_index_values(updated_at=updated_at_latest, id=id)
+        index_values_latest = cls.calc_index_values(
+            updated_at=updated_at_latest, id_=id_
+        )
         item_latest = cls(
             sub=sub,
-            id=id,
+            id=id_,
             version=version,
             updated_at=updated_at,
             title=title,
@@ -197,7 +198,7 @@ class Spec(models.Model):
 
     @classmethod
     def get_latest_spec_version(
-        cls, *, sub: types.TSub, id: types.TSpecId
+        cls, *, sub: types.TSub, id_: types.TSpecId
     ) -> types.TSpecVersion:
         """
         Get the latest version for a spec.
@@ -209,7 +210,7 @@ class Spec(models.Model):
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id: Unique identifier for the spec for a package.
+            id_: Unique identifier for the spec for a package.
 
         Returns:
             The latest version of the spec.
@@ -219,13 +220,13 @@ class Spec(models.Model):
             item = cls.get(
                 hash_key=sub,
                 range_key=cls.calc_index_values(
-                    updated_at=cls.UPDATED_AT_LATEST, id=id
+                    updated_at=cls.UPDATED_AT_LATEST, id_=id_
                 ).updated_at_id,
             )
             return item.version
         except cls.DoesNotExist as exc:
             raise exceptions.NotFoundError(
-                f"the spec {id} does not exist for customer {sub}"
+                f"the spec {id_} does not exist for customer {sub}"
             ) from exc
 
     @staticmethod
@@ -268,17 +269,17 @@ class Spec(models.Model):
         )
 
     @classmethod
-    def delete_spec(cls, *, sub: types.TSub, id: types.TSpecId) -> None:
+    def delete_spec(cls, *, sub: types.TSub, id_: types.TSpecId) -> None:
         """
         Delete a spec from the database.
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id: Unique identifier for the spec for a package.
+            id_: Unique identifier for the spec for a package.
 
         """
         items = cls.id_updated_at_index.query(
-            sub, cls.id_updated_at.startswith(f"{id}#")
+            sub, cls.id_updated_at.startswith(f"{id_}#")
         )
         with cls.batch_write() as batch:
             for item in items:
@@ -286,7 +287,7 @@ class Spec(models.Model):
 
     @classmethod
     def list_spec_versions(
-        cls, *, sub: types.TSub, id: types.TSpecId
+        cls, *, sub: types.TSub, id_: types.TSpecId
     ) -> types.TSpecInfoList:
         """
         List all available versions for a spec for a customer.
@@ -295,7 +296,7 @@ class Spec(models.Model):
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id: Unique identifier for the spec for a package.
+            id_: Unique identifier for the spec for a package.
 
         Returns:
             List of information for all versions of a spec for the customer.
@@ -303,7 +304,7 @@ class Spec(models.Model):
         """
         items = cls.id_updated_at_index.query(
             sub,
-            cls.id_updated_at.startswith(f"{id}#"),
+            cls.id_updated_at.startswith(f"{id_}#"),
         )
         items_no_latest = filter(
             lambda item: not item.updated_at_id.startswith(f"{cls.UPDATED_AT_LATEST}#"),

@@ -1,5 +1,4 @@
 """Types for the database facade."""
-# pylint: disable=redefined-builtin
 
 import dataclasses
 import typing
@@ -137,7 +136,7 @@ class TDatabase(typing.Protocol):
     def create_update_spec(
         *,
         sub: TSub,
-        id: TSpecId,
+        id_: TSpecId,
         version: TSpecVersion,
         model_count: TSpecModelCount,
         title: TOptSpecTitle = None,
@@ -148,7 +147,7 @@ class TDatabase(typing.Protocol):
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id: Unique identifier for the spec for a package.
+            id_: Unique identifier for the spec for a package.
             version: The version of the spec.
             model_count: The number of models in the spec.
             title: The title of a spec.
@@ -158,7 +157,7 @@ class TDatabase(typing.Protocol):
         ...
 
     @staticmethod
-    def get_latest_spec_version(*, sub: TSub, id: TSpecId) -> TSpecVersion:
+    def get_latest_spec_version(*, sub: TSub, id_: TSpecId) -> TSpecVersion:
         """
         Get the latest version for a spec.
 
@@ -166,7 +165,7 @@ class TDatabase(typing.Protocol):
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id: Unique identifier for the spec for a package.
+            id_: Unique identifier for the spec for a package.
 
         Returns:
             The latest version of the spec.
@@ -189,19 +188,19 @@ class TDatabase(typing.Protocol):
         ...
 
     @staticmethod
-    def delete_spec(*, sub: TSub, id: TSpecId) -> None:
+    def delete_spec(*, sub: TSub, id_: TSpecId) -> None:
         """
         Delete a spec from the database.
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id: Unique identifier for the spec for a package.
+            id_: Unique identifier for the spec for a package.
 
         """
         ...
 
     @staticmethod
-    def list_spec_versions(*, sub: TSub, id: TSpecId) -> TSpecInfoList:
+    def list_spec_versions(*, sub: TSub, id_: TSpecId) -> TSpecInfoList:
         """
         List all available versions for a spec for a customer.
 
@@ -209,7 +208,7 @@ class TDatabase(typing.Protocol):
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id: Unique identifier for the spec for a package.
+            id_: Unique identifier for the spec for a package.
 
         Returns:
             List of information for all versions of a spec for the customer.
@@ -237,7 +236,7 @@ class TDatabase(typing.Protocol):
     def create_update_credentials(
         *,
         sub: TSub,
-        id: TCredentialsId,
+        id_: TCredentialsId,
         public_key: TCredentialsPublicKey,
         secret_key_hash: TCredentialsSecretKeyHash,
         salt: TCredentialsSalt
@@ -247,7 +246,7 @@ class TDatabase(typing.Protocol):
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id: Unique identifier for the credentials.
+            id_: Unique identifier for the credentials.
             public_key: Public identifier for the credentials.
             secret_key_hash: Value derived from the secret key that is safe to store.
             salt: Random value used to generate the credentials.
@@ -257,14 +256,14 @@ class TDatabase(typing.Protocol):
 
     @staticmethod
     def get_credentials(
-        *, sub: TSub, id: TCredentialsId
+        *, sub: TSub, id_: TCredentialsId
     ) -> typing.Optional[TCredentialsInfo]:
         """
         Retrieve credentials.
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id: Unique identifier for the credentials.
+            id_: Unique identifier for the credentials.
 
         Returns:
             Information about the credentials.
@@ -289,13 +288,13 @@ class TDatabase(typing.Protocol):
         ...
 
     @staticmethod
-    def delete_credentials(*, sub: TSub, id: TCredentialsId) -> None:
+    def delete_credentials(*, sub: TSub, id_: TCredentialsId) -> None:
         """
         Delete the credentials.
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id: Unique identifier for the credentials.
+            id_: Unique identifier for the credentials.
 
         """
         ...

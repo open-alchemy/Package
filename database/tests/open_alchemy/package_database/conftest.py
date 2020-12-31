@@ -3,6 +3,7 @@
 import subprocess
 
 import pytest
+from open_alchemy.package_database import models
 from pynamodb import connection, exceptions
 
 
@@ -48,24 +49,24 @@ def _database():
         )
 
 
-# @pytest.fixture(scope="session")
-# def _package_storage_table(_database):
-#     """Create the package-storage table and empty it after every test."""
-#     assert not models.PackageStorage.exists()
-#     models.PackageStorage.create_table(
-#         read_capacity_units=1,
-#         write_capacity_units=1,
-#         wait=True,
-#     )
+@pytest.fixture(scope="session")
+def _spec_table(_database):
+    """Create the package-storage table and empty it after every test."""
+    assert not models.Spec.exists()
+    models.Spec.create_table(
+        read_capacity_units=1,
+        write_capacity_units=1,
+        wait=True,
+    )
 
-#     yield
+    yield
 
 
-# @pytest.fixture()
-# def _clean_package_storage_table(_package_storage_table):
-#     """Create the package-storage table and empty it after every test."""
-#     yield
+@pytest.fixture(autouse=True)
+def _clean_spec_table(_spec_table):
+    """Create the package-storage table and empty it after every test."""
+    yield
 
-#     with models.PackageStorage.batch_write() as batch:
-#         for item in models.PackageStorage.scan():
-#             batch.delete(item)
+    with models.Spec.batch_write() as batch:
+        for item in models.Spec.scan():
+            batch.delete(item)
