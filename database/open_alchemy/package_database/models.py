@@ -461,3 +461,19 @@ class Credentials(models.Model):
         return types.CredentialsAuthInfo(
             sub=item.sub, secret_key_hash=item.secret_key_hash, salt=item.salt
         )
+
+    @classmethod
+    def delete_credentials(cls, *, sub: types.TSub, id_: types.TCredentialsId) -> None:
+        """
+        Delete the credentials.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+            id_: Unique identifier for the credentials.
+
+        """
+        try:
+            item = cls.get(hash_key=sub, range_key=id_)
+            item.delete()
+        except cls.DoesNotExist:
+            pass

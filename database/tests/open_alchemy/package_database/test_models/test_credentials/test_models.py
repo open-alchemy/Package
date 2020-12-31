@@ -272,3 +272,22 @@ def test_get_user(item, public_key, expected_info):
     returned_info = models.Credentials.get_user(public_key=public_key)
 
     assert returned_info == expected_info
+
+
+def test_delete_credentials():
+    """
+    GIVEN database with item
+    WHEN delete_credentials is called with the sub and id of the key
+    THEN item is deleted.
+    """
+    item = factory.CredentialsFactory()
+    item.save()
+    assert len(list(models.Credentials.scan())) == 1
+
+    models.Credentials.delete_credentials(sub=item.sub, id_=item.id)
+
+    assert len(list(models.Credentials.scan())) == 0
+
+    models.Credentials.delete_credentials(sub=item.sub, id_=item.id)
+
+    assert len(list(models.Credentials.scan())) == 0
