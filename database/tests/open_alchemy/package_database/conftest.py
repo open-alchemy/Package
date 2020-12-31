@@ -62,7 +62,7 @@ def _spec_table(_database):
     yield
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture()
 def _clean_spec_table(_spec_table):
     """Create the package-storage table and empty it after every test."""
     yield
