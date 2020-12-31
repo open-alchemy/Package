@@ -1,7 +1,7 @@
 """Tests for the models."""
 
 import pytest
-from open_alchemy.package_database import factory, models
+from open_alchemy.package_database import factory, models, types
 
 LIST_CREDENTIALS_TESTS = [
     pytest.param([], "sub 1", [], id="empty"),
@@ -233,5 +233,42 @@ def test_get_credentials(item, sub, id_, expected_info):
     item.save()
 
     returned_info = models.Credentials.get_credentials(sub=sub, id_=id_)
+
+    assert returned_info == expected_info
+
+
+GET_USER_TESTS = [
+    pytest.param(
+        factory.CredentialsFactory(public_key="public key 1"),
+        "public key 2",
+        None,
+        id="public key miss",
+    ),
+    pytest.param(
+        factory.CredentialsFactory(
+            public_key="public key 1",
+            sub="sub 1",
+            secret_key_hash=b"secret key hash 1",
+            salt=b"salt 1",
+        ),
+        "public key 1",
+        types.CredentialsAuthInfo(
+            sub="sub 1", secret_key_hash=b"secret key hash 1", salt=b"salt 1"
+        ),
+        id="hit",
+    ),
+]
+
+
+@pytest.mark.parametrize("item, public_key, expected_info", GET_USER_TESTS)
+def test_get_user(item, public_key, expected_info):
+    """
+    GIVEN database with item and public key
+    WHEN get_user is called with the public key
+    THEN the expected info is returned.
+    """
+    item.save()
+
+    returned_info = models.Credentials.get_user(public_key=public_key)
 
     assert returned_info == expected_info

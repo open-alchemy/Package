@@ -438,3 +438,26 @@ class Credentials(models.Model):
             return None
 
         return cls.item_to_info(item)
+
+    @classmethod
+    def get_user(
+        cls, *, public_key: types.TCredentialsPublicKey
+    ) -> typing.Optional[types.CredentialsAuthInfo]:
+        """
+        Retrieve a user and information to authenticate the user.
+
+        Args:
+            public_key: Public identifier for the credentials.
+
+        Returns:
+            Information needed to authenticate the user.
+
+        """
+        item = next(cls.public_key_index.query(hash_key=public_key), None)
+
+        if item is None:
+            return None
+
+        return types.CredentialsAuthInfo(
+            sub=item.sub, secret_key_hash=item.secret_key_hash, salt=item.salt
+        )
