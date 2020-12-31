@@ -477,3 +477,17 @@ class Credentials(models.Model):
             item.delete()
         except cls.DoesNotExist:
             pass
+
+    @classmethod
+    def delete_all_credentials(cls, *, sub: types.TSub) -> None:
+        """
+        Delete all the credentials for a user.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+
+        """
+        items = cls.query(hash_key=sub)
+        with cls.batch_write() as batch:
+            for item in items:
+                batch.delete(item)

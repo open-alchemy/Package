@@ -274,20 +274,113 @@ def test_get_user(item, public_key, expected_info):
     assert returned_info == expected_info
 
 
-def test_delete_credentials():
+DELETE_CREDENTIALS_TESTS = [
+    pytest.param(
+        factory.CredentialsFactory(sub="sub 1", id="id 1"),
+        "sub 2",
+        "id 2",
+        1,
+        id="sub id miss",
+    ),
+    pytest.param(
+        factory.CredentialsFactory(sub="sub 1", id="id 1"),
+        "sub 2",
+        "id 1",
+        1,
+        id="sub miss",
+    ),
+    pytest.param(
+        factory.CredentialsFactory(sub="sub 1", id="id 1"),
+        "sub 1",
+        "id 2",
+        1,
+        id="id miss",
+    ),
+    pytest.param(
+        factory.CredentialsFactory(
+            sub="sub 1", id="id 1", public_key="public key 1", salt=b"salt 1"
+        ),
+        "sub 1",
+        "id 1",
+        0,
+        id="hit",
+    ),
+]
+
+
+@pytest.mark.parametrize("item, sub, id_, expected_count", DELETE_CREDENTIALS_TESTS)
+def test_delete_credentials(item, sub, id_, expected_count):
     """
-    GIVEN database with item
-    WHEN delete_credentials is called with the sub and id of the key
-    THEN item is deleted.
+    GIVEN database with item and sub and id
+    WHEN delete_credentials is called with the sub and id
+    THEN the database contains the expected number of items.
     """
-    item = factory.CredentialsFactory()
     item.save()
     assert len(list(models.Credentials.scan())) == 1
 
-    models.Credentials.delete_credentials(sub=item.sub, id_=item.id)
+    models.Credentials.delete_credentials(sub=sub, id_=id_)
 
-    assert len(list(models.Credentials.scan())) == 0
+    assert len(list(models.Credentials.scan())) == expected_count
 
-    models.Credentials.delete_credentials(sub=item.sub, id_=item.id)
 
-    assert len(list(models.Credentials.scan())) == 0
+DELETE_ALL_CREDENTIALS_TESTS = [
+    pytest.param([], "sub 1", 0, id="empty"),
+    pytest.param(
+        [factory.CredentialsFactory(sub="sub 1")], "sub 2", 1, id="single sub miss"
+    ),
+    pytest.param(
+        [factory.CredentialsFactory(sub="sub 1")], "sub 1", 0, id="single sub hit"
+    ),
+    pytest.param(
+        [
+            factory.CredentialsFactory(sub="sub 1"),
+            factory.CredentialsFactory(sub="sub 2"),
+        ],
+        "sub 3",
+        2,
+        id="multiple sub miss",
+    ),
+    pytest.param(
+        [
+            factory.CredentialsFactory(sub="sub 1"),
+            factory.CredentialsFactory(sub="sub 2"),
+        ],
+        "sub 1",
+        1,
+        id="multiple sub first hit",
+    ),
+    pytest.param(
+        [
+            factory.CredentialsFactory(sub="sub 1"),
+            factory.CredentialsFactory(sub="sub 2"),
+        ],
+        "sub 2",
+        1,
+        id="multiple sub second hit",
+    ),
+    pytest.param(
+        [
+            factory.CredentialsFactory(sub="sub 1"),
+            factory.CredentialsFactory(sub="sub 1"),
+        ],
+        "sub 1",
+        0,
+        id="multiple sub hit",
+    ),
+]
+
+
+@pytest.mark.parametrize("items, sub, expected_count", DELETE_ALL_CREDENTIALS_TESTS)
+def test_delete_all_credentials(items, sub, expected_count):
+    """
+    GIVEN database with items and sub
+    WHEN delete_all_credentials is called with the sub
+    THEN the database contains the expected number of items.
+    """
+    for item in items:
+        item.save()
+    assert len(list(models.Credentials.scan())) == len(items)
+
+    models.Credentials.delete_all_credentials(sub=sub)
+
+    assert len(list(models.Credentials.scan())) == expected_count
