@@ -31,7 +31,7 @@ jobs:
         id: cache-poetry
         with:
           path: ~/.virtualenvs
-          key: ${{ runner.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('database/poetry.lock', 'database/poetry.toml') }}
+          key: ${{ runner.os }}-${{ matrix.python-version }}-poetry--${{ hashFiles('database/poetry.lock', 'database/poetry.toml') }}
       - name: Configure poetry for ci
         working-directory: ./database
         run: |
