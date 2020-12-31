@@ -184,7 +184,7 @@ A salt is a random string generated using
 The public key is a hash based on the `sub` of the user and a salt. The
 following algorithm is used:
 
-1. create a message by combining the `sub` and `salt`,
+1. create a message by combining the `sub` and a random salt,
 1. digest the message using `sha256` using
    <https://docs.python.org/3/library/hashlib.html#hash-algorithms>
    and
@@ -194,10 +194,10 @@ following algorithm is used:
 
 #### Secret Key
 
-The secret key is a hash based on the `sub`, same salt as the public key and a
-secret associated with the package service. The following algorithm is used:
+The secret key is a hash based on the `sub`, `salt` and a secret associated
+with the service. The following algorithm is used:
 
-1. create a message by combining `sub`, `salt` and the package service secret,
+1. create a message by combining `sub`, `salt` and the service secret,
 1. digest the message using `sha256` using
    <https://docs.python.org/3/library/hashlib.html#hash-algorithms>
    and

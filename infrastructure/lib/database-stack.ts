@@ -15,7 +15,7 @@ export class DatabaseStack extends cdk.Stack {
       partitionKey: { ...sub },
       tableName: CONFIG.database.specs.tableName,
       sortKey: {
-        name: 'updated_at_spec_id',
+        name: 'updated_at_id',
         type: dynamodb.AttributeType.STRING,
       },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
@@ -23,7 +23,7 @@ export class DatabaseStack extends cdk.Stack {
     specsTable.addLocalSecondaryIndex({
       indexName: CONFIG.database.specs.localSecondaryIndexName,
       sortKey: {
-        name: 'spec_id_updated_at',
+        name: 'id_updated_at',
         type: dynamodb.AttributeType.STRING,
       },
       projectionType: dynamodb.ProjectionType.ALL,
@@ -34,7 +34,7 @@ export class DatabaseStack extends cdk.Stack {
       partitionKey: { ...sub },
       tableName: CONFIG.database.credentials.tableName,
       sortKey: {
-        name: 'credential_id',
+        name: 'id',
         type: dynamodb.AttributeType.STRING,
       },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
@@ -42,10 +42,6 @@ export class DatabaseStack extends cdk.Stack {
     credentialsTable.addGlobalSecondaryIndex({
       indexName: CONFIG.database.credentials.globalSecondaryIndexName,
       partitionKey: { name: 'public_key', type: dynamodb.AttributeType.STRING },
-      sortKey: {
-        name: 'secret_key_hash',
-        type: dynamodb.AttributeType.STRING,
-      },
       projectionType: dynamodb.ProjectionType.ALL,
     });
   }
