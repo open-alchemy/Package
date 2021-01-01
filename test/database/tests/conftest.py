@@ -11,4 +11,5 @@
 
 #     yield sub_value
 
-#     package_database.get().delete
+#     package_database.get().delete_all_credentials(sub=sub_value)
+#     package_database.get().delete_all_specs(sub=sub_value)

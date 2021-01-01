@@ -14,8 +14,9 @@ are expected:
 - create or update a spec record for a user,
 - get the latest version of a spec for a user,
 - list all specs for a user,
-- delete a particular spec for a user and
-- list all versions of a spec for a user.
+- delete a particular spec for a user,
+- list all versions of a spec for a user and
+- delete all specs for a user.
 
 #### Count Models for a User
 
@@ -135,6 +136,18 @@ Algorithm:
    `sub` and `spec_id_updated_at` starting with `<spec_id>#`,
 1. filter out any items where `updated_at_spec_id` starts with `latest#` and
 1. convert the items to dictionaries.
+
+#### Delete All Specs for a User
+
+Input:
+
+- `sub`.
+
+Output:
+
+Algorithm:
+
+1. Delete all entries for `sub`.
 
 #### Spec Properties
 
