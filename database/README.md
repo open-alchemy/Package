@@ -3,6 +3,25 @@
 The database has a facade exposes a series of functions that enable services to
 personalize responses.
 
+## Interface
+
+The interface for the database is defined as the `TDatabase` class here:
+[open_alchemy/package_database/types.py](open_alchemy/package_database/types.py)
+
+It can be retrieved using:
+
+```python
+from open_alchemy import package_database
+
+database_instance = package_database.get()
+```
+
+Note that the `STAGE` environment variable needs to be set. The possible
+values are:
+
+- `TEST`: DynamoDB is assumed to be running at <http://localhost:8000>
+- `PROD`: a connection is established to the AWS hosted DynamoDB
+
 ## Tables
 
 ### Specs
