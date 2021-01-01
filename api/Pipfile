@@ -7,7 +7,7 @@ name = "pypi"
 connexion = {extras = ["swagger-ui"], version = "2.7.0"}
 flask-cors = "3.0.9"
 boto3 = "1.16.35"
-botocore = "1.19.43"
+botocore = "1.19.47"
 serverless-wsgi = "1.7.6"
 pyjwt = "2.0.0"
 cryptography = "3.3.1"
