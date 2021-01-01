@@ -150,8 +150,9 @@ jobs:
         run: pip install poetry open-alchemy.package-database
       - name: Check if release is required
         id: check
+        working-directory: ./database
         run: |
-          RELEASED_VERSION=$(pip show open-alchemy.package-database -V)
+          RELEASED_VERSION=$(pip show -V open-alchemy.package-database)
           echo $RELEASED_VERSION
           PROJECT_VERSION=$(poetry version -s)
           echo $PROJECT_VERSION
