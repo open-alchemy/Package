@@ -31,7 +31,7 @@ jobs:
         id: cache-poetry
         with:
           path: ~/.virtualenvs
-          key: ${{ runner.os }}-${{ matrix.python-version }}-poetry--${{ hashFiles('database/poetry.lock', 'database/poetry.toml') }}
+          key: ${{ runner.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('database/poetry.lock', 'database/poetry.toml') }}
       - name: Configure poetry for ci
         working-directory: ./database
         run: |
@@ -60,6 +60,9 @@ jobs:
         run: npm install
       - name: Test with pytest
         working-directory: ./database
+        env:
+          AWS_ACCESS_KEY_ID: invalid id
+          AWS_SECRET_ACCESS_KEY: invalid key
         run: |
           poetry run pytest
 
