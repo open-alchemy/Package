@@ -32,7 +32,7 @@ Output:
 
 Algorithm:
 
-1. filter by the `sub` and `updated_at_spec_id` to start with `latest#` and
+1. filter by the `sub` and `updated_at_id` to start with `latest#` and
 1. sum over the `model_count` of each record.
 
 #### Create or Update a Spec
@@ -40,7 +40,7 @@ Algorithm:
 Input:
 
 - `sub`,
-- `spec_id`: unique identifier for the spec,
+- `id`: unique identifier for the spec,
 - `version`: the version of the spec,
 - `model_count`: the number of models in the spec,
 - `title` (_optional_): the title of the spec and
@@ -53,13 +53,12 @@ Algorithm:
 1. calculate `updated_at` based on he current EPOCH time using
    <https://docs.python.org/3/library/time.html#time.time>
    and convert to an integer represented as a string,
-1. calculate the value for `updated_at_spec_id` by joining a zero padded
-   `updated_at` to 20 characters and `spec_id` with a `#` and for
-   `spec_id_updated_at` by joining `spec_id` and
-   `updated_at` with a `#`,
+1. calculate the value for `updated_at_id` by joining a zero padded
+   `updated_at` to 20 characters and `id` with a `#` and for `id_updated_at`
+   by joining `id` and `updated_at` with a `#`,
 1. save the item to the database,
 1. create another item but use `latest` for `updated_at` when generating
-   `updated_at_spec_id` and `spec_id_updated_at`
+   `updated_at_id` and `id_updated_at`
 
 #### Get Latest Spec Version
 
@@ -68,7 +67,7 @@ Retrieve the latest version of a spec.
 Input:
 
 - `sub` and
-- `spec_id`.
+- `id`.
 
 Output:
 
@@ -76,8 +75,8 @@ Output:
 
 Algorithm:
 
-1. Retrieve the item using the `sub` partition key and `updated_at_spec_id`
-   sort key equal to `latest#<spec_id>` and
+1. Retrieve the item using the `sub` partition key and `updated_at_id` sort key
+   equal to `latest#<id>` and
 1. return the version of the item.
 
 #### List Specs
@@ -90,13 +89,13 @@ Input:
 
 Output:
 
-- A list of dictionaries with the `spec_id`, `updated_at`, `version`,
-  `model_count` and `title` and `description` if they are defined.
+- A list of dictionaries with the `id`, `updated_at`, `version`, `model_count`
+  and `title` and `description` if they are defined.
 
 Algorithm:
 
-1. filter items using the `sub` partition key and `updated_at_spec_id` starting
-   with `latest#` and
+1. filter items using the `sub` partition key and `updated_at_id` starting with
+   `latest#` and
 1. convert the items to dictionaries.
 
 #### Delete Spec
@@ -106,14 +105,14 @@ Delete a particular spec for a user.
 Input:
 
 - `sub` and
-- `spec_id`.
+- `id`.
 
 Output:
 
 Algorithm:
 
-1. query the `spec_id_updated_at_index` local secondary index by filtering for
-   `sub` and `spec_id_updated_at` starting with `<spec_id>#` and
+1. query the `id_updated_at_index` local secondary index by filtering for `sub`
+   and `id_updated_at` starting with `<id>#` and
 1. delete all returned items.
 
 #### List Spec Versions
@@ -123,18 +122,18 @@ Returns information about all the available versions of a spec for a user.
 Input:
 
 - `sub` and
-- `spec_id`.
+- `id`.
 
 Output:
 
-- A list of dictionaries with the `spec_id`, `updated_at`, `version`,
-  `model_count` and `title` and `description` if they are defined.
+- A list of dictionaries with the `id`, `updated_at`, `version`, `model_count`
+  and `title` and `description` if they are defined.
 
 Algorithm:
 
-1. query the `spec_id_updated_at_index` local secondary index by filtering for
-   `sub` and `spec_id_updated_at` starting with `<spec_id>#`,
-1. filter out any items where `updated_at_spec_id` starts with `latest#` and
+1. query the `id_updated_at_index` local secondary index by filtering for `sub`
+   and `id_updated_at` starting with `<id>#`,
+1. filter out any items where `updated_at_id` starts with `latest#` and
 1. convert the items to dictionaries.
 
 #### Delete All Specs for a User
@@ -152,14 +151,14 @@ Algorithm:
 #### Spec Properties
 
 - `sub`: A string that is the partition key of the table.
-- `spec_id`: A string.
+- `id`: A string.
 - `updated_at`: A string.
 - `version`: A string.
 - `title`: An optional string.
 - `description`: An optional string.
 - `model_count` A number.
-- `updated_at_spec_id`: A string that is the sort key of the table.
-- `spec_id_updated_at`: A string that is the sort key of the
+- `updated_at_id`: A string that is the sort key of the table.
+- `id_updated_at`: A string that is the sort key of the
   `specIdUpdatedAt` local secondary index of the table.
 
 ### Credentials
