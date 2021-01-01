@@ -29,20 +29,20 @@ export class DatabaseStack extends cdk.Stack {
       projectionType: dynamodb.ProjectionType.ALL,
     });
 
-    // Database for the credentials
-    const credentialsTable = new dynamodb.Table(this, 'CredentialsTable', {
-      partitionKey: { ...sub },
-      tableName: CONFIG.database.credentials.tableName,
-      sortKey: {
-        name: 'id',
-        type: dynamodb.AttributeType.STRING,
-      },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-    });
-    credentialsTable.addGlobalSecondaryIndex({
-      indexName: CONFIG.database.credentials.globalSecondaryIndexName,
-      partitionKey: { name: 'public_key', type: dynamodb.AttributeType.STRING },
-      projectionType: dynamodb.ProjectionType.ALL,
-    });
+    // // Database for the credentials
+    // const credentialsTable = new dynamodb.Table(this, 'CredentialsTable', {
+    //   partitionKey: { ...sub },
+    //   tableName: CONFIG.database.credentials.tableName,
+    //   sortKey: {
+    //     name: 'id',
+    //     type: dynamodb.AttributeType.STRING,
+    //   },
+    //   billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+    // });
+    // credentialsTable.addGlobalSecondaryIndex({
+    //   indexName: CONFIG.database.credentials.globalSecondaryIndexName,
+    //   partitionKey: { name: 'public_key', type: dynamodb.AttributeType.STRING },
+    //   projectionType: dynamodb.ProjectionType.ALL,
+    // });
   }
 }

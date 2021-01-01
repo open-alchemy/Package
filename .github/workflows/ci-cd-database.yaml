@@ -136,19 +136,19 @@ jobs:
         run: |
           npm run deploy:database
 
-  release-test-pypi:
-    runs-on: ubuntu-latest
-    needs:
-      - test
-      - build
-    steps:
-      - name: Retrieve packages
-        uses: actions/download-artifact@v2.0.7
-        with:
-          name: wheel
-          path: dist/
-      - name: Publish distribution 📦 to Test PyPI
-        uses: pypa/gh-action-pypi-publish@v1.4.1
-        with:
-          password: ${{ secrets.test_pypi_password_database }}
-          repository_url: https://test.pypi.org/legacy/
+  # release-test-pypi:
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - test
+  #     - build
+  #   steps:
+  #     - name: Retrieve packages
+  #       uses: actions/download-artifact@v2.0.7
+  #       with:
+  #         name: wheel
+  #         path: dist/
+  #     - name: Publish distribution 📦 to Test PyPI
+  #       uses: pypa/gh-action-pypi-publish@v1.4.1
+  #       with:
+  #         password: ${{ secrets.test_pypi_password_database }}
+  #         repository_url: https://test.pypi.org/legacy/
