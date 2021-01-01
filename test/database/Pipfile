@@ -9,7 +9,7 @@ verify_ssl = true
 name = "database-pypi"
 
 [packages]
-"open-alchemy.package-database" = {version="==1.2.1", index="database-pypi"}
+"open-alchemy.package-database" = { version="==${VERSION}", index="database-pypi" }
 
 [dev-packages]
 pytest = "6.2.1"

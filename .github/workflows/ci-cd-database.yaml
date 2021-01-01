@@ -140,6 +140,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       result: ${{ steps.check.outputs.result }}
+      project-version: ${{ steps.check.outputs.project-version }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -158,6 +159,7 @@ jobs:
           echo project version: $PROJECT_VERSION
           [[ "$RELEASED_VERSION" == "$PROJECT_VERSION"  ]] && RESULT=false || RESULT=true
           echo release required: $RESULT
+          echo "::set-output name=project-version::$RESULT"
           echo "::set-output name=result::$RESULT"
 
   release-test-pypi:
@@ -198,6 +200,7 @@ jobs:
       - name: install dependencies
         env:
           PYPI_MIRROR: https://test.pypi.org/simple/
+          VERSION: ${{ needs.release-required.outputs.project-version }}
         working-directory: test/database
         run: |
           pipenv install --dev
@@ -214,6 +217,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - test-production-test-pypi
+      - release-required
     steps:
       - name: Retrieve packages
         if: needs.release-required.outputs.result == 'true'
@@ -245,6 +249,7 @@ jobs:
       - name: install dependencies
         env:
           PYPI_MIRROR: https://pypi.org/simple/
+          VERSION: ${{ needs.release-required.outputs.project-version }}
         working-directory: test/database
         run: |
           pipenv install --dev
