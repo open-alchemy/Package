@@ -1,5 +1,7 @@
 """Fixtures."""
 
+import uuid
+
 import pytest
 from open_alchemy import package_database
 
@@ -7,7 +9,7 @@ from open_alchemy import package_database
 @pytest.fixture
 def sub():
     """Generates a sub and cleans up after any tests."""
-    sub_value = "test.sub 1"
+    sub_value = f"test.{uuid.uuid4()}"
 
     yield sub_value
 
