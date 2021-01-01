@@ -162,7 +162,7 @@ jobs:
 
   release-test-pypi:
     runs-on: ubuntu-latest
-    if: ${{needs.release-required.outputs.result}} == 'true'
+    if: needs.release-required.outputs.result == 'true'
     needs:
       - test
       - build
