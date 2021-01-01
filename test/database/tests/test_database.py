@@ -29,7 +29,14 @@ def test_spec_create_list_delete_all(sub):
         description=description,
     )
 
-    assert len(database_instance.list_specs(sub=sub)) == 1
+    infos = database_instance.list_specs(sub=sub)
+    assert len(infos) == 1
+    info = infos[0]
+    assert info["id"] == id_
+    assert info["model_count"] == model_count
+    assert info["version"] == version
+    assert info["title"] == title
+    assert info["description"] == description
 
     database_instance.delete_all_specs(sub=sub)
 
@@ -47,20 +54,13 @@ def test_spec_create_count_models_get_latest_version_list_versions_delete(sub):
     id_ = "id 1"
     model_count = 1
     version = "version 1"
-    title = "title 1"
-    description = "description 1"
 
     database_instance = package_database.get()
 
     assert len(database_instance.list_specs(sub=sub)) == 0
 
     database_instance.create_update_spec(
-        sub=sub,
-        id_=id_,
-        model_count=model_count,
-        version=version,
-        title=title,
-        description=description,
+        sub=sub, id_=id_, model_count=model_count, version=version
     )
 
     assert database_instance.count_customer_models(sub=sub) == model_count
@@ -76,7 +76,12 @@ def test_spec_create_count_models_get_latest_version_list_versions_delete(sub):
 
     assert database_instance.get_latest_spec_version(sub=sub, id_=id_) == version
 
-    assert database_instance.list_spec_versions(sub=sub, id_=id_) == [version]
+    infos = database_instance.list_spec_versions(sub=sub, id_=id_)
+    assert len(infos) == 1
+    info = infos[0]
+    assert info["id"] == id_
+    assert info["model_count"] == model_count
+    assert info["version"] == version
 
     database_instance.delete_spec(sub=sub, id_=id_)
 
