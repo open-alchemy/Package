@@ -336,10 +336,11 @@ class PublicKeyIndex(indexes.GlobalSecondaryIndex):
         projection = indexes.AllProjection()
         index_name = config.get().credentials_global_secondary_index_name
 
+        read_capacity_units = 1
+        write_capacity_units = 1
+
         if config.get().stage == config.Stage.TEST:
             host = "http://localhost:8000"
-            read_capacity_units = 1
-            write_capacity_units = 1
 
     public_key = attributes.UnicodeAttribute(hash_key=True)
 
