@@ -167,7 +167,7 @@ jobs:
   test-production-test-pypi:
     runs-on: ubuntu-latest
     needs:
-      - release-pypi
+      - deploy
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
