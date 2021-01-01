@@ -3,7 +3,7 @@
 import pytest
 from open_alchemy.package_database import factory, models, types
 
-LIST_CREDENTIALS_TESTS = [
+LIST_TESTS = [
     pytest.param([], "sub 1", [], id="empty"),
     pytest.param(
         [factory.CredentialsFactory(sub="sub 1")],
@@ -56,17 +56,17 @@ LIST_CREDENTIALS_TESTS = [
 ]
 
 
-@pytest.mark.parametrize("items, sub, expected_idx_list", LIST_CREDENTIALS_TESTS)
-def test_list_credentials(items, sub, expected_idx_list):
+@pytest.mark.parametrize("items, sub, expected_idx_list", LIST_TESTS)
+def test_list_(items, sub, expected_idx_list):
     """
     GIVEN items in the database and sub
-    WHEN list_credentials is called on Spec with the sub
+    WHEN list_ is called on Spec with the sub
     THEN the expected ids are returned.
     """
     for item in items:
         item.save()
 
-    returned_infos = models.Credentials.list_credentials(sub=sub)
+    returned_infos = models.Credentials.list_(sub=sub)
 
     expected_infos = list(
         map(
@@ -189,7 +189,7 @@ def test_item_to_info():
     assert spec_info["salt"] == item.salt
 
 
-GET_CREDENTIALS_TESTS = [
+GET_ITEM_TESTS = [
     pytest.param(
         factory.CredentialsFactory(sub="sub 1", id="id 1"),
         "sub 2",
@@ -223,16 +223,16 @@ GET_CREDENTIALS_TESTS = [
 ]
 
 
-@pytest.mark.parametrize("item, sub, id_, expected_info", GET_CREDENTIALS_TESTS)
-def test_get_credentials(item, sub, id_, expected_info):
+@pytest.mark.parametrize("item, sub, id_, expected_info", GET_ITEM_TESTS)
+def test_get_item(item, sub, id_, expected_info):
     """
     GIVEN database with item, sub and id
-    WHEN get_credentials is called with the sub and id
+    WHEN get_item is called with the sub and id
     THEN the expected info is returned.
     """
     item.save()
 
-    returned_info = models.Credentials.get_credentials(sub=sub, id_=id_)
+    returned_info = models.Credentials.get_item(sub=sub, id_=id_)
 
     assert returned_info == expected_info
 
@@ -274,7 +274,7 @@ def test_get_user(item, public_key, expected_info):
     assert returned_info == expected_info
 
 
-DELETE_CREDENTIALS_TESTS = [
+DELETE_ITEM_TESTS = [
     pytest.param(
         factory.CredentialsFactory(sub="sub 1", id="id 1"),
         "sub 2",
@@ -308,22 +308,22 @@ DELETE_CREDENTIALS_TESTS = [
 ]
 
 
-@pytest.mark.parametrize("item, sub, id_, expected_count", DELETE_CREDENTIALS_TESTS)
-def test_delete_credentials(item, sub, id_, expected_count):
+@pytest.mark.parametrize("item, sub, id_, expected_count", DELETE_ITEM_TESTS)
+def test_delete_item(item, sub, id_, expected_count):
     """
     GIVEN database with item and sub and id
-    WHEN delete_credentials is called with the sub and id
+    WHEN delete_item is called with the sub and id
     THEN the database contains the expected number of items.
     """
     item.save()
     assert len(list(models.Credentials.scan())) == 1
 
-    models.Credentials.delete_credentials(sub=sub, id_=id_)
+    models.Credentials.delete_item(sub=sub, id_=id_)
 
     assert len(list(models.Credentials.scan())) == expected_count
 
 
-DELETE_ALL_CREDENTIALS_TESTS = [
+DELETE_ALL_TESTS = [
     pytest.param([], "sub 1", 0, id="empty"),
     pytest.param(
         [factory.CredentialsFactory(sub="sub 1")], "sub 2", 1, id="single sub miss"
@@ -370,17 +370,17 @@ DELETE_ALL_CREDENTIALS_TESTS = [
 ]
 
 
-@pytest.mark.parametrize("items, sub, expected_count", DELETE_ALL_CREDENTIALS_TESTS)
-def test_delete_all_credentials(items, sub, expected_count):
+@pytest.mark.parametrize("items, sub, expected_count", DELETE_ALL_TESTS)
+def test_delete_all(items, sub, expected_count):
     """
     GIVEN database with items and sub
-    WHEN delete_all_credentials is called with the sub
+    WHEN delete_all is called with the sub
     THEN the database contains the expected number of items.
     """
     for item in items:
         item.save()
     assert len(list(models.Credentials.scan())) == len(items)
 
-    models.Credentials.delete_all_credentials(sub=sub)
+    models.Credentials.delete_all(sub=sub)
 
     assert len(list(models.Credentials.scan())) == expected_count

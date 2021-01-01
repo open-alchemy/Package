@@ -316,7 +316,7 @@ def test_create_update_item_update(monkeypatch):
     assert len(items) == 3
 
 
-get_latest_spec_version_NOT_FOUND_TESTS = [
+GET_LATEST_version_NOT_FOUND_TESTS = [
     pytest.param([], "sub 1", "spec id 1", id="empty"),
     pytest.param(
         [
@@ -357,24 +357,24 @@ get_latest_spec_version_NOT_FOUND_TESTS = [
 ]
 
 
-@pytest.mark.parametrize("items, sub, id_", get_latest_spec_version_NOT_FOUND_TESTS)
-def test_get_latest_spec_version_not_found(items, sub, id_):
+@pytest.mark.parametrize("items, sub, id_", GET_LATEST_version_NOT_FOUND_TESTS)
+def test_get_latest_version_not_found(items, sub, id_):
     """
     GIVEN items in the database and sub and spec id
-    WHEN get_latest_spec_version is called on Spec with the sub and spec id
+    WHEN get_latest_version is called on Spec with the sub and spec id
     THEN NotFoundError is raised.
     """
     for item in items:
         item.save()
 
     with pytest.raises(exceptions.NotFoundError) as exc:
-        models.Spec.get_latest_spec_version(sub=sub, id_=id_)
+        models.Spec.get_latest_version(sub=sub, id_=id_)
 
     assert sub in str(exc)
     assert id_ in str(exc)
 
 
-get_latest_spec_version_TESTS = [
+GET_LATEST_VERSION_TESTS = [
     pytest.param(
         [
             factory.SpecFactory(
@@ -434,18 +434,18 @@ get_latest_spec_version_TESTS = [
 
 @pytest.mark.parametrize(
     "items, sub, id_, expected_version",
-    get_latest_spec_version_TESTS,
+    GET_LATEST_VERSION_TESTS,
 )
-def test_get_latest_spec_version(items, sub, id_, expected_version):
+def test_get_latest_version(items, sub, id_, expected_version):
     """
     GIVEN items in the database and sub and spec id
-    WHEN get_latest_spec_version is called on Spec with the sub and spec id
+    WHEN get_latest_version is called on Spec with the sub and spec id
     THEN the expected version is returned.
     """
     for item in items:
         item.save()
 
-    returned_version = models.Spec.get_latest_spec_version(sub=sub, id_=id_)
+    returned_version = models.Spec.get_latest_version(sub=sub, id_=id_)
 
     assert returned_version == expected_version
 
@@ -542,16 +542,16 @@ LIST_SPECS_TESTS = [
 
 
 @pytest.mark.parametrize("items, sub, expected_idx_list", LIST_SPECS_TESTS)
-def test_list_specs(items, sub, expected_idx_list):
+def test_list_(items, sub, expected_idx_list):
     """
     GIVEN items in the database and sub
-    WHEN list_specs is called on Spec with the sub
+    WHEN list_ is called on Spec with the sub
     THEN the expected spec ids are returned.
     """
     for item in items:
         item.save()
 
-    returned_spec_infos = models.Spec.list_specs(sub=sub)
+    returned_spec_infos = models.Spec.list_(sub=sub)
 
     expected_spec_info = list(
         map(
@@ -594,7 +594,7 @@ def test_item_to_info(title, description, expected_spec_info):
     assert spec_info == expected_spec_info
 
 
-DELETE_SPEC_TESTS = [
+DELETE_ITEM_TESTS = [
     pytest.param([], "sub 1", "spec id 1", 0, id="empty"),
     pytest.param(
         [
@@ -710,22 +710,22 @@ DELETE_SPEC_TESTS = [
 ]
 
 
-@pytest.mark.parametrize("items, sub, id_, expected_item_count", DELETE_SPEC_TESTS)
-def test_delete_spec(items, sub, id_, expected_item_count):
+@pytest.mark.parametrize("items, sub, id_, expected_item_count", DELETE_ITEM_TESTS)
+def test_delete_item(items, sub, id_, expected_item_count):
     """
     GIVEN items in the database and sub and spec id
-    WHEN delete_spec is called on Spec with the sub and spec id
+    WHEN delete_item is called on Spec with the sub and spec id
     THEN the expected number of items in the database remain.
     """
     for item in items:
         item.save()
 
-    models.Spec.delete_spec(sub=sub, id_=id_)
+    models.Spec.delete_item(sub=sub, id_=id_)
 
     assert len(list(models.Spec.scan())) == expected_item_count
 
 
-LIST_SPEC_VERSIONS_TESTS = [
+LIST_VERSIONS_TESTS = [
     pytest.param([], "sub 1", "spec id 1", [], id="empty"),
     pytest.param(
         [
@@ -890,18 +890,18 @@ LIST_SPEC_VERSIONS_TESTS = [
 
 @pytest.mark.parametrize(
     "items, sub, id_, expected_idx_list",
-    LIST_SPEC_VERSIONS_TESTS,
+    LIST_VERSIONS_TESTS,
 )
-def test_list_spec_versions(items, sub, id_, expected_idx_list):
+def test_list_versions(items, sub, id_, expected_idx_list):
     """
     GIVEN items in the database and sub and spec id
-    WHEN list_spec_versions is called on Spec with the sub and spec id
+    WHEN list_versions is called on Spec with the sub and spec id
     THEN the expected spec ids are returned.
     """
     for item in items:
         item.save()
 
-    returned_spec_infos = models.Spec.list_spec_versions(sub=sub, id_=id_)
+    returned_spec_infos = models.Spec.list_versions(sub=sub, id_=id_)
 
     expected_spec_info = list(
         map(

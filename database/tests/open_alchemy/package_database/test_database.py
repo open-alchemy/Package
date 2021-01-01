@@ -262,3 +262,118 @@ def test_list_spec_versions(monkeypatch, _clean_spec_table):
     assert spec_info["version"] == version_2
     assert spec_info["model_count"] == model_count_2
     assert "updated_at" in spec_info
+
+
+def test_create_list_delete_all_credentials(_clean_credentials_table):
+    """
+    GIVE multiple credentials
+    WHEN credentials are created, listed and deleted
+    THEN all created credentials are listed and subsequently deleted.
+    """
+    sub_1 = "sub 1"
+
+    database_instance = package_database.get()
+    assert len(database_instance.list_credentials(sub=sub_1)) == 0
+
+    database_instance.create_update_credentials(
+        sub=sub_1,
+        id_="id 1",
+        public_key="public key 1",
+        secret_key_hash=b"secret key hash 1",
+        salt=b"salt 1",
+    )
+
+    assert len(database_instance.list_credentials(sub=sub_1)) == 1
+
+    sub_2 = "sub 2"
+
+    assert len(database_instance.list_credentials(sub=sub_2)) == 0
+
+    database_instance.create_update_credentials(
+        sub=sub_2,
+        id_="id 2",
+        public_key="public key 2",
+        secret_key_hash=b"secret key hash 2",
+        salt=b"salt 2",
+    )
+
+    assert len(database_instance.list_credentials(sub=sub_2)) == 1
+
+    database_instance.delete_all_credentials(sub=sub_1)
+
+    assert len(database_instance.list_credentials(sub=sub_1)) == 0
+    assert len(database_instance.list_credentials(sub=sub_2)) == 1
+
+
+def test_create_get_get_user_delete_credentials(_clean_credentials_table):
+    """
+    GIVE single credentials
+    WHEN credentials are created, retrieved, user is retrieved and deleted
+    THEN all the created credentials and user are returned and then deleted.
+    """
+    sub = "sub 1"
+    id_ = "id 1"
+    public_key_1 = "public key 1"
+    secret_key_hash_1 = b"secret key hash 1"
+    salt_1 = b"salt 1"
+
+    database_instance = package_database.get()
+    info = database_instance.get_credentials(sub=sub, id_=id_)
+
+    assert info is None
+
+    auth_info = database_instance.get_user(public_key=public_key_1)
+
+    assert auth_info is None
+
+    database_instance.create_update_credentials(
+        sub=sub,
+        id_=id_,
+        public_key=public_key_1,
+        secret_key_hash=secret_key_hash_1,
+        salt=salt_1,
+    )
+
+    info = database_instance.get_credentials(sub=sub, id_=id_)
+
+    assert info["id"] == id_
+    assert info["public_key"] == public_key_1
+    assert info["salt"] == salt_1
+
+    auth_info = database_instance.get_user(public_key=public_key_1)
+
+    assert auth_info.sub == sub
+    assert auth_info.secret_key_hash == secret_key_hash_1
+    assert auth_info.salt == salt_1
+
+    public_key_2 = "public key 2"
+    secret_key_hash_2 = b"secret key hash 2"
+    salt_2 = b"salt 2"
+
+    database_instance.create_update_credentials(
+        sub=sub,
+        id_=id_,
+        public_key=public_key_2,
+        secret_key_hash=secret_key_hash_2,
+        salt=salt_2,
+    )
+
+    info = database_instance.get_credentials(sub=sub, id_=id_)
+
+    assert info["public_key"] == public_key_2
+    assert info["salt"] == salt_2
+
+    auth_info = database_instance.get_user(public_key=public_key_2)
+
+    assert auth_info.secret_key_hash == secret_key_hash_2
+    assert auth_info.salt == salt_2
+
+    database_instance.delete_credentials(sub=sub, id_=id_)
+
+    info = database_instance.get_credentials(sub=sub, id_=id_)
+
+    assert info is None
+
+    auth_info = database_instance.get_user(public_key=public_key_1)
+
+    assert auth_info is None

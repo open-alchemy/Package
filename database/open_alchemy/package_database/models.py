@@ -197,7 +197,7 @@ class Spec(models.Model):
         item_latest.save()
 
     @classmethod
-    def get_latest_spec_version(
+    def get_latest_version(
         cls, *, sub: types.TSub, id_: types.TSpecId
     ) -> types.TSpecVersion:
         """
@@ -245,7 +245,7 @@ class Spec(models.Model):
         return info
 
     @classmethod
-    def list_specs(cls, *, sub: types.TSub) -> types.TSpecInfoList:
+    def list_(cls, *, sub: types.TSub) -> types.TSpecInfoList:
         """
         List all available specs for a customer.
 
@@ -269,7 +269,7 @@ class Spec(models.Model):
         )
 
     @classmethod
-    def delete_spec(cls, *, sub: types.TSub, id_: types.TSpecId) -> None:
+    def delete_item(cls, *, sub: types.TSub, id_: types.TSpecId) -> None:
         """
         Delete a spec from the database.
 
@@ -286,7 +286,7 @@ class Spec(models.Model):
                 batch.delete(item)
 
     @classmethod
-    def list_spec_versions(
+    def list_versions(
         cls, *, sub: types.TSub, id_: types.TSpecId
     ) -> types.TSpecInfoList:
         """
@@ -372,7 +372,7 @@ class Credentials(models.Model):
         return info
 
     @classmethod
-    def list_credentials(cls, *, sub: types.TSub) -> types.TCredentialsInfoList:
+    def list_(cls, *, sub: types.TSub) -> types.TCredentialsInfoList:
         """
         List all available credentials for a user.
 
@@ -418,7 +418,7 @@ class Credentials(models.Model):
         item.save()
 
     @classmethod
-    def get_credentials(
+    def get_item(
         cls, *, sub: types.TSub, id_: types.TCredentialsId
     ) -> typing.Optional[types.TCredentialsInfo]:
         """
@@ -463,7 +463,7 @@ class Credentials(models.Model):
         )
 
     @classmethod
-    def delete_credentials(cls, *, sub: types.TSub, id_: types.TCredentialsId) -> None:
+    def delete_item(cls, *, sub: types.TSub, id_: types.TCredentialsId) -> None:
         """
         Delete the credentials.
 
@@ -479,7 +479,7 @@ class Credentials(models.Model):
             pass
 
     @classmethod
-    def delete_all_credentials(cls, *, sub: types.TSub) -> None:
+    def delete_all(cls, *, sub: types.TSub) -> None:
         """
         Delete all the credentials for a user.
 
