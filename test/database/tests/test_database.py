@@ -166,9 +166,9 @@ def test_credentials_create_get_get_user_delete(sub):
     assert info["salt"] == salt
 
     auth_info = database_instance.get_user(public_key=public_key)
-    assert auth_info["sub"] == sub
-    assert auth_info["secret_key_hash"] == secret_key_hash
-    assert auth_info["salt"] == salt
+    assert auth_info.sub == sub
+    assert auth_info.secret_key_hash == secret_key_hash
+    assert auth_info.salt == salt
 
     database_instance.delete_credentials(sub=sub, id_=id_)
 

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "dfcedc031ce2175565e3c5bac3bab9bd551140e10417830757ffe12cf70f5fa6"
+            "sha256": "8120dc0d5ad4f01e9246ee8f93e79136b6c9f36084193bab3626ee9f27a9b870"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -54,11 +54,11 @@
         },
         "open-alchemy.package-database": {
             "hashes": [
-                "sha256:59df70d12ec505503eb93fcfcd23c6630d03a83015dd7f74db1de40e9daf8eed",
-                "sha256:69795dca30c3cfea4618d97f5c818a308a52dbe11c10e42cf36c2262b94429db"
+                "sha256:2084013f35ceecb88d0d80c45b8de83850b64691b2efa4e74f40eba54cb1d5e8",
+                "sha256:cd2201d6ded8699d7a6e598453c49142f0dd1985a29aeb495f73bdd413861a4e"
             ],
             "index": "database-pypi",
-            "version": "==1.2.0"
+            "version": "==1.2.1"
         },
         "pynamodb": {
             "hashes": [
