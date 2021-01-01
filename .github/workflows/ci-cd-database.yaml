@@ -207,6 +207,7 @@ jobs:
     needs:
       - test
       - build
+      - deploy
     steps:
       - name: Retrieve packages
         uses: actions/download-artifact@v2.0.7
@@ -217,7 +218,6 @@ jobs:
         uses: pypa/gh-action-pypi-publish@v1.4.1
         with:
           password: ${{ secrets.pypi_password_database }}
-          repository_url: https://pypi.org/legacy/
 
   test-production-pypi:
     runs-on: ubuntu-latest
