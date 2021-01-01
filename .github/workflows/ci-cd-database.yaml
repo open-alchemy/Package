@@ -152,6 +152,8 @@ jobs:
         id: check
         working-directory: ./database
         run: |
+          pip show --version open-alchemy.package-database
+          pip show --version open-alchemy.package-database | grep -Eo "\d+.\d+.\d+"
           RELEASED_VERSION=$(pip show --version open-alchemy.package-database | grep -Eo "\d+.\d+.\d+")
           echo $RELEASED_VERSION
           PROJECT_VERSION=$(poetry version -s)
