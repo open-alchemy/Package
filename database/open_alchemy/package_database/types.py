@@ -216,96 +216,96 @@ class TDatabase(typing.Protocol):
         """
         ...
 
-    @staticmethod
-    def list_credentials(*, sub: TSub) -> TCredentialsInfoList:
-        """
-        List all available credentials for a user.
+    # @staticmethod
+    # def list_credentials(*, sub: TSub) -> TCredentialsInfoList:
+    #     """
+    #     List all available credentials for a user.
 
-        Filters for a customer and returns all credentials.
+    #     Filters for a customer and returns all credentials.
 
-        Args:
-            sub: Unique identifier for a cutsomer.
+    #     Args:
+    #         sub: Unique identifier for a cutsomer.
 
-        Returns:
-            List of information for all credentials of the customer.
+    #     Returns:
+    #         List of information for all credentials of the customer.
 
-        """
-        ...
+    #     """
+    #     ...
 
-    @staticmethod
-    def create_update_item(
-        *,
-        sub: TSub,
-        id_: TCredentialsId,
-        public_key: TCredentialsPublicKey,
-        secret_key_hash: TCredentialsSecretKeyHash,
-        salt: TCredentialsSalt
-    ) -> None:
-        """
-        Create or update a spec.
+    # @staticmethod
+    # def create_update_credentials(
+    #     *,
+    #     sub: TSub,
+    #     id_: TCredentialsId,
+    #     public_key: TCredentialsPublicKey,
+    #     secret_key_hash: TCredentialsSecretKeyHash,
+    #     salt: TCredentialsSalt
+    # ) -> None:
+    #     """
+    #     Create or update a spec.
 
-        Args:
-            sub: Unique identifier for a cutsomer.
-            id_: Unique identifier for the credentials.
-            public_key: Public identifier for the credentials.
-            secret_key_hash: Value derived from the secret key that is safe to store.
-            salt: Random value used to generate the credentials.
+    #     Args:
+    #         sub: Unique identifier for a cutsomer.
+    #         id_: Unique identifier for the credentials.
+    #         public_key: Public identifier for the credentials.
+    #         secret_key_hash: Value derived from the secret key that is safe to store.
+    #         salt: Random value used to generate the credentials.
 
-        """
-        ...
+    #     """
+    #     ...
 
-    @staticmethod
-    def get_credentials(
-        *, sub: TSub, id_: TCredentialsId
-    ) -> typing.Optional[TCredentialsInfo]:
-        """
-        Retrieve credentials.
+    # @staticmethod
+    # def get_credentials(
+    #     *, sub: TSub, id_: TCredentialsId
+    # ) -> typing.Optional[TCredentialsInfo]:
+    #     """
+    #     Retrieve credentials.
 
-        Args:
-            sub: Unique identifier for a cutsomer.
-            id_: Unique identifier for the credentials.
+    #     Args:
+    #         sub: Unique identifier for a cutsomer.
+    #         id_: Unique identifier for the credentials.
 
-        Returns:
-            Information about the credentials.
+    #     Returns:
+    #         Information about the credentials.
 
-        """
-        ...
+    #     """
+    #     ...
 
-    @staticmethod
-    def get_user(
-        *, public_key: TCredentialsPublicKey
-    ) -> typing.Optional[CredentialsAuthInfo]:
-        """
-        Retrieve a user and information to authenticate the user.
+    # @staticmethod
+    # def get_user(
+    #     *, public_key: TCredentialsPublicKey
+    # ) -> typing.Optional[CredentialsAuthInfo]:
+    #     """
+    #     Retrieve a user and information to authenticate the user.
 
-        Args:
-            public_key: Public identifier for the credentials.
+    #     Args:
+    #         public_key: Public identifier for the credentials.
 
-        Returns:
-            Information needed to authenticate the user.
+    #     Returns:
+    #         Information needed to authenticate the user.
 
-        """
-        ...
+    #     """
+    #     ...
 
-    @staticmethod
-    def delete_credentials(*, sub: TSub, id_: TCredentialsId) -> None:
-        """
-        Delete the credentials.
+    # @staticmethod
+    # def delete_credentials(*, sub: TSub, id_: TCredentialsId) -> None:
+    #     """
+    #     Delete the credentials.
 
-        Args:
-            sub: Unique identifier for a cutsomer.
-            id_: Unique identifier for the credentials.
+    #     Args:
+    #         sub: Unique identifier for a cutsomer.
+    #         id_: Unique identifier for the credentials.
 
-        """
-        ...
+    #     """
+    #     ...
 
-    @staticmethod
-    def delete_all_credentials(*, sub: TSub) -> None:
-        """
-        Delete all the credentials for a user.
+    # @staticmethod
+    # def delete_all_credentials(*, sub: TSub) -> None:
+    #     """
+    #     Delete all the credentials for a user.
 
-        Args:
-            sub: Unique identifier for a cutsomer.
+    #     Args:
+    #         sub: Unique identifier for a cutsomer.
 
-        """
-        ...
+    #     """
+    #     ...

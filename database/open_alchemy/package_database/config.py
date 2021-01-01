@@ -27,6 +27,7 @@ class TConfig:
         credentials_table_name: The name of the credentials table
         credentials_local_secondary_index_name: The name of the credentials global
             secondary index
+        free_tier_model_count: The number of models included in the free tier
 
     """
 
@@ -35,6 +36,7 @@ class TConfig:
     specs_local_secondary_index_name: str
     credentials_table_name: str
     credentials_global_secondary_index_name: str
+    free_tier_model_count: int
 
 
 def _get() -> TConfig:
@@ -53,12 +55,15 @@ def _get() -> TConfig:
     credentials_table_name = "package.credentials"
     credentials_global_secondary_index_name = "publicKeySecretKeyHash"
 
+    free_tier_model_count = 10
+
     return TConfig(
         stage=stage,
         specs_table_name=specs_table_name,
         specs_local_secondary_index_name=specs_local_secondary_index_name,
         credentials_table_name=credentials_table_name,
         credentials_global_secondary_index_name=credentials_global_secondary_index_name,
+        free_tier_model_count=free_tier_model_count,
     )
 
 
