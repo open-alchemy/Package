@@ -320,3 +320,14 @@ class TDatabase(typing.Protocol):
 
         """
         ...
+
+    @classmethod
+    def delete_all(cls, *, sub: TSub) -> None:
+        """
+        Delete all the items for a user.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+
+        """
+        ...

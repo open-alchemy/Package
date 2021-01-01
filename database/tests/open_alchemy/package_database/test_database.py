@@ -381,3 +381,32 @@ def test_create_get_get_user_delete_credentials(_clean_credentials_table):
     auth_info = database_instance.get_user(public_key=public_key_1)
 
     assert auth_info is None
+
+
+def test_delete_all(_clean_spec_table, _clean_credentials_table):
+    """
+    GIVEN database with spec and credentials
+    WHEN delete_all is called
+    THEN all spec and credentials are deleted.
+    """
+    sub = "sub 1"
+
+    database_instance = package_database.get()
+    database_instance.create_update_credentials(
+        sub=sub,
+        id_="id 1",
+        public_key="public key 1",
+        secret_key_hash=b"secret key hash 1",
+        salt=b"salt 1",
+    )
+    database_instance.create_update_spec(
+        sub=sub, id_="id 1", version="version 1", model_count=1
+    )
+
+    assert len(database_instance.list_specs(sub=sub)) == 1
+    assert len(database_instance.list_credentials(sub=sub)) == 1
+
+    database_instance.delete_all(sub=sub)
+
+    assert len(database_instance.list_specs(sub=sub)) == 0
+    assert len(database_instance.list_credentials(sub=sub)) == 0

@@ -257,3 +257,15 @@ class Database:
 
         """
         models.Credentials.delete_all(sub=sub)
+
+    @classmethod
+    def delete_all(cls, *, sub: types.TSub) -> None:
+        """
+        Delete all the items for a user.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+
+        """
+        cls.delete_all_specs(sub=sub)
+        cls.delete_all_credentials(sub=sub)
