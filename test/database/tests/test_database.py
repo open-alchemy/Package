@@ -92,3 +92,90 @@ def test_spec_create_count_models_get_latest_version_list_versions_delete(sub):
 
     with pytest.raises(package_database.exceptions.NotFoundError):
         database_instance.list_spec_versions(sub=sub, id_=id_)
+
+
+def test_credentials_create_list_delete_all(sub):
+    """
+    GIVEN credentials values
+    WHEN credentials are created, listed and all are deleted
+    THEN the credentials are returned in the list after creation but not after deletion.
+    """
+    id_ = "id 1"
+    public_key = "public key 1"
+    secret_key_hash = b"secret key has 1"
+    salt = b"salt 1"
+
+    database_instance = package_database.get()
+
+    assert len(database_instance.list_credentials(sub=sub)) == 0
+
+    database_instance.create_update_credentials(
+        sub=sub,
+        id_=id_,
+        public_key=public_key,
+        secret_key_hash=secret_key_hash,
+        salt=salt,
+    )
+
+    infos = database_instance.list_credentials(sub=sub)
+    assert len(infos) == 1
+    info = infos[0]
+    assert info["id"] == id_
+    assert info["public_key"] == public_key
+    assert info["salt"] == salt
+
+    database_instance.delete_all_credentials(sub=sub)
+
+    assert len(database_instance.list_credentials(sub=sub)) == 0
+
+
+def test_credentials_create_get_get_user_delete(sub):
+    """
+    GIVEN credentials values
+    WHEN credentials are created, retrieved, the user is retrieved and deleted
+    THEN the credentials and user are returned after creation but not after deletion.
+    """
+    id_ = "id 1"
+    public_key = "public key 1"
+    secret_key_hash = b"secret key has 1"
+    salt = b"salt 1"
+
+    database_instance = package_database.get()
+
+    assert len(database_instance.list_credentials(sub=sub)) == 0
+
+    info = database_instance.get_credentials(sub=sub, id_=id_)
+
+    assert info is None
+
+    auth_info = database_instance.get_user(public_key=public_key)
+
+    assert auth_info is None
+
+    database_instance.create_update_credentials(
+        sub=sub,
+        id_=id_,
+        public_key=public_key,
+        secret_key_hash=secret_key_hash,
+        salt=salt,
+    )
+
+    info = database_instance.get_credentials(sub=sub, id_=id_)
+    assert info["id"] == id_
+    assert info["public_key"] == public_key
+    assert info["salt"] == salt
+
+    auth_info = database_instance.get_user(public_key=public_key)
+    assert auth_info["sub"] == sub
+    assert auth_info["secret_key_hash"] == secret_key_hash
+    assert auth_info["salt"] == salt
+
+    database_instance.delete_credentials(sub=sub, id_=id_)
+
+    info = database_instance.get_credentials(sub=sub, id_=id_)
+
+    assert info is None
+
+    auth_info = database_instance.get_user(public_key=public_key)
+
+    assert auth_info is None

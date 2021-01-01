@@ -53,7 +53,7 @@ def _get() -> TConfig:
     specs_local_secondary_index_name = "idUpdatedAt"
 
     credentials_table_name = "package.credentials"
-    credentials_global_secondary_index_name = "publicKeySecretKeyHash"
+    credentials_global_secondary_index_name = "publicKey"
 
     free_tier_model_count = 10
 

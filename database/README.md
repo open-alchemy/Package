@@ -248,7 +248,7 @@ Output:
 Algorithm:
 
 1. check whether an entry exists using the `public_key` partition key for the
-   `publicKeySecretKeyHash` global secondary index
+   `publicKey` global secondary index
 1. if it does not exist, return `None` and
 1. retrieve and return the `sub`, `salt` and `secret_key_hash`.
 
