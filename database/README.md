@@ -304,3 +304,29 @@ Algorithm:
   global secondary index.
 - `secret_key_hash`: Bytes.
 - `salt`: Bytes.
+
+## CI-CD
+
+There are a few groups of jobs in the CI-CD:
+
+- `test`: runs the tests for the package in supported python versions,
+- `build`: builds the database package,
+- `release-required`: determines whether a release to PyPI is required,
+- `deploy`: deploys database infrastructure to AWS and
+- `release`: a combination of deploying to test and production PyPI and
+  executing tests on the published packages
+
+### `test`
+
+Executes the tests defined at [tests](tests).
+
+### `build`
+
+Builds the database package defined at [.](.).
+
+### `release-required`
+
+Has 2 outputs:
+
+- `result`: whether a release to PyPI is required based on the latest released
+  version and the version configured in the project.

@@ -198,6 +198,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pipenv
+      - name: Wait for a minute
+        if: needs.release-required.outputs.result == 'true'
+        run: sleep 60
       - name: install dependencies
         env:
           PYPI_MIRROR: https://test.pypi.org/simple/
@@ -248,6 +251,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pipenv
+      - name: Wait for a minute
+        if: needs.release-required.outputs.result == 'true'
+        run: sleep 60
       - name: install dependencies
         env:
           PYPI_MIRROR: https://pypi.org/simple/
