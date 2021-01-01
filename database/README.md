@@ -307,6 +307,9 @@ Algorithm:
 
 ## CI-CD
 
+The workflow is defined here:
+[../.github/workflows/ci-cd-database.yaml](../.github/workflows/ci-cd-database.yaml)
+
 There are a few groups of jobs in the CI-CD:
 
 - `test`: runs the tests for the package in supported python versions,
@@ -329,4 +332,31 @@ Builds the database package defined at [.](.).
 Has 2 outputs:
 
 - `result`: whether a release to PyPI is required based on the latest released
-  version and the version configured in the project.
+  version and the version configured in the project and
+- `project-version`: the version configured in the code base.
+
+### `deploy`
+
+Deploys the CloudFormation stack for the database defined at
+[../infrastructure/lib/database-stack.ts](../infrastructure/lib/database-stack.ts)
+.
+
+### `release`
+
+If the `result` output from `release-required` is true, the package is deployed
+to both test and production PyPI.
+
+Irrespective of whether the release was executed, the version of the package
+defined in the code base is installed from both test and production PyPI and
+the tests defined at [../test/database/tests](../test/database/tests) are
+executed against the deployed infrastructure on AWS.
+
+## Periodic Production Tests
+
+The workflow is defined here:
+[../.github/workflows/production-test-database.yaml](../.github/workflows/production-test-database.yaml)
+.
+
+Executes the tests defined at [../test/database/tests](../test/database/tests)
+against a configured version of the package and against the currently deployed
+infrastructure on AWS.
