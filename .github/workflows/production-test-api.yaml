@@ -1,16 +1,21 @@
-name: API Periodic Production Tests
+name: Database Periodic Production Tests
 
 on:
   schedule:
-    - cron: "0 1 * * *"
+    - cron: "0 5 * * *"
   workflow_dispatch:
 
 jobs:
-  api:
+  database:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        PYPI_MIRROR:
+          - https://test.pypi.org/simple/
+          - https://pypi.org/simple/
     steps:
       - uses: actions/checkout@v2
-      - name: set up python
+      - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
@@ -18,27 +23,17 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pipenv
-      - id: cache-pipenv
-        uses: actions/cache@v2
-        with:
-          path: test/api/.venv
-          key: ${{ runner.os }}-test-api-${{ hashFiles('test/api/Pipfile.lock') }}
       - name: install dependencies
-        working-directory: ./test/api/
-        if: steps.cache-pipenv.outputs.cache-hit != 'true'
+        working-directory: test/database
         env:
-          PIPENV_VENV_IN_PROJECT: 1
+          PYPI_MIRROR: ${{ matrix.PYPI_MIRROR }}
         run: |
           pipenv install --dev
-      - name: Run tests
-        working-directory: ./test/api/
+      - name: run tests
+        working-directory: test/database
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: "us-east-1"
-          USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          TEST_USERNAME: ${{ secrets.TEST_USERNAME_API }}
-          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD_API }}
+          STAGE: PROD
         run: |
           pipenv run test
