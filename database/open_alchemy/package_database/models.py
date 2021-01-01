@@ -312,6 +312,20 @@ class Spec(models.Model):
         )
         return list(map(cls.item_to_info, items_no_latest))
 
+    @classmethod
+    def delete_all(cls, *, sub: types.TSub) -> None:
+        """
+        Delete all the specs for a user.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+
+        """
+        items = cls.query(hash_key=sub)
+        with cls.batch_write() as batch:
+            for item in items:
+                batch.delete(item)
+
 
 class PublicKeyIndex(indexes.GlobalSecondaryIndex):
     """Global secondary index for querying based on the public key."""

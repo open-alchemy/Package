@@ -128,7 +128,7 @@ def test_get_latest_spec_version(_clean_spec_table):
         database_instance.get_latest_spec_version(sub="sub 2", id_=id_)
 
 
-def test_list_specs(_clean_spec_table):
+def test_list_delete_all_spec(_clean_spec_table):
     """
     GIVEN sub, spec id, version and model count
     WHEN create_update_spec is called with the spec info and list_specs is called
@@ -179,8 +179,12 @@ def test_list_specs(_clean_spec_table):
     assert spec_info["model_count"] == model_count_2
     assert "updated_at" in spec_info
 
+    database_instance.delete_all_specs(sub=sub)
 
-def test_delete_specs(_clean_spec_table):
+    assert database_instance.list_specs(sub=sub) == []
+
+
+def test_delete_spec(_clean_spec_table):
     """
     GIVEN sub, spec id, version and model count
     WHEN create_update_spec is called with the spec info and delete_spec is called

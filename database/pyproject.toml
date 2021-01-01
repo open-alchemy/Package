@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "open-alchemy.package-database"
-version = "1.0.0"
+version = "1.1.0"
 description = "Facade for the OpenAlchemy package database"
 readme = "README.md"
 authors = ["David Andersson <jdkandersson@users.noreply.github.com>"]

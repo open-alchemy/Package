@@ -148,6 +148,17 @@ class Database:
         return spec_infos
 
     @staticmethod
+    def delete_all_specs(*, sub: types.TSub) -> None:
+        """
+        Delete all the specs for a user.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+
+        """
+        models.Spec.delete_all(sub=sub)
+
+    @staticmethod
     def list_credentials(*, sub: types.TSub) -> types.TCredentialsInfoList:
         """
         List all available credentials for a user.

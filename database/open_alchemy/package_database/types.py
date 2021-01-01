@@ -217,6 +217,17 @@ class TDatabase(typing.Protocol):
         ...
 
     @staticmethod
+    def delete_all_specs(*, sub: TSub) -> None:
+        """
+        Delete all the specs for a user.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+
+        """
+        ...
+
+    @staticmethod
     def list_credentials(*, sub: TSub) -> TCredentialsInfoList:
         """
         List all available credentials for a user.
