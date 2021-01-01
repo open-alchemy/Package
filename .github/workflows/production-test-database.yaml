@@ -27,7 +27,7 @@ jobs:
         working-directory: test/database
         env:
           PYPI_MIRROR: ${{ matrix.PYPI_MIRROR }}
-          VERSION: "1.2.2"
+          VERSION: "1.2.5"
         run: |
           pipenv install --dev
       - name: run tests
