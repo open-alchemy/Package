@@ -7,18 +7,18 @@ from pynamodb import attributes, indexes, models
 
 from . import config, exceptions, types
 
-TSpecUpdatedAtSpecId = str
-TSpecSpecIdUpdatedAt = str
+TSpecUpdatedAtId = str
+TSpecIdUpdatedAt = str
 
 
 class TSpecIndexValues(typing.NamedTuple):
     """The index values for Spec."""
 
-    updated_at_id: TSpecUpdatedAtSpecId
-    id_updated_at: TSpecSpecIdUpdatedAt
+    updated_at_id: TSpecUpdatedAtId
+    id_updated_at: TSpecIdUpdatedAt
 
 
-class SpecIdUpdatedAtIndex(indexes.LocalSecondaryIndex):
+class IdUpdatedAtIndex(indexes.LocalSecondaryIndex):
     """Local secondary index for querying based on id."""
 
     class Meta:
@@ -82,7 +82,7 @@ class Spec(models.Model):
     updated_at_id = attributes.UnicodeAttribute(range_key=True)
     id_updated_at = attributes.UnicodeAttribute()
 
-    id_updated_at_index = SpecIdUpdatedAtIndex()
+    id_updated_at_index = IdUpdatedAtIndex()
 
     @classmethod
     def count_customer_models(cls, *, sub: types.TSub) -> int:

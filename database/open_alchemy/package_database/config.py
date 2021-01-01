@@ -50,7 +50,7 @@ def _get() -> TConfig:
     stage = Stage[stage_str]
 
     specs_table_name = "package.specs"
-    specs_local_secondary_index_name = "specIdUpdatedAt"
+    specs_local_secondary_index_name = "idUpdatedAt"
 
     credentials_table_name = "package.credentials"
     credentials_global_secondary_index_name = "publicKeySecretKeyHash"

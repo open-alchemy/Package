@@ -159,7 +159,7 @@ Algorithm:
 - `model_count` A number.
 - `updated_at_id`: A string that is the sort key of the table.
 - `id_updated_at`: A string that is the sort key of the
-  `specIdUpdatedAt` local secondary index of the table.
+  `idUpdatedAt` local secondary index of the table.
 
 ### Credentials
 
