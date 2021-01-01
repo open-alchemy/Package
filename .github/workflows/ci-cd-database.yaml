@@ -187,6 +187,7 @@ jobs:
     needs:
       - deploy
       - release-test-pypi
+      - release-required
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -236,6 +237,7 @@ jobs:
     needs:
       - deploy
       - release-pypi
+      - release-required
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
