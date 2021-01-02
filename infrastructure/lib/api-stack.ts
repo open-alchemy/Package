@@ -94,8 +94,16 @@ export class ApiStack extends cdk.Stack {
     bucket.grantReadWrite(func);
     table.grantReadWriteData(func);
     table.grant(func, 'dynamodb:DescribeTable');
-    specTable.grantReadWriteData(func);
-    specTable.grant(func, 'dynamodb:DescribeTable');
+    specTable
+      .grantReadWriteData(func)
+      .resourceStatement?.addResources(
+        'arn:aws:dynamodb:us-east-1:606685527493:table/package.specs/index/*'
+      );
+    specTable
+      .grant(func, 'dynamodb:DescribeTable')
+      .resourceStatement?.addResources(
+        'arn:aws:dynamodb:us-east-1:606685527493:table/package.specs/index/*'
+      );
     credentialsTable.grantReadWriteData(func);
     credentialsTable.grant(func, 'dynamodb:DescribeTable');
     const version = new lambda.Version(
