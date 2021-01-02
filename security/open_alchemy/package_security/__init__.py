@@ -70,3 +70,18 @@ def create(*, sub: types.TSub) -> types.Credentials:
         secret_key_hash=secret_key_hash,
         salt=salt,
     )
+
+
+def retrieve(*, sub: types.TSub, salt: types.TSalt) -> types.TSecretKey:
+    """
+    Retrieve the secret from existing credentials.
+
+    Args:
+        sub: Unique identifier for the customer.
+        salt: Random value used to generate the credentials.
+
+    Returns:
+        The secret key for the credentials.
+
+    """
+    return _generate_secret_key(sub=sub, salt=salt)

@@ -51,3 +51,17 @@ def test_create():
     assert returned_credentials.secret_key_hash not in returned_credentials.salt
     assert returned_credentials.salt not in returned_credentials.secret_key_hash
     assert len(returned_credentials.salt) >= 32
+
+
+def test_retrieve():
+    """
+    GIVEN credentials
+    WHEN retrieve is called with the sub and salt from the credentials
+    THEN the returned secret is equal to the secret of the credentials.
+    """
+    sub = "sub 1"
+    credentials = package_security.create(sub=sub)
+
+    returned_secret_key = package_security.retrieve(sub=sub, salt=credentials.salt)
+
+    assert returned_secret_key == credentials.secret_key
