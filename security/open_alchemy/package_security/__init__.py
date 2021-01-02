@@ -73,7 +73,7 @@ def create(*, sub: types.TSub) -> types.Credentials:
     )
 
 
-def retrieve(*, sub: types.TSub, salt: types.TSalt) -> types.TSecretKey:
+def retrieve_secret_key(*, sub: types.TSub, salt: types.TSalt) -> types.TSecretKey:
     """
     Retrieve the secret from existing credentials.
 
@@ -89,7 +89,7 @@ def retrieve(*, sub: types.TSub, salt: types.TSalt) -> types.TSecretKey:
 
 
 def compare_secret_key_hashes(
-    left: types.TSecretKeyHash, right: types.TSecretKeyHash
+    *, left: types.TSecretKeyHash, right: types.TSecretKeyHash
 ) -> bool:
     """
     Safe comparison of two secret key hashes, computes left == right.
