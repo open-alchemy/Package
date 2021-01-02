@@ -52,23 +52,6 @@ export class ApiStack extends cdk.Stack {
         globalIndexes: [CONFIG.database.credentials.globalSecondaryIndexName],
       }
     );
-    const table = new dynamodb.Table(this, 'Table', {
-      partitionKey: { name: 'sub', type: dynamodb.AttributeType.STRING },
-      tableName: CONFIG.database.storage.tableName,
-      sortKey: {
-        name: 'updated_at_spec_id',
-        type: dynamodb.AttributeType.STRING,
-      },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-    });
-    table.addLocalSecondaryIndex({
-      indexName: 'specIdUpdatedAt',
-      sortKey: {
-        name: 'spec_id_updated_at',
-        type: dynamodb.AttributeType.STRING,
-      },
-      projectionType: dynamodb.ProjectionType.ALL,
-    });
 
     // Lambda function
     const deploymentPackage = 'resources/api/deployment-package.zip';
@@ -87,15 +70,11 @@ export class ApiStack extends cdk.Stack {
         ACCESS_CONTROL_ALLOW_ORIGIN: '*',
         ACCESS_CONTROL_ALLOW_HEADERS: 'x-language',
         PACKAGE_STORAGE_BUCKET_NAME: CONFIG.storage.bucketName,
-        PACKAGE_DATABASE_STORAGE_TABLE_NAME: CONFIG.database.storage.tableName,
-        PACKAGE_DATABASE_STORAGE_INDEX_NAME: CONFIG.database.storage.indexName,
       },
       logRetention: logs.RetentionDays.ONE_WEEK,
       timeout: cdk.Duration.seconds(10),
     });
     bucket.grantReadWrite(func);
-    table.grantReadWriteData(func);
-    table.grant(func, 'dynamodb:DescribeTable');
     specTable.grantReadWriteData(func);
     specTable.grant(func, 'dynamodb:DescribeTable');
     credentialsTable.grantReadWriteData(func);
