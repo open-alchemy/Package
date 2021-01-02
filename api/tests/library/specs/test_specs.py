@@ -9,7 +9,7 @@ from library.facades import server, storage
 from open_alchemy import package_database
 
 
-def test_list_(_clean_spec_table):
+def test_list_(_clean_specs_table):
     """
     GIVEN user and database with a single spec
     WHEN list_ is called with the user
@@ -36,7 +36,7 @@ def test_list_(_clean_spec_table):
     assert "updated_at" in spec_info
 
 
-def test_list_miss(_clean_spec_table):
+def test_list_miss(_clean_specs_table):
     """
     GIVEN user and database with a single spec for a different user
     WHEN list_ is called with the user
@@ -77,7 +77,7 @@ def test_list_database_error(monkeypatch):
     assert "database" in response.data.decode()
 
 
-def test_get(_clean_spec_table):
+def test_get(_clean_specs_table):
     """
     GIVEN user and database and storage with a single spec
     WHEN get is called with the user and spec id
@@ -105,7 +105,7 @@ def test_get(_clean_spec_table):
     assert "key: value" in response.data.decode()
 
 
-def test_get_database_error(_clean_spec_table, monkeypatch):
+def test_get_database_error(_clean_specs_table, monkeypatch):
     """
     GIVEN user and database that raises an error
     WHEN get is called with the user and spec id
@@ -130,7 +130,7 @@ def test_get_database_error(_clean_spec_table, monkeypatch):
     assert "database" in response.data.decode()
 
 
-def test_get_database_miss(_clean_spec_table):
+def test_get_database_miss(_clean_specs_table):
     """
     GIVEN user and empty database
     WHEN get is called with the user and spec id
@@ -147,7 +147,7 @@ def test_get_database_miss(_clean_spec_table):
     assert "not find" in response.data.decode()
 
 
-def test_get_storage_facade_error(_clean_spec_table, monkeypatch):
+def test_get_storage_facade_error(_clean_specs_table, monkeypatch):
     """
     GIVEN user and database with a spec but storage that raises an error
     WHEN get is called with the user and spec id
@@ -170,7 +170,7 @@ def test_get_storage_facade_error(_clean_spec_table, monkeypatch):
     assert "reading" in response.data.decode()
 
 
-def test_get_storage_facade_miss(_clean_spec_table):
+def test_get_storage_facade_miss(_clean_specs_table):
     """
     GIVEN user and database with a spec but empty storage
     WHEN get is called with the user and spec id
@@ -191,7 +191,7 @@ def test_get_storage_facade_miss(_clean_spec_table):
     assert "not find" in response.data.decode()
 
 
-def test_put(monkeypatch, _clean_spec_table):
+def test_put(monkeypatch, _clean_specs_table):
     """
     GIVEN body, spec id and user
     WHEN put is called with the body, spec id and user
@@ -265,7 +265,7 @@ def test_put_invalid_spec_error(monkeypatch):
     assert "not valid" in response.data.decode()
 
 
-def test_put_too_many_models_error(monkeypatch, _clean_spec_table):
+def test_put_too_many_models_error(monkeypatch, _clean_specs_table):
     """
     GIVEN body spec and spec id and user that already has too many models
     WHEN put is called with the body and spec id
@@ -301,7 +301,7 @@ def test_put_too_many_models_error(monkeypatch, _clean_spec_table):
     assert "spec: 1" in response.data.decode()
 
 
-def test_put_database_count_error(monkeypatch, _clean_spec_table):
+def test_put_database_count_error(monkeypatch, _clean_specs_table):
     """
     GIVEN body with invalid spec and spec id and database that raises DatabaseError
     WHEN put is called with the body and spec id
@@ -341,7 +341,7 @@ def test_put_database_count_error(monkeypatch, _clean_spec_table):
     assert "database" in response.data.decode()
 
 
-def test_put_storage_error(monkeypatch, _clean_spec_table):
+def test_put_storage_error(monkeypatch, _clean_specs_table):
     """
     GIVEN body with invalid spec and spec id
     WHEN put is called with the body and spec id
@@ -379,7 +379,7 @@ def test_put_storage_error(monkeypatch, _clean_spec_table):
     assert "storing" in response.data.decode()
 
 
-def test_put_database_update_error(monkeypatch, _clean_spec_table):
+def test_put_database_update_error(monkeypatch, _clean_specs_table):
     """
     GIVEN body and spec id
     WHEN put is called with the body and spec id
@@ -428,7 +428,7 @@ def test_put_database_update_error(monkeypatch, _clean_spec_table):
     assert "database" in response.data.decode()
 
 
-def test_delete(_clean_spec_table):
+def test_delete(_clean_specs_table):
     """
     GIVEN database and storage with spec and user and spec id
     WHEN put is called with the body and spec id
@@ -454,7 +454,7 @@ def test_delete(_clean_spec_table):
     assert response.status_code == 204
 
 
-def test_delete_database_error(monkeypatch, _clean_spec_table):
+def test_delete_database_error(monkeypatch, _clean_specs_table):
     """
     GIVEN database that raises a DatabaseError and storage with spec and user and spec
         id
@@ -484,7 +484,7 @@ def test_delete_database_error(monkeypatch, _clean_spec_table):
     assert response.status_code == 204
 
 
-def test_delete_storage_error(monkeypatch, _clean_spec_table):
+def test_delete_storage_error(monkeypatch, _clean_specs_table):
     """
     GIVEN database and storage that raises a StorageError with spec and user and spec
         id

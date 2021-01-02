@@ -308,7 +308,7 @@ Algorithm:
 ## CI-CD
 
 The workflow is defined here:
-[../.github/workflows/ci-cd-database.yaml](../.github/workflows/ci-cd-database.yaml)
+[../.github/workflows/ci-cd-database.yaml](../.github/workflows/ci-cd-database.yaml).
 
 There are a few groups of jobs in the CI-CD:
 
@@ -338,8 +338,7 @@ Has 2 outputs:
 ### `deploy`
 
 Deploys the CloudFormation stack for the database defined at
-[../infrastructure/lib/database-stack.ts](../infrastructure/lib/database-stack.ts)
-.
+[../infrastructure/lib/database-stack.ts](../infrastructure/lib/database-stack.ts).
 
 ### `release`
 
@@ -354,8 +353,7 @@ executed against the deployed infrastructure on AWS.
 ## Periodic Production Tests
 
 The workflow is defined here:
-[../.github/workflows/production-test-database.yaml](../.github/workflows/production-test-database.yaml)
-.
+[../.github/workflows/production-test-database.yaml](../.github/workflows/production-test-database.yaml).
 
 Executes the tests defined at [../test/database/tests](../test/database/tests)
 against a configured version of the package and against the currently deployed
@@ -364,8 +362,7 @@ infrastructure on AWS.
 ## Pytest Plugin
 
 A pytest plugin is made available to make testing easier. It is defined at
-[open_alchemy/package_database/pytest_plugin.py](open_alchemy/package_database/pytest_plugin.py)
-.
+[open_alchemy/package_database/pytest_plugin.py](open_alchemy/package_database/pytest_plugin.py).
 
 It requires the `dynalite` NPM package to be installed in the project using
 `npm install --save-dev dynalite` to run a local dynamoDB instance at

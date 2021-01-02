@@ -83,7 +83,7 @@ def test_put_unauthorized(client, url):
     assert response.status_code == 401
 
 
-def test_specs_get(client, _clean_spec_table):
+def test_specs_get(client, _clean_specs_table):
     """
     GIVEN database with a single spec
     WHEN GET /v1/specs is called with the Authorization header
@@ -116,7 +116,7 @@ def test_specs_get(client, _clean_spec_table):
     assert "updated_at" in spec_info
 
 
-def test_specs_spec_id_get(client, _clean_spec_table):
+def test_specs_spec_id_get(client, _clean_specs_table):
     """
     GIVEN database and storage with a single spec
     WHEN GET /v1/specs/{spec_id} is called with the Authorization header
@@ -151,7 +151,7 @@ def test_specs_spec_id_get(client, _clean_spec_table):
     assert "key: value" in response.data.decode()
 
 
-def test_specs_spec_id_put(client, _clean_spec_table):
+def test_specs_spec_id_put(client, _clean_specs_table):
     """
     GIVEN spec id, data and token
     WHEN PUT /v1/specs/{spec-id} is called with the Authorization header
@@ -190,7 +190,7 @@ def test_specs_spec_id_put(client, _clean_spec_table):
     )
 
 
-def test_specs_spec_id_delete(client, _clean_spec_table):
+def test_specs_spec_id_delete(client, _clean_specs_table):
     """
     GIVEN database and storage with a single spec
     WHEN DELETE /v1/specs/{spec_id} is called with the Authorization header
@@ -229,7 +229,7 @@ def test_specs_spec_id_delete(client, _clean_spec_table):
     assert package_database.get().count_customer_models(sub=sub) == 0
 
 
-def test_specs_spec_id_versions_get(client, _clean_spec_table):
+def test_specs_spec_id_versions_get(client, _clean_specs_table):
     """
     GIVEN database and storage with a single spec
     WHEN GET /v1/specs/{spec_id}/versions is called with the Authorization header
@@ -298,7 +298,7 @@ def test_specs_spec_id_version_version_get(client):
     assert "key: value" in response.data.decode()
 
 
-def test_specs_spec_id_versions_version_put(client, _clean_spec_table):
+def test_specs_spec_id_versions_version_put(client, _clean_specs_table):
     """
     GIVEN spec id, data, version and token
     WHEN PUT /v1/specs/{spec-id}/versions/{version} is called with the Authorization

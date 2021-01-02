@@ -71,8 +71,7 @@ Algorithm:
 ## Salt
 
 A salt is a random string generated using
-<https://docs.python.org/3/library/secrets.html#secrets.token_bytes>
-.
+<https://docs.python.org/3/library/secrets.html#secrets.token_bytes>.
 
 ## Public Key
 
