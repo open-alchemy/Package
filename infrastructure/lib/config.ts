@@ -29,4 +29,7 @@ export const CONFIG = {
       globalSecondaryIndexName: 'publicKey',
     },
   },
+  security: {
+    secretName: 'package-service',
+  },
 };

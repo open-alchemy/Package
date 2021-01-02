@@ -6,6 +6,7 @@ import { ApiStack } from '../lib/api-stack';
 import { WebStack } from '../lib/web-stack';
 import { BuildStack } from '../lib/build-stack';
 import { DatabaseStack } from '../lib/database-stack';
+import { SecurityStack } from '../lib/security-stack';
 import { ENVIRONMENT } from '../lib/environment';
 
 const env = {
@@ -26,4 +27,7 @@ if (ENVIRONMENT.STACK === 'PackageBuildStack') {
 }
 if (ENVIRONMENT.STACK === 'PackageDatabaseStack') {
   new DatabaseStack(app, 'PackageDatabaseStack', { env });
+}
+if (ENVIRONMENT.STACK === 'PackageSecurityStack') {
+  new SecurityStack(app, 'PackageSecurityStack', { env });
 }

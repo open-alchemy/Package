@@ -1,0 +1,48 @@
+name: Security CI-CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/ci-cd-security.yaml"
+      - "security/**"
+      - "infrastructure/**"
+      - "!infrastructure/lib/*-stack.ts"
+      - "infrastructure/lib/security-stack.ts"
+      - "!infrastructure/test/**"
+      - "!**.md"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up node
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 14.x
+      - name: cache node modules
+        id: cache-node_modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: infrastructure/node_modules
+          key: ${{ runner.os }}-infrastructure-${{ env.cache-name }}-${{ hashFiles('infrastructure/package-lock.json') }}
+      - name: install dependencies
+        if: steps.cache-node_modules.outputs.cache-hit != 'true'
+        working-directory: ./infrastructure
+        run: npm install
+      - name: deploy
+        working-directory: ./infrastructure
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-1"
+          AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
+          AWS_OPEN_ALCHEMY_CERTIFICATE_ARN: ${{ secrets.AWS_OPEN_ALCHEMY_CERTIFICATE_ARN }}
+          AWS_OPEN_ALCHEMY_API_CERTIFICATE_ARN: ${{ secrets.AWS_OPEN_ALCHEMY_API_CERTIFICATE_ARN }}
+          AWS_IDENTITY_PROVIDER_ARN: ${{ secrets.AWS_IDENTITY_PROVIDER_ARN }}
+        run: |
+          npm run deploy:security

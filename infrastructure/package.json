@@ -12,7 +12,8 @@
     "deploy:api": "cdk deploy PackageApiStack --require-approval never",
     "deploy:web": "cdk deploy PackageWebStack --require-approval never",
     "deploy:build": "cdk deploy PackageBuildStack --require-approval never",
-    "deploy:database": "cdk deploy PackageDatabaseStack --require-approval never"
+    "deploy:database": "cdk deploy PackageDatabaseStack --require-approval never",
+    "deploy:security": "STACK=PackageSecurityStack cdk deploy PackageSecurityStack --require-approval never"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.80.0",
@@ -42,6 +43,7 @@
     "@aws-cdk/aws-s3": "1.80.0",
     "@aws-cdk/aws-s3-deployment": "^1.80.0",
     "@aws-cdk/aws-s3-notifications": "^1.80.0",
+    "@aws-cdk/aws-secretsmanager": "^1.80.0",
     "@aws-cdk/aws-sns": "^1.80.0",
     "@aws-cdk/aws-sqs": "^1.80.0",
     "@aws-cdk/core": "1.80.0",
