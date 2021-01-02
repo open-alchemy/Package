@@ -13,7 +13,7 @@ const SPEC_INFOS_1: SpecInfo[] = [
   {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     spec_id: 'spec id 1',
-    // eslint-disable-next-line @typescript-eslint/naming-convention
+    id: 'spec id 1',
     version: 'version 1',
     // eslint-disable-next-line @typescript-eslint/naming-convention
     model_count: 1,
@@ -23,7 +23,7 @@ const SPEC_INFOS_2: SpecInfo[] = [
   {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     spec_id: 'spec id 2',
-    // eslint-disable-next-line @typescript-eslint/naming-convention
+    id: 'spec id 2',
     version: 'version 2',
     // eslint-disable-next-line @typescript-eslint/naming-convention
     model_count: 2,

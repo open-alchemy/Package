@@ -17,7 +17,7 @@ class AppSpecsManageSpecStubComponent {
 const SPEC_INFO_1: SpecInfo = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   spec_id: 'spec id 1',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
+  id: 'spec id 1',
   version: 'version 1',
   // eslint-disable-next-line @typescript-eslint/naming-convention
   model_count: 1,
@@ -25,11 +25,9 @@ const SPEC_INFO_1: SpecInfo = {
 const SPEC_INFO_2: SpecInfo = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   spec_id: 'spec id 2',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
+  id: 'spec id 2',
   version: 'version 2',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   title: 'title 2',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   description: 'description 2',
   // eslint-disable-next-line @typescript-eslint/naming-convention
   updated_at: 2000000,
@@ -89,7 +87,7 @@ describe('SpecsTableComponent', () => {
     const tds = trs[1].querySelectorAll('td');
     expect(tds.length).toEqual(component.displayedColumns.length);
     const tdInnerTexts = new Set(Array.from(tds).map((td) => td.innerText));
-    expect(tdInnerTexts).toContain(SPEC_INFO_1.spec_id);
+    expect(tdInnerTexts).toContain(SPEC_INFO_1.id);
     expect(tdInnerTexts).toContain(SPEC_INFO_1.version);
     expect(tdInnerTexts).toContain(SPEC_INFO_1.model_count.toString());
     // AND the specId is passed to app-specs-manage-spec
@@ -100,7 +98,7 @@ describe('SpecsTableComponent', () => {
     const specsManageSpecComponent = specsManageSpecDebugElement.injector.get(
       AppSpecsManageSpecStubComponent
     );
-    expect(specsManageSpecComponent.specId).toEqual(SPEC_INFO_1.spec_id);
+    expect(specsManageSpecComponent.specId).toEqual(SPEC_INFO_1.id);
   });
 
   it('should only show a single row with optional values shown if a single spec is provided with optional values', () => {
@@ -120,7 +118,7 @@ describe('SpecsTableComponent', () => {
     const tds = trs[1].querySelectorAll('td');
     expect(tds.length).toEqual(component.displayedColumns.length);
     const tdInnerTexts = new Set(Array.from(tds).map((td) => td.innerText));
-    expect(tdInnerTexts).toContain(SPEC_INFO_2.spec_id);
+    expect(tdInnerTexts).toContain(SPEC_INFO_2.id);
     expect(tdInnerTexts).toContain(SPEC_INFO_2.version);
     expect(tdInnerTexts).toContain(SPEC_INFO_2.title);
     expect(tdInnerTexts).toContain(SPEC_INFO_2.description);
@@ -139,7 +137,7 @@ describe('SpecsTableComponent', () => {
     const specsManageSpecComponent = specsManageSpecDebugElement.injector.get(
       AppSpecsManageSpecStubComponent
     );
-    expect(specsManageSpecComponent.specId).toEqual(SPEC_INFO_2.spec_id);
+    expect(specsManageSpecComponent.specId).toEqual(SPEC_INFO_2.id);
   });
 
   it('should only show a multiple rows if multiple specs are provided', () => {

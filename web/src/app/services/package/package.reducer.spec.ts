@@ -11,6 +11,7 @@ const SPEC_INFOS: SpecInfo[] = [
   {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     spec_id: 'spec id 1',
+    id: 'spec id 1',
     // eslint-disable-next-line @typescript-eslint/naming-convention
     version: 'version 1',
     // eslint-disable-next-line @typescript-eslint/naming-convention

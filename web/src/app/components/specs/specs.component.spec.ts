@@ -14,7 +14,7 @@ import { PackageService } from '../../services/package/package.service';
 const SPEC_INFO: SpecInfo = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   spec_id: 'spec id 1',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
+  id: 'spec id 1',
   version: 'version 1',
   // eslint-disable-next-line @typescript-eslint/naming-convention
   model_count: 1,

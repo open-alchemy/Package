@@ -26,7 +26,7 @@
     "@angular/router": "~11.0.3",
     "@ngrx/effects": "^10.1.0",
     "@ngrx/store": "^10.1.0",
-    "@open-alchemy/package-sdk": "^2.1.0",
+    "@open-alchemy/package-sdk": "^2.2.0",
     "angular-oauth2-oidc": "^10.0.3",
     "rxjs": "~6.6.3",
     "tslib": "^2.0.0",
