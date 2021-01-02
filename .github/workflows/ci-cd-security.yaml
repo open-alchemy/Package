@@ -180,21 +180,19 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pipenv
-      - name: Wait for a minute
-        if: needs.release-required.outputs.result == 'true'
-        run: sleep 60
       - name: install dependencies
         env:
           PYPI_MIRROR: https://test.pypi.org/simple/
           VERSION: ${{ needs.release-required.outputs.project-version }}
         working-directory: test/security
         run: |
-          pipenv install --dev || pipenv install --dev
+          pipenv install --dev || sleep 30 && pipenv install --dev || sleep 30 && pipenv install --dev || sleep 30 && pipenv install --dev
       - name: run tests
         working-directory: test/security
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-1"
         run: |
           pipenv run test
 
@@ -232,20 +230,18 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pipenv
-      - name: Wait for a minute
-        if: needs.release-required.outputs.result == 'true'
-        run: sleep 60
       - name: install dependencies
         env:
           PYPI_MIRROR: https://pypi.org/simple/
           VERSION: ${{ needs.release-required.outputs.project-version }}
         working-directory: test/security
         run: |
-          pipenv install --dev || pipenv install --dev
+          pipenv install --dev || sleep 30 && pipenv install --dev || sleep 30 && pipenv install --dev || sleep 30 && pipenv install --dev
       - name: run tests
         working-directory: test/security
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-1"
         run: |
           pipenv run test
