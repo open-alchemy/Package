@@ -4,265 +4,265 @@
  */
 
 export interface paths {
-  "/specs": {
-    get: operations["library.specs.list_"];
+  '/specs': {
+    get: operations['library.specs.list_'];
   };
-  "/specs/{spec_id}": {
-    get: operations["library.specs.get"];
-    put: operations["library.specs.put"];
-    delete: operations["library.specs.delete"];
+  '/specs/{spec_id}': {
+    get: operations['library.specs.get'];
+    put: operations['library.specs.put'];
+    delete: operations['library.specs.delete'];
   };
-  "/specs/{spec_id}/versions": {
-    get: operations["library.specs.versions.list_"];
+  '/specs/{spec_id}/versions': {
+    get: operations['library.specs.versions.list_'];
   };
-  "/specs/{spec_id}/versions/{version}": {
-    get: operations["library.specs.versions.get"];
-    put: operations["library.specs.versions.put"];
+  '/specs/{spec_id}/versions/{version}': {
+    get: operations['library.specs.versions.get'];
+    put: operations['library.specs.versions.put'];
   };
-  "/credentials/default": {
-    get: operations["library.credentials.get"];
-    delete: operations["library.credentials.delete"];
+  '/credentials/default': {
+    get: operations['library.credentials.get'];
+    delete: operations['library.credentials.delete'];
   };
 }
 
 export interface operations {
-  "library.specs.list_": {
+  'library.specs.list_': {
     responses: {
       /**
        * All the available specs
        */
-      "200": {
-        "application/json": components["schemas"]["SpecInfo"][];
+      '200': {
+        'application/json': components['schemas']['SpecInfo'][];
       };
       /**
        * Unauthorized
        */
-      "401": {
-        "text/plain": string;
+      '401': {
+        'text/plain': string;
       };
     };
   };
-  "library.specs.get": {
+  'library.specs.get': {
     parameters: {
       path: {
-        spec_id: components["parameters"]["SpecId"];
+        spec_id: components['parameters']['SpecId'];
       };
     };
     responses: {
       /**
        * The requested spec
        */
-      "200": {
-        "text/plain": components["schemas"]["SpecValue"];
+      '200': {
+        'text/plain': components['schemas']['SpecValue'];
       };
       /**
        * Unauthorized
        */
-      "401": {
-        "text/plain": string;
+      '401': {
+        'text/plain': string;
       };
       /**
        * Spec was not found
        */
-      "404": {
-        "text/plain": string;
+      '404': {
+        'text/plain': string;
       };
     };
   };
-  "library.specs.put": {
+  'library.specs.put': {
     parameters: {
       path: {
-        spec_id: components["parameters"]["SpecId"];
+        spec_id: components['parameters']['SpecId'];
       };
       header: {
         /**
          * The language of the spec
          */
-        "X-LANGUAGE": "JSON" | "YAML";
+        'X-LANGUAGE': 'JSON' | 'YAML';
       };
     };
     requestBody: {
-      "text/plain": components["schemas"]["SpecValue"];
+      'text/plain': components['schemas']['SpecValue'];
     };
     responses: {
       /**
        * The spec has been stored
        */
-      "204": never;
+      '204': never;
       /**
        * The spec is not valid
        */
-      "400": {
-        "text/plain": string;
+      '400': {
+        'text/plain': string;
       };
       /**
        * Unauthorized
        */
-      "401": {
-        "text/plain": string;
+      '401': {
+        'text/plain': string;
       };
       /**
        * Payment required
        */
-      "402": {
-        "text/plain": string;
+      '402': {
+        'text/plain': string;
       };
       /**
        * Something went wrong whilst saving the spec
        */
-      "500": {
-        "text/plain": string;
+      '500': {
+        'text/plain': string;
       };
     };
   };
-  "library.specs.delete": {
+  'library.specs.delete': {
     parameters: {
       path: {
-        spec_id: components["parameters"]["SpecId"];
+        spec_id: components['parameters']['SpecId'];
       };
     };
     responses: {
       /**
        * The spec has been deleted
        */
-      "204": never;
+      '204': never;
       /**
        * Unauthorized
        */
-      "401": {
-        "text/plain": string;
+      '401': {
+        'text/plain': string;
       };
     };
   };
-  "library.specs.versions.list_": {
+  'library.specs.versions.list_': {
     parameters: {
       path: {
-        spec_id: components["parameters"]["SpecId"];
+        spec_id: components['parameters']['SpecId'];
       };
     };
     responses: {
       /**
        * All the available versions for a spec
        */
-      "200": {
-        "application/json": components["schemas"]["SpecInfo"][];
+      '200': {
+        'application/json': components['schemas']['SpecInfo'][];
       };
       /**
        * Unauthorized
        */
-      "401": {
-        "text/plain": string;
+      '401': {
+        'text/plain': string;
       };
       /**
        * Spec was not found
        */
-      "404": {
-        "text/plain": string;
+      '404': {
+        'text/plain': string;
       };
     };
   };
-  "library.specs.versions.get": {
+  'library.specs.versions.get': {
     parameters: {
       path: {
-        spec_id: components["parameters"]["SpecId"];
-        version: components["parameters"]["SpecVersion"];
+        spec_id: components['parameters']['SpecId'];
+        version: components['parameters']['SpecVersion'];
       };
     };
     responses: {
       /**
        * The requested spec
        */
-      "200": {
-        "text/plain": components["schemas"]["SpecValue"];
+      '200': {
+        'text/plain': components['schemas']['SpecValue'];
       };
       /**
        * Unauthorized
        */
-      "401": {
-        "text/plain": string;
+      '401': {
+        'text/plain': string;
       };
       /**
        * Spec was not found
        */
-      "404": {
-        "text/plain": string;
+      '404': {
+        'text/plain': string;
       };
     };
   };
-  "library.specs.versions.put": {
+  'library.specs.versions.put': {
     parameters: {
       path: {
-        spec_id: components["parameters"]["SpecId"];
-        version: components["parameters"]["SpecVersion"];
+        spec_id: components['parameters']['SpecId'];
+        version: components['parameters']['SpecVersion'];
       };
       header: {
         /**
          * The language of the spec
          */
-        "X-LANGUAGE": "JSON" | "YAML";
+        'X-LANGUAGE': 'JSON' | 'YAML';
       };
     };
     requestBody: {
-      "text/plain": components["schemas"]["SpecValue"];
+      'text/plain': components['schemas']['SpecValue'];
     };
     responses: {
       /**
        * The spec has been stored
        */
-      "204": never;
+      '204': never;
       /**
        * The spec is not valid or there is a version mismatch in the path and spec
        */
-      "400": {
-        "text/plain": string;
+      '400': {
+        'text/plain': string;
       };
       /**
        * Unauthorized
        */
-      "401": {
-        "text/plain": string;
+      '401': {
+        'text/plain': string;
       };
       /**
        * Payment required
        */
-      "402": {
-        "text/plain": string;
+      '402': {
+        'text/plain': string;
       };
       /**
        * Something went wrong whilst saving the spec
        */
-      "500": {
-        "text/plain": string;
+      '500': {
+        'text/plain': string;
       };
     };
   };
-  "library.credentials.get": {
+  'library.credentials.get': {
     responses: {
       /**
        * The default credentials
        */
-      "200": {
-        "application/json": components["schemas"]["Credentials"];
+      '200': {
+        'application/json': components['schemas']['Credentials'];
       };
       /**
        * Unauthorized
        */
-      "401": {
-        "text/plain": string;
+      '401': {
+        'text/plain': string;
       };
     };
   };
-  "library.credentials.delete": {
+  'library.credentials.delete': {
     responses: {
       /**
        * The default credentials have been deleted
        */
-      "204": never;
+      '204': never;
       /**
        * Unauthorized
        */
-      "401": {
-        "text/plain": string;
+      '401': {
+        'text/plain': string;
       };
     };
   };
@@ -273,11 +273,11 @@ export interface components {
     /**
      * The id of the spec
      */
-    SpecId: components["schemas"]["SpecId"];
+    SpecId: components['schemas']['SpecId'];
     /**
      * The version of the spec
      */
-    SpecVersion: components["schemas"]["SpecVersion"];
+    SpecVersion: components['schemas']['SpecVersion'];
   };
   schemas: {
     /**
@@ -312,12 +312,12 @@ export interface components {
      * Information about a an OpenAPI specification
      */
     SpecInfo: {
-      id: components["schemas"]["SpecId"];
-      version: components["schemas"]["SpecVersion"];
-      updated_at?: components["schemas"]["SpecUpdatedAt"];
-      title?: components["schemas"]["SpecTitle"];
-      description?: components["schemas"]["SpecDescription"];
-      model_count: components["schemas"]["SpecModelCount"];
+      id: components['schemas']['SpecId'];
+      version: components['schemas']['SpecVersion'];
+      updated_at?: components['schemas']['SpecUpdatedAt'];
+      title?: components['schemas']['SpecTitle'];
+      description?: components['schemas']['SpecDescription'];
+      model_count: components['schemas']['SpecModelCount'];
     };
     /**
      * A public key for for machine to machine interactions.
@@ -331,8 +331,8 @@ export interface components {
      * Machine to machine credentials
      */
     Credentials: {
-      public_key: components["schemas"]["PublicKey"];
-      secret_key: components["schemas"]["SecretKey"];
+      public_key: components['schemas']['PublicKey'];
+      secret_key: components['schemas']['SecretKey'];
     };
   };
 }
