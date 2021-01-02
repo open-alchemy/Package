@@ -130,13 +130,13 @@ jobs:
         with:
           python-version: 3.9
       - name: Install poetry and package
-        run: pip install poetry open-alchemy.package-security
+        run: pip install poetry # open-alchemy.package-security
       - name: Check if release is required
         id: check
         working-directory: ./security
         run: |
-          RELEASED_VERSION=$(python -c "from importlib.metadata import version;print(version('open-alchemy.package-security'))")
-          echo released version: $RELEASED_VERSION
+          # RELEASED_VERSION=$(python -c "from importlib.metadata import version;print(version('open-alchemy.package-security'))")
+          # echo released version: $RELEASED_VERSION
           PROJECT_VERSION=$(poetry version -s)
           echo project version: $PROJECT_VERSION
           [[ "$RELEASED_VERSION" == "$PROJECT_VERSION"  ]] && RESULT=false || RESULT=true
