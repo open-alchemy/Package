@@ -34,17 +34,17 @@ class TConfig:
                 response, dict
             ), f"secrets manager response not dict, {response=}"
 
-            secret_binary_key = "SecretBinary"
+            secret_string_key = "SecretString"
             assert (
-                secret_binary_key in response
-            ), f"{secret_binary_key} not in secrets manager response, {response=}"
-            secret_binary = response[secret_binary_key]
-            assert isinstance(secret_binary, bytes), (
-                f"secrets manager response.{secret_binary_key} not string, "
-                f"{secret_binary=}, {response=}"
+                secret_string_key in response
+            ), f"{secret_string_key} not in secrets manager response, {response=}"
+            secret_string = response[secret_string_key]
+            assert isinstance(secret_string, str), (
+                f"secrets manager response.{secret_string_key} not string, "
+                f"{secret_string=}, {response=}"
             )
 
-            self._service_secret = secret_binary
+            self._service_secret = secret_string.encode()
 
         return self._service_secret
 

@@ -8,9 +8,9 @@ from open_alchemy.package_security import config
 
 SERVICE_SECRET_ERROR_TESTS = [
     pytest.param(None, id="secretsmanager response not dict"),
-    pytest.param({}, id="secretsmanager response SecretBinary missing"),
+    pytest.param({}, id="secretsmanager response SecretString missing"),
     pytest.param(
-        {"SecretBinary": None}, id="secretsmanager response SecretBinary not bytes"
+        {"SecretString": None}, id="secretsmanager response SecretString not string"
     ),
 ]
 
@@ -42,23 +42,23 @@ def test_service_secret_not_set():
     """
     # pylint: disable=protected-access
     config_instance = config._get()
-    secret_binary = b"secret binary 1"
+    secret_string = "secret string 1"
 
     stubber = stub.Stubber(config._SECRETS_MANAGER_CLIENT)
     expected_params = {"SecretId": config_instance.service_secret_name}
     stubber.add_response(
-        "get_secret_value", {"SecretBinary": secret_binary}, expected_params
+        "get_secret_value", {"SecretString": secret_string}, expected_params
     )
     stubber.activate()
 
     service_secret = config_instance.service_secret
 
     stubber.assert_no_pending_responses()
-    assert service_secret == secret_binary
+    assert service_secret == secret_string.encode()
 
     service_secret = config_instance.service_secret
 
-    assert service_secret == secret_binary
+    assert service_secret == secret_string.encode()
 
 
 def test_service_secret_set(monkeypatch):
@@ -68,7 +68,7 @@ def test_service_secret_set(monkeypatch):
     THEN the secret value is not retrieved from AWS.
     """
     # pylint: disable=protected-access
-    service_secret = "service secret 1"
+    service_secret = b"service secret 1"
     mock_get_secret_value = mock.MagicMock()
     monkeypatch.setattr(
         config._SECRETS_MANAGER_CLIENT, "get_secret_value", mock_get_secret_value
