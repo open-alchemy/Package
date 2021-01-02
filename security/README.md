@@ -50,6 +50,24 @@ Output:
 
 - `secret_key_hash`.
 
+## Compare Secret Hashes
+
+Safely compare two secret key hashes
+
+Input:
+
+- `left`: a `secret_key_hash` and
+- `right`: a `secret_key_hash`.
+
+Output:
+
+- Whether `left` == `right`.
+
+Algorithm:
+
+1. use <https://docs.python.org/3/library/hmac.html#hmac.compare_digest> to
+   compare the secret key hashes.
+
 ## Salt
 
 A salt is a random string generated using

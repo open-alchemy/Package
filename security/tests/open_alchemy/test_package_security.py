@@ -65,3 +65,45 @@ def test_retrieve():
     returned_secret_key = package_security.retrieve(sub=sub, salt=credentials.salt)
 
     assert returned_secret_key == credentials.secret_key
+
+
+def test_calculate_secret_key_hash():
+    """
+    GIVEN credentials
+    WHEN calculate_secret_key_hash is called with the sub and salt from the credentials
+    THEN the returned secret is equal to the secret of the credentials.
+    """
+    sub = "sub 1"
+    credentials = package_security.create(sub=sub)
+
+    returned_secret_key_hash = package_security.calculate_secret_key_hash(
+        secret_key=credentials.secret_key, salt=credentials.salt
+    )
+
+    assert returned_secret_key_hash == credentials.secret_key_hash
+
+
+def test_compare_secret_key_hashes():
+    """
+    GIVEN multiple credentials
+    WHEN compare_secret_key_hashes is called with the secret_key hash from the same and
+        different credentials
+    THEN true and false, respectively, is returned.
+    """
+    sub_1 = "sub 1"
+    credentials_1 = package_security.create(sub=sub_1)
+    sub_2 = "sub 2"
+    credentials_2 = package_security.create(sub=sub_2)
+
+    assert (
+        package_security.compare_secret_key_hashes(
+            left=credentials_1.secret_key_hash, right=credentials_1.secret_key_hash
+        )
+        is True
+    )
+    assert (
+        package_security.compare_secret_key_hashes(
+            left=credentials_1.secret_key_hash, right=credentials_2.secret_key_hash
+        )
+        is False
+    )

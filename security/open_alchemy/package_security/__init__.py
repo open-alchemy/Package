@@ -2,6 +2,7 @@
 
 import base64
 import hashlib
+import hmac
 import secrets
 
 from . import config, types
@@ -41,7 +42,7 @@ def _generate_secret_key(*, sub: types.TSub, salt: types.TSalt) -> types.TSecret
     return f"sk_{b64_raw_secret_key.decode()}"
 
 
-def _generate_secret_key_hash(
+def calculate_secret_key_hash(
     *, secret_key: types.TSecretKey, salt: types.TSalt
 ) -> types.TSecretKeyHash:
     """Generate the secret key hash."""
@@ -62,7 +63,7 @@ def create(*, sub: types.TSub) -> types.Credentials:
     public_key = _generate_public_key(sub=sub)
     salt = _generate_salt()
     secret_key = _generate_secret_key(sub=sub, salt=salt)
-    secret_key_hash = _generate_secret_key_hash(secret_key=secret_key, salt=salt)
+    secret_key_hash = calculate_secret_key_hash(secret_key=secret_key, salt=salt)
 
     return types.Credentials(
         public_key=public_key,
@@ -85,3 +86,20 @@ def retrieve(*, sub: types.TSub, salt: types.TSalt) -> types.TSecretKey:
 
     """
     return _generate_secret_key(sub=sub, salt=salt)
+
+
+def compare_secret_key_hashes(
+    left: types.TSecretKeyHash, right: types.TSecretKeyHash
+) -> bool:
+    """
+    Safe comparison of two secret key hashes, computes left == right.
+
+    Args:
+        left: The left side of the comparison.
+        right: The right side of the comparison.
+
+    Returns:
+        Whether left == right.
+
+    """
+    return hmac.compare_digest(left, right)
