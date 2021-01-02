@@ -53,7 +53,7 @@ Output:
 ## Salt
 
 A salt is a random string generated using
-<https://docs.python.org/3/library/secrets.html#secrets.token_urlsafe>
+<https://docs.python.org/3/library/secrets.html#secrets.token_bytes>
 .
 
 ## Public Key
@@ -62,7 +62,7 @@ The public key is a hash based on the `sub` of the user and a salt. The
 following algorithm is used:
 
 1. create a message by combining the `sub` and a random salt created using
-   <https://docs.python.org/3/library/secrets.html#secrets.token_urlsafe>,
+   <https://docs.python.org/3/library/secrets.html#secrets.token_bytes>,
 1. digest the message using `sha256` using
    <https://docs.python.org/3/library/hashlib.html#hash-algorithms>
    and

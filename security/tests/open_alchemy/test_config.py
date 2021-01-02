@@ -8,9 +8,9 @@ from open_alchemy.package_security import config
 
 SERVICE_SECRET_ERROR_TESTS = [
     pytest.param(None, id="secretsmanager response not dict"),
-    pytest.param({}, id="secretsmanager response SecretString missing"),
+    pytest.param({}, id="secretsmanager response SecretBinary missing"),
     pytest.param(
-        {"SecretString": None}, id="secretsmanager response SecretString not string"
+        {"SecretBinary": None}, id="secretsmanager response SecretBinary not bytes"
     ),
 ]
 
@@ -42,23 +42,23 @@ def test_service_secret_not_set():
     """
     # pylint: disable=protected-access
     config_instance = config._get()
-    secret_string = "secret value 1"
+    secret_binary = b"secret binary 1"
 
     stubber = stub.Stubber(config._SECRETS_MANAGER_CLIENT)
     expected_params = {"SecretId": config_instance.service_secret_name}
     stubber.add_response(
-        "get_secret_value", {"SecretString": secret_string}, expected_params
+        "get_secret_value", {"SecretBinary": secret_binary}, expected_params
     )
     stubber.activate()
 
     service_secret = config_instance.service_secret
 
     stubber.assert_no_pending_responses()
-    assert service_secret == secret_string
+    assert service_secret == secret_binary
 
     service_secret = config_instance.service_secret
 
-    assert service_secret == secret_string
+    assert service_secret == secret_binary
 
 
 def test_service_secret_set(monkeypatch):
