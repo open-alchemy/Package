@@ -43,7 +43,8 @@
     "pyjwt",
     "pynamodb",
     "Popen",
-    "SDIST"
+    "SDIST",
+    "scrypt"
   ],
   "dictionaries": [
     "python",
