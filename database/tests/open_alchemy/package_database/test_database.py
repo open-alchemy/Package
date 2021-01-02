@@ -7,7 +7,7 @@ import pytest
 from open_alchemy import package_database
 
 
-def test_count_customer_models(_clean_spec_table):
+def test_count_customer_models(_clean_specs_table):
     """
     GIVEN sub, spec id, version and model count
     WHEN create_update_spec is called with the spec info and count_customer_models is
@@ -68,7 +68,7 @@ def test_count_customer_models(_clean_spec_table):
     ],
 )
 def test_check_would_exceed_free_tier(
-    initial_count, additional_count, expected_result, _clean_spec_table
+    initial_count, additional_count, expected_result, _clean_specs_table
 ):
     """
     GIVEN initial count and additional count
@@ -92,7 +92,7 @@ def test_check_would_exceed_free_tier(
     assert returned_result.result == expected_result
 
 
-def test_get_latest_spec_version(_clean_spec_table):
+def test_get_latest_spec_version(_clean_specs_table):
     """
     GIVEN sub, spec id, version and model count
     WHEN create_update_spec is called with the spec info and get_latest_spec_version is
@@ -128,7 +128,7 @@ def test_get_latest_spec_version(_clean_spec_table):
         database_instance.get_latest_spec_version(sub="sub 2", id_=id_)
 
 
-def test_list_delete_all_spec(_clean_spec_table):
+def test_list_delete_all_spec(_clean_specs_table):
     """
     GIVEN sub, spec id, version and model count
     WHEN create_update_spec is called with the spec info and list_specs is called
@@ -184,7 +184,7 @@ def test_list_delete_all_spec(_clean_spec_table):
     assert database_instance.list_specs(sub=sub) == []
 
 
-def test_delete_spec(_clean_spec_table):
+def test_delete_spec(_clean_specs_table):
     """
     GIVEN sub, spec id, version and model count
     WHEN create_update_spec is called with the spec info and delete_spec is called
@@ -211,7 +211,7 @@ def test_delete_spec(_clean_spec_table):
         database_instance.get_latest_spec_version(sub=sub, id_=id_)
 
 
-def test_list_spec_versions(monkeypatch, _clean_spec_table):
+def test_list_spec_versions(monkeypatch, _clean_specs_table):
     """
     GIVEN sub, spec id, version and model count
     WHEN create_update_spec is called with the spec info and list_spec_versions is
@@ -383,7 +383,7 @@ def test_create_get_get_user_delete_credentials(_clean_credentials_table):
     assert auth_info is None
 
 
-def test_delete_all(_clean_spec_table, _clean_credentials_table):
+def test_delete_all(_clean_specs_table, _clean_credentials_table):
     """
     GIVEN database with spec and credentials
     WHEN delete_all is called

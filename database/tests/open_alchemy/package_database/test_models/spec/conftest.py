@@ -4,5 +4,5 @@ import pytest
 
 
 @pytest.fixture(autouse=True)
-def _auto_clean_spec_table(_clean_spec_table):
-    """Autouses _clean_spec_table."""
+def _auto_clean_specs_table(_clean_specs_table):
+    """Autouses _clean_specs_table."""

@@ -371,3 +371,34 @@ It requires the `dynalite` NPM package to be installed in the project using
 `npm install --save-dev dynalite` to run a local dynamoDB instance at
 <http://localhost:8000>. More information on the package is here:
 <https://www.npmjs.com/package/dynalite>.
+
+### Fixtures
+
+All fixtures that have an effect but yield `None` are prefixed with `_` so that
+tools like pylint do not complain about unused arguments for test functions.
+
+#### `_database`
+
+Spins up the database at the start of the tests and tars down the database at
+the end. This fixture is unlikely to be useful as no tables are created. The
+table specific fixtures depend on the `_database` fixture so it is not
+necessary to include this fixture in any tests.
+
+#### `_specs_table`
+
+Creates the `package.specs` table before all the tests and deletes it after all
+tests complete.
+
+#### `_clean_specs_table`
+
+Deletes all items from the `package.specs` table before and after each test.
+
+#### `_credentials_table`
+
+Creates the `package.credentials` table before all the tests and deletes it after
+all tests complete.
+
+#### `_clean_credentials_table`
+
+Deletes all items from the `package.credentials` table before and after each
+test.
