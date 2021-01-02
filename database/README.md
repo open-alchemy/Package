@@ -360,3 +360,14 @@ The workflow is defined here:
 Executes the tests defined at [../test/database/tests](../test/database/tests)
 against a configured version of the package and against the currently deployed
 infrastructure on AWS.
+
+## Pytest Plugin
+
+A pytest plugin is made available to make testing easier. It is defined at
+[open_alchemy/package_database/pytest_plugin.py](open_alchemy/package_database/pytest_plugin.py)
+.
+
+It requires the `dynalite` NPM package to be installed in the project using
+`npm install --save-dev dynalite` to run a local dynamoDB instance at
+<http://localhost:8000>. More information on the package is here:
+<https://www.npmjs.com/package/dynalite>.
