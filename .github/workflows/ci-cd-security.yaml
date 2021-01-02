@@ -44,6 +44,8 @@ jobs:
           poetry install
       - name: Test with pytest
         working-directory: ./security
+        env:
+          AWS_DEFAULT_REGION: "us-east-1"
         run: |
           poetry run pytest
 
