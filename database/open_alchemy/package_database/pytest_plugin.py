@@ -1,5 +1,6 @@
 """Common fixtures."""
 
+import pathlib
 import subprocess
 
 import pytest
@@ -10,9 +11,8 @@ from pynamodb import connection, exceptions
 @pytest.fixture(scope="session")
 def _database():
     """Starts the database server."""
-    process = subprocess.Popen(
-        ["npx", "node", "tests/open_alchemy/package_database/init-database.js"]
-    )
+    init_database_script = pathlib.Path(__file__).parent / "init-database.js"
+    process = subprocess.Popen(["npx", "node", str(init_database_script)])
     host = "http://localhost:8000"
 
     # Wait for the server to be available

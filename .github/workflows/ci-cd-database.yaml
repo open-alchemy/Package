@@ -198,16 +198,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pipenv
-      - name: Wait for a minute
-        if: needs.release-required.outputs.result == 'true'
-        run: sleep 60
       - name: install dependencies
         env:
           PYPI_MIRROR: https://test.pypi.org/simple/
           VERSION: ${{ needs.release-required.outputs.project-version }}
         working-directory: test/database
         run: |
-          pipenv install --dev
+          pipenv install --dev || sleep 30 && pipenv install --dev || sleep 30 && pipenv install --dev || sleep 30 && pipenv install --dev
       - name: run tests
         working-directory: test/database
         env:
@@ -251,16 +248,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pipenv
-      - name: Wait for a minute
-        if: needs.release-required.outputs.result == 'true'
-        run: sleep 60
       - name: install dependencies
         env:
           PYPI_MIRROR: https://pypi.org/simple/
           VERSION: ${{ needs.release-required.outputs.project-version }}
         working-directory: test/database
         run: |
-          pipenv install --dev
+          pipenv install --dev || sleep 30 && pipenv install --dev || sleep 30 && pipenv install --dev || sleep 30 && pipenv install --dev
       - name: run tests
         working-directory: test/database
         env:
