@@ -16,6 +16,12 @@ updates:
     schedule:
       interval: "weekly"
 
+  # Maintain Python dependencies for build.
+  - package-ecosystem: "pip"
+    directory: "build/"
+    schedule:
+      interval: "weekly"
+
   # Maintain npm dependencies for sdk.
   - package-ecosystem: "npm"
     directory: "sdk/"
