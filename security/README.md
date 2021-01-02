@@ -113,3 +113,75 @@ where:
 - `n` is `2 ** 14`,
 - `r` is 8 and
 - `p` is 1.
+
+## CI-CD
+
+The workflow is defined here:
+[../.github/workflows/ci-cd-security.yaml](../.github/workflows/ci-cd-security.yaml).
+
+There are a few groups of jobs in the CI-CD:
+
+- `test`: runs the tests for the package in supported python versions,
+- `build`: builds the security package,
+- `deploy`: deploys security infrastructure to AWS,
+- `release-required`: determines whether a release to PyPI is required and
+- `release`: a combination of deploying to test and production PyPI and
+  executing tests on the published packages
+
+### `test`
+
+Executes the tests defined at [tests](tests).
+
+### `build`
+
+Builds the security package defined at [.](.).
+
+### `release-required`
+
+Has 2 outputs:
+
+- `result`: whether a release to PyPI is required based on the latest released
+  version and the version configured in the project and
+- `project-version`: the version configured in the code base.
+
+### `deploy`
+
+Deploys the CloudFormation stack for the security defined at
+[../infrastructure/lib/security-stack.ts](../infrastructure/lib/security-stack.ts).
+
+### `release`
+
+If the `result` output from `release-required` is true, the package is deployed
+to both test and production PyPI.
+
+Irrespective of whether the release was executed, the version of the package
+defined in the code base is installed from both test and production PyPI and
+the tests defined at [../test/security/tests](../test/security/tests) are
+executed against the deployed infrastructure on AWS.
+
+## Periodic Production Tests
+
+The workflow is defined here:
+[../.github/workflows/production-test-security.yaml](../.github/workflows/production-test-security.yaml).
+
+Executes the tests defined at [../test/security/tests](../test/security/tests)
+against a configured version of the package and against the currently deployed
+infrastructure on AWS.
+
+## Pytest Plugin
+
+A pytest plugin is made available to make testing easier. It is defined at
+[open_alchemy/package_security/pytest_plugin.py](open_alchemy/package_security/pytest_plugin.py).
+
+### Fixtures
+
+All fixtures that have an effect but yield `None` are prefixed with `_` so that
+tools like pylint do not complain about unused arguments for test functions.
+
+#### `service_secret`
+
+Configures the package to use a dummy service secret and yields it.
+
+#### `_service_secret`
+
+The same as `service_secret` except that it is prefix with a leading `_`.

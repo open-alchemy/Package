@@ -314,8 +314,8 @@ There are a few groups of jobs in the CI-CD:
 
 - `test`: runs the tests for the package in supported python versions,
 - `build`: builds the database package,
-- `release-required`: determines whether a release to PyPI is required,
-- `deploy`: deploys database infrastructure to AWS and
+- `deploy`: deploys database infrastructure to AWS,
+- `release-required`: determines whether a release to PyPI is required and
 - `release`: a combination of deploying to test and production PyPI and
   executing tests on the published packages
 
