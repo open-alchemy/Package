@@ -5,7 +5,8 @@ import json
 import jwt
 import pytest
 from library import config
-from library.facades import database, storage
+from library.facades import storage
+from open_alchemy import package_database
 
 OPTIONS_TESTS = [
     pytest.param("/v1/specs/spec1", "PUT", id="/v1/specs/{spec-id}"),
@@ -82,7 +83,7 @@ def test_put_unauthorized(client, url):
     assert response.status_code == 401
 
 
-def test_specs_get(client, _clean_package_storage_table):
+def test_specs_get(client, _clean_spec_table):
     """
     GIVEN database with a single spec
     WHEN GET /v1/specs is called with the Authorization header
@@ -92,8 +93,8 @@ def test_specs_get(client, _clean_package_storage_table):
     spec_id = "spec id 1"
     version = "version 1"
     model_count = 1
-    database.get_database().create_update_spec(
-        sub=sub, spec_id=spec_id, version=version, model_count=model_count
+    package_database.get().create_update_spec(
+        sub=sub, id_=spec_id, version=version, model_count=model_count
     )
     token = jwt.encode({"sub": sub}, "secret 1")
 
@@ -115,7 +116,7 @@ def test_specs_get(client, _clean_package_storage_table):
     assert "updated_at" in spec_info
 
 
-def test_specs_spec_id_get(client, _clean_package_storage_table):
+def test_specs_spec_id_get(client, _clean_spec_table):
     """
     GIVEN database and storage with a single spec
     WHEN GET /v1/specs/{spec_id} is called with the Authorization header
@@ -124,8 +125,8 @@ def test_specs_spec_id_get(client, _clean_package_storage_table):
     sub = "sub 1"
     spec_id = "spec id 1"
     version = "version 1"
-    database.get_database().create_update_spec(
-        sub=sub, spec_id=spec_id, version=version, model_count=1
+    package_database.get().create_update_spec(
+        sub=sub, id_=spec_id, version=version, model_count=1
     )
     spec = {"key": "value"}
     storage.get_storage_facade().create_update_spec(
@@ -150,7 +151,7 @@ def test_specs_spec_id_get(client, _clean_package_storage_table):
     assert "key: value" in response.data.decode()
 
 
-def test_specs_spec_id_put(client, _clean_package_storage_table):
+def test_specs_spec_id_put(client, _clean_spec_table):
     """
     GIVEN spec id, data and token
     WHEN PUT /v1/specs/{spec-id} is called with the Authorization header
@@ -189,7 +190,7 @@ def test_specs_spec_id_put(client, _clean_package_storage_table):
     )
 
 
-def test_specs_spec_id_delete(client, _clean_package_storage_table):
+def test_specs_spec_id_delete(client, _clean_spec_table):
     """
     GIVEN database and storage with a single spec
     WHEN DELETE /v1/specs/{spec_id} is called with the Authorization header
@@ -198,8 +199,8 @@ def test_specs_spec_id_delete(client, _clean_package_storage_table):
     sub = "sub 1"
     spec_id = "spec id 1"
     version = "version 1"
-    database.get_database().create_update_spec(
-        sub=sub, spec_id=spec_id, version=version, model_count=1
+    package_database.get().create_update_spec(
+        sub=sub, id_=spec_id, version=version, model_count=1
     )
     spec = {"key": "value"}
     storage.get_storage_facade().create_update_spec(
@@ -225,10 +226,10 @@ def test_specs_spec_id_delete(client, _clean_package_storage_table):
         storage.get_storage_facade().get_spec(
             user=sub, spec_id=spec_id, version=version
         )
-    assert database.get_database().count_customer_models(sub=sub) == 0
+    assert package_database.get().count_customer_models(sub=sub) == 0
 
 
-def test_specs_spec_id_versions_get(client, _clean_package_storage_table):
+def test_specs_spec_id_versions_get(client, _clean_spec_table):
     """
     GIVEN database and storage with a single spec
     WHEN GET /v1/specs/{spec_id}/versions is called with the Authorization header
@@ -238,8 +239,8 @@ def test_specs_spec_id_versions_get(client, _clean_package_storage_table):
     spec_id = "spec id 1"
     version = "version 1"
     model_count = 1
-    database.get_database().create_update_spec(
-        sub=sub, spec_id=spec_id, version=version, model_count=model_count
+    package_database.get().create_update_spec(
+        sub=sub, id_=spec_id, version=version, model_count=model_count
     )
     token = jwt.encode({"sub": sub}, "secret 1")
 
@@ -297,7 +298,7 @@ def test_specs_spec_id_version_version_get(client):
     assert "key: value" in response.data.decode()
 
 
-def test_specs_spec_id_versions_version_put(client, _clean_package_storage_table):
+def test_specs_spec_id_versions_version_put(client, _clean_spec_table):
     """
     GIVEN spec id, data, version and token
     WHEN PUT /v1/specs/{spec-id}/versions/{version} is called with the Authorization

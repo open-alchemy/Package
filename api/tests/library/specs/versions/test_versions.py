@@ -3,11 +3,12 @@
 import json
 from unittest import mock
 
-from library.facades import database, server, storage
+from library.facades import server, storage
 from library.specs import versions
+from open_alchemy import package_database
 
 
-def test_list_(_clean_package_storage_table):
+def test_list_(_clean_spec_table):
     """
     GIVEN user, spec id and database with a single spec
     WHEN list_ is called with the user and spec id
@@ -17,8 +18,8 @@ def test_list_(_clean_package_storage_table):
     spec_id = "spec id 1"
     version = "version 1"
     model_count = 1
-    database.get_database().create_update_spec(
-        sub=user, spec_id=spec_id, version=version, model_count=model_count
+    package_database.get().create_update_spec(
+        sub=user, id_=spec_id, version=version, model_count=model_count
     )
 
     response = versions.list_(user=user, spec_id=spec_id)
@@ -59,9 +60,9 @@ def test_list_database_error(monkeypatch):
     user = "user 1"
     spec_id = "spec id 1"
     mock_database_list_spec_versions = mock.MagicMock()
-    mock_database_list_spec_versions.side_effect = database.exceptions.DatabaseError
+    mock_database_list_spec_versions.side_effect = package_database.exceptions.BaseError
     monkeypatch.setattr(
-        database.get_database(),
+        package_database.get(),
         "list_spec_versions",
         mock_database_list_spec_versions,
     )
@@ -118,7 +119,7 @@ def test_get_storage_facade_error(monkeypatch):
     assert "reading" in response.data.decode()
 
 
-def test_get_storage_facade_miss(_clean_package_storage_table):
+def test_get_storage_facade_miss(_clean_spec_table):
     """
     GIVEN user and database with a spec but empty storage
     WHEN get is called with the user and spec id
@@ -136,7 +137,7 @@ def test_get_storage_facade_miss(_clean_package_storage_table):
     assert "not find" in response.data.decode()
 
 
-def test_put(monkeypatch, _clean_package_storage_table):
+def test_put(monkeypatch, _clean_spec_table):
     """
     GIVEN body, spec id, user and version
     WHEN put is called with the body, spec id, user and version
@@ -177,11 +178,11 @@ def test_put(monkeypatch, _clean_package_storage_table):
     assert '"x-tablename"' in spec_str
     assert '"schema"' in spec_str
 
-    assert database.get_database().count_customer_models(sub=user) == 1
-    spec_infos = database.get_database().list_specs(sub=user)
+    assert package_database.get().count_customer_models(sub=user) == 1
+    spec_infos = package_database.get().list_specs(sub=user)
     assert len(spec_infos) == 1
     spec_info = spec_infos[0]
-    assert spec_info["spec_id"] == spec_id
+    assert spec_info["id"] == spec_id
     assert spec_info["version"] == version
     assert spec_info["title"] == title
     assert spec_info["description"] == description
@@ -250,7 +251,7 @@ def test_put_version_mismatch_error(monkeypatch):
     assert version_2 in response.data.decode()
 
 
-def test_put_too_many_models_error(monkeypatch, _clean_package_storage_table):
+def test_put_too_many_models_error(monkeypatch, _clean_spec_table):
     """
     GIVEN body, spec id, version and user that already has too many models
     WHEN put is called with the body and spec id
@@ -273,8 +274,8 @@ def test_put_too_many_models_error(monkeypatch, _clean_package_storage_table):
     )
     spec_id = "id 1"
     user = "user 1"
-    database.get_database().create_update_spec(
-        sub=user, spec_id=spec_id, version="version 1", model_count=100
+    package_database.get().create_update_spec(
+        sub=user, id_=spec_id, version="version 1", model_count=100
     )
 
     response = versions.put(
@@ -288,7 +289,7 @@ def test_put_too_many_models_error(monkeypatch, _clean_package_storage_table):
     assert "spec: 1" in response.data.decode()
 
 
-def test_put_database_count_error(monkeypatch, _clean_package_storage_table):
+def test_put_database_count_error(monkeypatch, _clean_spec_table):
     """
     GIVEN body with invalid spec and spec id and database that raises DatabaseError
     WHEN put is called with the body and spec id
@@ -313,10 +314,10 @@ def test_put_database_count_error(monkeypatch, _clean_package_storage_table):
     user = "user 1"
     mock_database_check_would_exceed_free_tier = mock.MagicMock()
     mock_database_check_would_exceed_free_tier.side_effect = (
-        database.exceptions.DatabaseError
+        package_database.exceptions.BaseError
     )
     monkeypatch.setattr(
-        database.get_database(),
+        package_database.get(),
         "check_would_exceed_free_tier",
         mock_database_check_would_exceed_free_tier,
     )
@@ -330,7 +331,7 @@ def test_put_database_count_error(monkeypatch, _clean_package_storage_table):
     assert "database" in response.data.decode()
 
 
-def test_put_storage_error(monkeypatch, _clean_package_storage_table):
+def test_put_storage_error(monkeypatch, _clean_spec_table):
     """
     GIVEN body with invalid spec and spec id
     WHEN put is called with the body and spec id
@@ -370,7 +371,7 @@ def test_put_storage_error(monkeypatch, _clean_package_storage_table):
     assert "storing" in response.data.decode()
 
 
-def test_put_database_update_error(monkeypatch, _clean_package_storage_table):
+def test_put_database_update_error(monkeypatch, _clean_spec_table):
     """
     GIVEN body and spec id
     WHEN put is called with the body and spec id
@@ -397,9 +398,9 @@ def test_put_database_update_error(monkeypatch, _clean_package_storage_table):
     spec_id = "id 1"
     user = "user 1"
     mock_database_create_update_spec = mock.MagicMock()
-    mock_database_create_update_spec.side_effect = database.exceptions.DatabaseError
+    mock_database_create_update_spec.side_effect = package_database.exceptions.BaseError
     monkeypatch.setattr(
-        database.get_database(),
+        package_database.get(),
         "create_update_spec",
         mock_database_create_update_spec,
     )
@@ -415,7 +416,7 @@ def test_put_database_update_error(monkeypatch, _clean_package_storage_table):
     assert '"Schema"' in spec_str
     assert '"x-tablename"' in spec_str
     assert '"schema"' in spec_str
-    assert database.get_database().count_customer_models(sub=user) == 0
+    assert package_database.get().count_customer_models(sub=user) == 0
     assert response.status_code == 500
     assert response.mimetype == "text/plain"
     assert "database" in response.data.decode()

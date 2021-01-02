@@ -2,8 +2,10 @@
 
 import json
 
+from open_alchemy import package_database
+
 from .. import exceptions, types
-from ..facades import database, server, storage
+from ..facades import server, storage
 from ..helpers import spec
 
 
@@ -20,11 +22,13 @@ def list_(user: types.TUser) -> server.Response:
     """
     try:
         return server.Response(
-            json.dumps(database.get_database().list_specs(sub=user)),
+            json.dumps(
+                list(map(spec.add_spec_id, package_database.get().list_specs(sub=user)))
+            ),
             status=200,
             mimetype="application/json",
         )
-    except database.exceptions.DatabaseError:
+    except package_database.exceptions.BaseError:
         return server.Response(
             "something went wrong whilst reading from the database",
             status=500,
@@ -45,9 +49,7 @@ def get(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
 
     """
     try:
-        version = database.get_database().get_latest_spec_version(
-            sub=user, spec_id=spec_id
-        )
+        version = package_database.get().get_latest_spec_version(sub=user, id_=spec_id)
         spec_str = storage.get_storage_facade().get_spec(
             user=user, spec_id=spec_id, version=version
         )
@@ -58,13 +60,13 @@ def get(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
             status=200,
             mimetype="text/plain",
         )
-    except database.exceptions.NotFoundError:
+    except package_database.exceptions.NotFoundError:
         return server.Response(
             f"could not find the spec with id {spec_id}",
             status=404,
             mimetype="text/plain",
         )
-    except database.exceptions.DatabaseError:
+    except package_database.exceptions.BaseError:
         return server.Response(
             "something went wrong whilst reading from the database",
             status=500,
@@ -108,7 +110,7 @@ def put(body: bytearray, spec_id: types.TSpecId, user: types.TUser) -> server.Re
         spec_info = spec.process(spec_str=body.decode(), language=language)
 
         # Check that the maximum number of models hasn't been exceeded
-        free_tier_check = database.get_database().check_would_exceed_free_tier(
+        free_tier_check = package_database.get().check_would_exceed_free_tier(
             sub=user, model_count=spec_info.model_count
         )
         if free_tier_check.result:
@@ -127,9 +129,9 @@ def put(body: bytearray, spec_id: types.TSpecId, user: types.TUser) -> server.Re
         )
 
         # Write an update into the database
-        database.get_database().create_update_spec(
+        package_database.get().create_update_spec(
             sub=user,
-            spec_id=spec_id,
+            id_=spec_id,
             version=spec_info.version,
             title=spec_info.title,
             description=spec_info.description,
@@ -150,7 +152,7 @@ def put(body: bytearray, spec_id: types.TSpecId, user: types.TUser) -> server.Re
             status=500,
             mimetype="text/plain",
         )
-    except database.exceptions.DatabaseError:
+    except package_database.exceptions.BaseError:
         return server.Response(
             "something went wrong whilst updating the database",
             status=500,
@@ -171,8 +173,8 @@ def delete(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
 
     """
     try:
-        database.get_database().delete_spec(sub=user, spec_id=spec_id)
-    except database.exceptions.DatabaseError:
+        package_database.get().delete_spec(sub=user, id_=spec_id)
+    except package_database.exceptions.BaseError:
         pass
     try:
         storage.get_storage_facade().delete_spec(user=user, spec_id=spec_id)

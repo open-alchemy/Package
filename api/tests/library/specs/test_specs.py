@@ -5,10 +5,11 @@ from unittest import mock
 
 import pytest
 from library import specs
-from library.facades import database, server, storage
+from library.facades import server, storage
+from open_alchemy import package_database
 
 
-def test_list_(_clean_package_storage_table):
+def test_list_(_clean_spec_table):
     """
     GIVEN user and database with a single spec
     WHEN list_ is called with the user
@@ -18,8 +19,8 @@ def test_list_(_clean_package_storage_table):
     spec_id = "spec id 1"
     version = "version 1"
     model_count = 1
-    database.get_database().create_update_spec(
-        sub=user, spec_id=spec_id, version=version, model_count=model_count
+    package_database.get().create_update_spec(
+        sub=user, id_=spec_id, version=version, model_count=model_count
     )
 
     response = specs.list_(user=user)
@@ -35,7 +36,7 @@ def test_list_(_clean_package_storage_table):
     assert "updated_at" in spec_info
 
 
-def test_list_miss(_clean_package_storage_table):
+def test_list_miss(_clean_spec_table):
     """
     GIVEN user and database with a single spec for a different user
     WHEN list_ is called with the user
@@ -43,8 +44,8 @@ def test_list_miss(_clean_package_storage_table):
     """
     user = "user 1"
     spec_id = "spec id 1"
-    database.get_database().create_update_spec(
-        sub="user 2", spec_id=spec_id, version="version 1", model_count=1
+    package_database.get().create_update_spec(
+        sub="user 2", id_=spec_id, version="version 1", model_count=1
     )
 
     response = specs.list_(user=user)
@@ -62,9 +63,9 @@ def test_list_database_error(monkeypatch):
     """
     user = "user 1"
     mock_database_list_specs = mock.MagicMock()
-    mock_database_list_specs.side_effect = database.exceptions.DatabaseError
+    mock_database_list_specs.side_effect = package_database.exceptions.BaseError
     monkeypatch.setattr(
-        database.get_database(),
+        package_database.get(),
         "list_specs",
         mock_database_list_specs,
     )
@@ -76,7 +77,7 @@ def test_list_database_error(monkeypatch):
     assert "database" in response.data.decode()
 
 
-def test_get(_clean_package_storage_table):
+def test_get(_clean_spec_table):
     """
     GIVEN user and database and storage with a single spec
     WHEN get is called with the user and spec id
@@ -85,8 +86,8 @@ def test_get(_clean_package_storage_table):
     user = "user 1"
     spec_id = "spec id 1"
     version = "version 1"
-    database.get_database().create_update_spec(
-        sub=user, spec_id=spec_id, version=version, model_count=1
+    package_database.get().create_update_spec(
+        sub=user, id_=spec_id, version=version, model_count=1
     )
     spec = {"key": "value"}
     storage.get_storage_facade().create_update_spec(
@@ -104,7 +105,7 @@ def test_get(_clean_package_storage_table):
     assert "key: value" in response.data.decode()
 
 
-def test_get_database_error(_clean_package_storage_table, monkeypatch):
+def test_get_database_error(_clean_spec_table, monkeypatch):
     """
     GIVEN user and database that raises an error
     WHEN get is called with the user and spec id
@@ -114,10 +115,10 @@ def test_get_database_error(_clean_package_storage_table, monkeypatch):
     spec_id = "spec id 1"
     mock_database_get_latest_spec_version = mock.MagicMock()
     mock_database_get_latest_spec_version.side_effect = (
-        database.exceptions.DatabaseError
+        package_database.exceptions.BaseError
     )
     monkeypatch.setattr(
-        database.get_database(),
+        package_database.get(),
         "get_latest_spec_version",
         mock_database_get_latest_spec_version,
     )
@@ -129,7 +130,7 @@ def test_get_database_error(_clean_package_storage_table, monkeypatch):
     assert "database" in response.data.decode()
 
 
-def test_get_database_miss(_clean_package_storage_table):
+def test_get_database_miss(_clean_spec_table):
     """
     GIVEN user and empty database
     WHEN get is called with the user and spec id
@@ -146,7 +147,7 @@ def test_get_database_miss(_clean_package_storage_table):
     assert "not find" in response.data.decode()
 
 
-def test_get_storage_facade_error(_clean_package_storage_table, monkeypatch):
+def test_get_storage_facade_error(_clean_spec_table, monkeypatch):
     """
     GIVEN user and database with a spec but storage that raises an error
     WHEN get is called with the user and spec id
@@ -155,8 +156,8 @@ def test_get_storage_facade_error(_clean_package_storage_table, monkeypatch):
     user = "user 1"
     spec_id = "spec id 1"
     version = "version 1"
-    database.get_database().create_update_spec(
-        sub=user, spec_id=spec_id, version=version, model_count=1
+    package_database.get().create_update_spec(
+        sub=user, id_=spec_id, version=version, model_count=1
     )
     mock_storage_get_spec = mock.MagicMock()
     mock_storage_get_spec.side_effect = storage.exceptions.StorageError
@@ -169,7 +170,7 @@ def test_get_storage_facade_error(_clean_package_storage_table, monkeypatch):
     assert "reading" in response.data.decode()
 
 
-def test_get_storage_facade_miss(_clean_package_storage_table):
+def test_get_storage_facade_miss(_clean_spec_table):
     """
     GIVEN user and database with a spec but empty storage
     WHEN get is called with the user and spec id
@@ -178,8 +179,8 @@ def test_get_storage_facade_miss(_clean_package_storage_table):
     user = "user 1"
     spec_id = "spec id 1"
     version = "version 1"
-    database.get_database().create_update_spec(
-        sub=user, spec_id=spec_id, version=version, model_count=1
+    package_database.get().create_update_spec(
+        sub=user, id_=spec_id, version=version, model_count=1
     )
 
     response = specs.get(user=user, spec_id=spec_id)
@@ -190,7 +191,7 @@ def test_get_storage_facade_miss(_clean_package_storage_table):
     assert "not find" in response.data.decode()
 
 
-def test_put(monkeypatch, _clean_package_storage_table):
+def test_put(monkeypatch, _clean_spec_table):
     """
     GIVEN body, spec id and user
     WHEN put is called with the body, spec id and user
@@ -229,11 +230,11 @@ def test_put(monkeypatch, _clean_package_storage_table):
     assert '"x-tablename"' in spec_str
     assert '"schema"' in spec_str
 
-    assert database.get_database().count_customer_models(sub=user) == 1
-    spec_infos = database.get_database().list_specs(sub=user)
+    assert package_database.get().count_customer_models(sub=user) == 1
+    spec_infos = package_database.get().list_specs(sub=user)
     assert len(spec_infos) == 1
     spec_info = spec_infos[0]
-    assert spec_info["spec_id"] == spec_id
+    assert spec_info["id"] == spec_id
     assert spec_info["version"] == version
     assert spec_info["title"] == title
     assert spec_info["description"] == description
@@ -264,7 +265,7 @@ def test_put_invalid_spec_error(monkeypatch):
     assert "not valid" in response.data.decode()
 
 
-def test_put_too_many_models_error(monkeypatch, _clean_package_storage_table):
+def test_put_too_many_models_error(monkeypatch, _clean_spec_table):
     """
     GIVEN body spec and spec id and user that already has too many models
     WHEN put is called with the body and spec id
@@ -287,8 +288,8 @@ def test_put_too_many_models_error(monkeypatch, _clean_package_storage_table):
     )
     spec_id = "id 1"
     user = "user 1"
-    database.get_database().create_update_spec(
-        sub=user, spec_id=spec_id, version="version 1", model_count=100
+    package_database.get().create_update_spec(
+        sub=user, id_=spec_id, version="version 1", model_count=100
     )
 
     response = specs.put(body=body.encode(), spec_id=spec_id, user=user)
@@ -300,7 +301,7 @@ def test_put_too_many_models_error(monkeypatch, _clean_package_storage_table):
     assert "spec: 1" in response.data.decode()
 
 
-def test_put_database_count_error(monkeypatch, _clean_package_storage_table):
+def test_put_database_count_error(monkeypatch, _clean_spec_table):
     """
     GIVEN body with invalid spec and spec id and database that raises DatabaseError
     WHEN put is called with the body and spec id
@@ -325,10 +326,10 @@ def test_put_database_count_error(monkeypatch, _clean_package_storage_table):
     user = "user 1"
     mock_database_check_would_exceed_free_tier = mock.MagicMock()
     mock_database_check_would_exceed_free_tier.side_effect = (
-        database.exceptions.DatabaseError
+        package_database.exceptions.BaseError
     )
     monkeypatch.setattr(
-        database.get_database(),
+        package_database.get(),
         "check_would_exceed_free_tier",
         mock_database_check_would_exceed_free_tier,
     )
@@ -340,7 +341,7 @@ def test_put_database_count_error(monkeypatch, _clean_package_storage_table):
     assert "database" in response.data.decode()
 
 
-def test_put_storage_error(monkeypatch, _clean_package_storage_table):
+def test_put_storage_error(monkeypatch, _clean_spec_table):
     """
     GIVEN body with invalid spec and spec id
     WHEN put is called with the body and spec id
@@ -378,7 +379,7 @@ def test_put_storage_error(monkeypatch, _clean_package_storage_table):
     assert "storing" in response.data.decode()
 
 
-def test_put_database_update_error(monkeypatch, _clean_package_storage_table):
+def test_put_database_update_error(monkeypatch, _clean_spec_table):
     """
     GIVEN body and spec id
     WHEN put is called with the body and spec id
@@ -405,9 +406,9 @@ def test_put_database_update_error(monkeypatch, _clean_package_storage_table):
     spec_id = "id 1"
     user = "user 1"
     mock_database_create_update_spec = mock.MagicMock()
-    mock_database_create_update_spec.side_effect = database.exceptions.DatabaseError
+    mock_database_create_update_spec.side_effect = package_database.exceptions.BaseError
     monkeypatch.setattr(
-        database.get_database(),
+        package_database.get(),
         "create_update_spec",
         mock_database_create_update_spec,
     )
@@ -421,13 +422,13 @@ def test_put_database_update_error(monkeypatch, _clean_package_storage_table):
     assert '"Schema"' in spec_str
     assert '"x-tablename"' in spec_str
     assert '"schema"' in spec_str
-    assert database.get_database().count_customer_models(sub=user) == 0
+    assert package_database.get().count_customer_models(sub=user) == 0
     assert response.status_code == 500
     assert response.mimetype == "text/plain"
     assert "database" in response.data.decode()
 
 
-def test_delete(_clean_package_storage_table):
+def test_delete(_clean_spec_table):
     """
     GIVEN database and storage with spec and user and spec id
     WHEN put is called with the body and spec id
@@ -436,8 +437,8 @@ def test_delete(_clean_package_storage_table):
     spec_id = "id 1"
     user = "user 1"
     version = "version 1"
-    database.get_database().create_update_spec(
-        sub=user, spec_id=spec_id, version=version, model_count=1
+    package_database.get().create_update_spec(
+        sub=user, id_=spec_id, version=version, model_count=1
     )
     storage.get_storage_facade().create_update_spec(
         user=user, spec_id=spec_id, version=version, spec_str="spec str 1"
@@ -449,11 +450,11 @@ def test_delete(_clean_package_storage_table):
         storage.get_storage_facade().get_spec(
             user=user, spec_id=spec_id, version=version
         )
-    assert database.get_database().count_customer_models(sub=user) == 0
+    assert package_database.get().count_customer_models(sub=user) == 0
     assert response.status_code == 204
 
 
-def test_delete_database_error(monkeypatch, _clean_package_storage_table):
+def test_delete_database_error(monkeypatch, _clean_spec_table):
     """
     GIVEN database that raises a DatabaseError and storage with spec and user and spec
         id
@@ -464,9 +465,9 @@ def test_delete_database_error(monkeypatch, _clean_package_storage_table):
     user = "user 1"
     version = "version 1"
     mock_database_delete_spec = mock.MagicMock()
-    mock_database_delete_spec.side_effect = database.exceptions.DatabaseError
+    mock_database_delete_spec.side_effect = package_database.exceptions.BaseError
     monkeypatch.setattr(
-        database.get_database(),
+        package_database.get(),
         "delete_spec",
         mock_database_delete_spec,
     )
@@ -483,7 +484,7 @@ def test_delete_database_error(monkeypatch, _clean_package_storage_table):
     assert response.status_code == 204
 
 
-def test_delete_storage_error(monkeypatch, _clean_package_storage_table):
+def test_delete_storage_error(monkeypatch, _clean_spec_table):
     """
     GIVEN database and storage that raises a StorageError with spec and user and spec
         id
@@ -493,8 +494,8 @@ def test_delete_storage_error(monkeypatch, _clean_package_storage_table):
     spec_id = "id 1"
     user = "user 1"
     version = "version 1"
-    database.get_database().create_update_spec(
-        sub=user, spec_id=spec_id, version=version, model_count=1
+    package_database.get().create_update_spec(
+        sub=user, id_=spec_id, version=version, model_count=1
     )
     mock_storage_delete_spec = mock.MagicMock()
     mock_storage_delete_spec.side_effect = storage.exceptions.StorageError
@@ -506,5 +507,5 @@ def test_delete_storage_error(monkeypatch, _clean_package_storage_table):
 
     response = specs.delete(spec_id=spec_id, user=user)
 
-    assert database.get_database().count_customer_models(sub=user) == 0
+    assert package_database.get().count_customer_models(sub=user) == 0
     assert response.status_code == 204
