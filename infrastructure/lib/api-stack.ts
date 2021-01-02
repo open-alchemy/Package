@@ -41,15 +41,17 @@ export class ApiStack extends cdk.Stack {
     );
 
     // Database for the packages
-    const specTable = dynamodb.Table.fromTableName(
-      this,
-      'SpecTable',
-      CONFIG.database.spec.tableName
-    );
-    const credentialsTable = dynamodb.Table.fromTableName(
+    const specTable = dynamodb.Table.fromTableAttributes(this, 'SpecTable', {
+      tableName: CONFIG.database.spec.tableName,
+      localIndexes: [CONFIG.database.spec.localSecondaryIndexName],
+    });
+    const credentialsTable = dynamodb.Table.fromTableAttributes(
       this,
       'CredentialsTable',
-      CONFIG.database.credentials.tableName
+      {
+        tableName: CONFIG.database.credentials.tableName,
+        globalIndexes: [CONFIG.database.credentials.globalSecondaryIndexName],
+      }
     );
     const table = new dynamodb.Table(this, 'Table', {
       partitionKey: { name: 'sub', type: dynamodb.AttributeType.STRING },
@@ -95,16 +97,8 @@ export class ApiStack extends cdk.Stack {
     bucket.grantReadWrite(func);
     table.grantReadWriteData(func);
     table.grant(func, 'dynamodb:DescribeTable');
-    let grant = specTable.grantReadWriteData(func);
-    grant.resourceStatement?.addResources(
-      'arn:aws:dynamodb:us-east-1:606685527493:table/package.specs/index/*'
-    );
-    grant.applyBefore(func);
-    grant = specTable.grant(func, 'dynamodb:DescribeTable');
-    grant.resourceStatement?.addResources(
-      'arn:aws:dynamodb:us-east-1:606685527493:table/package.specs/index/*'
-    );
-    grant.applyBefore(func);
+    specTable.grantReadWriteData(func);
+    specTable.grant(func, 'dynamodb:DescribeTable');
     credentialsTable.grantReadWriteData(func);
     credentialsTable.grant(func, 'dynamodb:DescribeTable');
     const version = new lambda.Version(
