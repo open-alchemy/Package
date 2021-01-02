@@ -312,6 +312,7 @@ components:
         model_count:
           $ref: "#/components/schemas/SpecModelCount"
       required:
+        - id
         - spec_id
         - version
         - model_count
