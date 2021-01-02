@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "open-alchemy.package-security"
-version = "1.0.2"
+version = "1.0.3"
 description = "Security helper for the OpenAlchemy package service"
 readme = "README.md"
 authors = ["David Andersson <jdkandersson@users.noreply.github.com>"]
