@@ -297,8 +297,6 @@ components:
       description: Information about a an OpenAPI specification
       type: object
       properties:
-        spec_id:
-          $ref: "#/components/schemas/SpecId"
         id:
           $ref: "#/components/schemas/SpecId"
         version:
@@ -313,7 +311,6 @@ components:
           $ref: "#/components/schemas/SpecModelCount"
       required:
         - id
-        - spec_id
         - version
         - model_count
     PublicKey:

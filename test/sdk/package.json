@@ -57,7 +57,7 @@
     "typescript": "^3.9.7"
   },
   "dependencies": {
-    "@open-alchemy/package-sdk": "^2.2.0",
+    "@open-alchemy/package-sdk": "^3.0.0",
     "aws-sdk": "^2.820.0"
   }
 }

@@ -24,14 +24,7 @@ def list_(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
     try:
         return server.Response(
             json.dumps(
-                list(
-                    map(
-                        spec.add_spec_id,
-                        package_database.get().list_spec_versions(
-                            sub=user, id_=spec_id
-                        ),
-                    )
-                )
+                package_database.get().list_spec_versions(sub=user, id_=spec_id)
             ),
             status=200,
             mimetype="application/json",

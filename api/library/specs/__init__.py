@@ -22,9 +22,7 @@ def list_(user: types.TUser) -> server.Response:
     """
     try:
         return server.Response(
-            json.dumps(
-                list(map(spec.add_spec_id, package_database.get().list_specs(sub=user)))
-            ),
+            json.dumps(package_database.get().list_specs(sub=user)),
             status=200,
             mimetype="application/json",
         )

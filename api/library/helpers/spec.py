@@ -110,9 +110,3 @@ def prepare(*, spec_str: str, version: str) -> str:
     """
     spec = json.loads(spec_str)
     return yaml.dump({"info": {"version": version}}) + yaml.dump(spec)
-
-
-def add_spec_id(info):
-    """Add spec_id back in."""
-    info["spec_id"] = info["id"]
-    return info

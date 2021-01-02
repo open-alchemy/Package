@@ -110,7 +110,7 @@ def test_specs_get(client, _clean_spec_table):
     spec_infos = json.loads(response.data.decode())
     assert len(spec_infos) == 1
     spec_info = spec_infos[0]
-    assert spec_info["spec_id"] == spec_id
+    assert spec_info["id"] == spec_id
     assert spec_info["version"] == version
     assert spec_info["model_count"] == model_count
     assert "updated_at" in spec_info
@@ -258,7 +258,7 @@ def test_specs_spec_id_versions_get(client, _clean_spec_table):
     spec_infos = json.loads(response.data.decode())
     assert len(spec_infos) == 1
     spec_info = spec_infos[0]
-    assert spec_info["spec_id"] == spec_id
+    assert spec_info["id"] == spec_id
     assert spec_info["version"] == version
     assert spec_info["model_count"] == model_count
     assert "updated_at" in spec_info
