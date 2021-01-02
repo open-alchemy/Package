@@ -131,7 +131,7 @@ def test_specs_create_get_delete(access_token, spec_id):
         returned_specs = json.loads(response.read().decode())
         assert len(returned_specs) == 1
         returned_spec = returned_specs[0]
-        assert returned_spec["spec_id"] == spec_id
+        assert returned_spec["id"] == spec_id
         assert returned_spec["version"] == version
         assert returned_spec["title"] == title
         assert returned_spec["description"] == description
@@ -249,7 +249,7 @@ def test_specs_versions_create_get_delete(access_token, spec_id):
         returned_specs = json.loads(response.read().decode())
         assert len(returned_specs) == 1
         returned_spec = returned_specs[0]
-        assert returned_spec["spec_id"] == spec_id
+        assert returned_spec["id"] == spec_id
         assert returned_spec["version"] == version
         assert "updated_at" in returned_spec
 
@@ -264,7 +264,7 @@ def test_specs_versions_create_get_delete(access_token, spec_id):
         returned_specs = json.loads(response.read().decode())
         assert len(returned_specs) == 1
         returned_spec = returned_specs[0]
-        assert returned_spec["spec_id"] == spec_id
+        assert returned_spec["id"] == spec_id
         assert returned_spec["version"] == version
         assert "updated_at" in returned_spec
 

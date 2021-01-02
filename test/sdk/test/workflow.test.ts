@@ -133,7 +133,7 @@ describe('create spec', () => {
         const returnedSpecInfos = await specsService.list({ accessToken });
         expect(returnedSpecInfos.length).toEqual(1);
         const returnedSpecInfo = returnedSpecInfos[0];
-        expect(returnedSpecInfo.spec_id).toEqual(specId);
+        expect(returnedSpecInfo.id).toEqual(specId);
         expect(returnedSpecInfo.version).toEqual(VERSION);
         expect(returnedSpecInfo.title).toEqual(TITLE);
         expect(returnedSpecInfo.description).toEqual(DESCRIPTION);

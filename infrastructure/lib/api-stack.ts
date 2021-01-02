@@ -40,6 +40,16 @@ export class ApiStack extends cdk.Stack {
     );
 
     // Database for the packages
+    const specTable = dynamodb.Table.fromTableName(
+      this,
+      'SpecTable',
+      CONFIG.database.spec.tableName
+    );
+    const credentialsTable = dynamodb.Table.fromTableName(
+      this,
+      'CredentialsTable',
+      CONFIG.database.credentials.tableName
+    );
     const table = new dynamodb.Table(this, 'Table', {
       partitionKey: { name: 'sub', type: dynamodb.AttributeType.STRING },
       tableName: CONFIG.database.storage.tableName,
@@ -84,6 +94,10 @@ export class ApiStack extends cdk.Stack {
     bucket.grantReadWrite(func);
     table.grantReadWriteData(func);
     table.grant(func, 'dynamodb:DescribeTable');
+    specTable.grantReadWriteData(func);
+    specTable.grant(func, 'dynamodb:DescribeTable');
+    credentialsTable.grantReadWriteData(func);
+    credentialsTable.grant(func, 'dynamodb:DescribeTable');
     const version = new lambda.Version(
       this,
       `LambdaVersion-${deploymentPackageHash}`,

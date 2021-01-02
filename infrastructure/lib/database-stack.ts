@@ -13,7 +13,7 @@ export class DatabaseStack extends cdk.Stack {
     // Database for the specs
     const specsTable = new dynamodb.Table(this, 'SpecsTable', {
       partitionKey: { ...sub },
-      tableName: CONFIG.database.specs.tableName,
+      tableName: CONFIG.database.spec.tableName,
       sortKey: {
         name: 'updated_at_id',
         type: dynamodb.AttributeType.STRING,
@@ -21,7 +21,7 @@ export class DatabaseStack extends cdk.Stack {
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
     });
     specsTable.addLocalSecondaryIndex({
-      indexName: CONFIG.database.specs.localSecondaryIndexName,
+      indexName: CONFIG.database.spec.localSecondaryIndexName,
       sortKey: {
         name: 'id_updated_at',
         type: dynamodb.AttributeType.STRING,

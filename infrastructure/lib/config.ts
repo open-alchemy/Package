@@ -20,7 +20,7 @@ export const CONFIG = {
       tableName: 'package-storage',
       indexName: 'specIdUpdatedAt',
     },
-    specs: {
+    spec: {
       tableName: 'package.specs',
       localSecondaryIndexName: 'idUpdatedAt',
     },
