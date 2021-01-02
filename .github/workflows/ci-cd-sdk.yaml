@@ -113,7 +113,7 @@ jobs:
         working-directory: ./test/sdk/
         if: steps.cache-node_modules.outputs.cache-hit != 'true'
         run: |
-          npm install
+          npm install || sleep 30 && npm install || sleep 30 && npm install || sleep 30 && npm install
       - name: Run tests
         working-directory: ./test/sdk/
         env:
