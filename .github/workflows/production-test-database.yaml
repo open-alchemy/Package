@@ -22,13 +22,19 @@ jobs:
       - name: install pipenv
         run: |
           python -m pip install --upgrade pip
-          pip install pipenv
+          pip install pipenv poetry
       - name: install dependencies
         working-directory: test/database
         env:
           PYPI_MIRROR: ${{ matrix.PYPI_MIRROR }}
           VERSION: "1.2.6"
         run: |
+          # Check that project version equal requested version
+          cd ../../database
+          PROJECT_VERSION=$(poetry version -s)
+          cd -
+          [[ "$VERSION" == "$PROJECT_VERSION" ]]
+          # install dependencies
           pipenv install --dev
       - name: run tests
         working-directory: test/database

@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  database:
+  security:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -34,6 +34,7 @@ jobs:
           PROJECT_VERSION=$(poetry version -s)
           cd -
           [[ "$VERSION" == "$PROJECT_VERSION" ]]
+          # install dependencies
           pipenv install --dev
       - name: run tests
         working-directory: test/security
