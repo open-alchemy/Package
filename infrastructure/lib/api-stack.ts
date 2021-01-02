@@ -18,6 +18,7 @@ import * as s3Notifications from '@aws-cdk/aws-s3-notifications';
 
 import { ENVIRONMENT } from './environment';
 import { CONFIG } from './config';
+import { Arn } from '@aws-cdk/core';
 
 export class ApiStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -94,16 +95,16 @@ export class ApiStack extends cdk.Stack {
     bucket.grantReadWrite(func);
     table.grantReadWriteData(func);
     table.grant(func, 'dynamodb:DescribeTable');
-    specTable
-      .grantReadWriteData(func)
-      .resourceStatement?.addResources(
-        'arn:aws:dynamodb:us-east-1:606685527493:table/package.specs/index/*'
-      );
-    specTable
-      .grant(func, 'dynamodb:DescribeTable')
-      .resourceStatement?.addResources(
-        'arn:aws:dynamodb:us-east-1:606685527493:table/package.specs/index/*'
-      );
+    let grant = specTable.grantReadWriteData(func);
+    grant.resourceStatement?.addResources(
+      'arn:aws:dynamodb:us-east-1:606685527493:table/package.specs/index/*'
+    );
+    grant.applyBefore(func);
+    grant = specTable.grant(func, 'dynamodb:DescribeTable');
+    grant.resourceStatement?.addResources(
+      'arn:aws:dynamodb:us-east-1:606685527493:table/package.specs/index/*'
+    );
+    grant.applyBefore(func);
     credentialsTable.grantReadWriteData(func);
     credentialsTable.grant(func, 'dynamodb:DescribeTable');
     const version = new lambda.Version(
