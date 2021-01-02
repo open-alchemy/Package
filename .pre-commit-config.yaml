@@ -41,8 +41,17 @@ repos:
         name: mypy (database)
         files: ^database/
       - id: mypy
+        name: mypy (security)
+        files: ^security/
+      - id: mypy
         name: mypy (test api)
         files: ^test/api
+      - id: mypy
+        name: mypy (test database)
+        files: ^test/database
+      - id: mypy
+        name: mypy (test security)
+        files: ^test/security
   - repo: https://github.com/pre-commit/mirrors-pylint
     rev: "v2.6.0"
     hooks:
