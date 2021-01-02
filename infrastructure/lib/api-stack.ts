@@ -18,7 +18,6 @@ import * as s3Notifications from '@aws-cdk/aws-s3-notifications';
 
 import { ENVIRONMENT } from './environment';
 import { CONFIG } from './config';
-import { Arn } from '@aws-cdk/core';
 
 export class ApiStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
