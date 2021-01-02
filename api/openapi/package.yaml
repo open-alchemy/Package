@@ -299,6 +299,8 @@ components:
       properties:
         spec_id:
           $ref: "#/components/schemas/SpecId"
+        id:
+          $ref: "#/components/schemas/SpecId"
         version:
           $ref: "#/components/schemas/SpecVersion"
         updated_at:
