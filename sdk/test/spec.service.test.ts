@@ -31,10 +31,10 @@ describe('SpecService', () => {
         });
 
       // WHEN get is called
-      const returnedSpecPromise = service.get({ accessToken, id: specId });
+      const returnedPromise = service.get({ accessToken, id: specId });
 
       // THEN the spec value is returned
-      await expect(returnedSpecPromise).resolves.toEqual(responseData);
+      await expect(returnedPromise).resolves.toEqual(responseData);
     });
 
     test('should return spec value when 200 is returned using the observable method', async () => {
@@ -47,12 +47,12 @@ describe('SpecService', () => {
         .replyOnce(200, responseData);
 
       // WHEN get is called
-      const returnedSpecPromise = service
+      const returnedPromise = service
         .get$({ accessToken, id: specId })
         .toPromise();
 
       // THEN the spec value is returned
-      await expect(returnedSpecPromise).resolves.toEqual(responseData);
+      await expect(returnedPromise).resolves.toEqual(responseData);
     });
 
     test('should return the spec value for a version when 200 is returned', async () => {
@@ -75,14 +75,14 @@ describe('SpecService', () => {
         });
 
       // WHEN get is called
-      const returnedSpecPromise = service.get({
+      const returnedPromise = service.get({
         accessToken,
         id: specId,
         version,
       });
 
       // THEN the spec value is returned
-      await expect(returnedSpecPromise).resolves.toEqual(responseData);
+      await expect(returnedPromise).resolves.toEqual(responseData);
     });
 
     test('should throw error if a 400 error is returned', async () => {
@@ -95,13 +95,13 @@ describe('SpecService', () => {
         .replyOnce(400, btoa(message));
 
       // WHEN get is called
-      const returnedSpecPromise = service.get({ accessToken, id: specId });
+      const returnedPromise = service.get({ accessToken, id: specId });
 
       // THEN the expected error is thrown
       const expectedError = new SpecError(
         `error whilst loading the spec: ${message}`
       );
-      await expect(returnedSpecPromise).rejects.toEqual(expectedError);
+      await expect(returnedPromise).rejects.toEqual(expectedError);
     });
   });
 
@@ -123,13 +123,13 @@ describe('SpecService', () => {
         });
 
       // WHEN getVersions is called
-      const returnedSpecPromise = service.getVersions({
+      const returnedPromise = service.getVersions({
         accessToken,
         id: specId,
       });
 
       // THEN the spec versions are returned
-      await expect(returnedSpecPromise).resolves.toEqual(responseData);
+      await expect(returnedPromise).resolves.toEqual(responseData);
     });
 
     test('should return specs when 200 is returned using observables', async () => {
@@ -142,7 +142,7 @@ describe('SpecService', () => {
         .replyOnce(200, responseData);
 
       // WHEN getVersions is called
-      const returnedSpecPromise = service
+      const returnedPromise = service
         .getVersions$({
           accessToken,
           id: specId,
@@ -150,7 +150,7 @@ describe('SpecService', () => {
         .toPromise();
 
       // THEN the spec versions are returned
-      await expect(returnedSpecPromise).resolves.toEqual(responseData);
+      await expect(returnedPromise).resolves.toEqual(responseData);
     });
 
     test('should throw error if a 400 error is returned', async () => {
@@ -163,7 +163,7 @@ describe('SpecService', () => {
         .replyOnce(400, btoa(message));
 
       // WHEN getVersions is called
-      const returnedSpecPromise = service.getVersions({
+      const returnedPromise = service.getVersions({
         accessToken,
         id: specId,
       });
@@ -172,7 +172,7 @@ describe('SpecService', () => {
       const expectedError = new SpecError(
         `error whilst loading the versions for the spec: ${message}`
       );
-      await expect(returnedSpecPromise).rejects.toEqual(expectedError);
+      await expect(returnedPromise).rejects.toEqual(expectedError);
     });
   });
 
@@ -199,7 +199,7 @@ describe('SpecService', () => {
         });
 
       // WHEN put is called
-      const returnedSpecPromise = service.put({
+      const returnedPromise = service.put({
         accessToken,
         id: specId,
         value: specValue,
@@ -207,7 +207,7 @@ describe('SpecService', () => {
       });
 
       // THEN the promise resolves
-      await expect(returnedSpecPromise).resolves.toEqual(undefined);
+      await expect(returnedPromise).resolves.toEqual(undefined);
     });
 
     test('should create or update spec when 200 is returned using observable', async () => {
@@ -221,7 +221,7 @@ describe('SpecService', () => {
         .replyOnce(204);
 
       // WHEN put is called
-      const returnedSpecPromise = service
+      const returnedPromise = service
         .put$({
           accessToken,
           id: specId,
@@ -231,7 +231,7 @@ describe('SpecService', () => {
         .toPromise();
 
       // THEN the promise resolves
-      await expect(returnedSpecPromise).resolves.toEqual(undefined);
+      await expect(returnedPromise).resolves.toEqual(undefined);
     });
 
     test('should create or update specific version of a spec spec when 200 is returned', async () => {
@@ -259,7 +259,7 @@ describe('SpecService', () => {
         });
 
       // WHEN put is called
-      const returnedSpecPromise = service.put({
+      const returnedPromise = service.put({
         accessToken,
         id: specId,
         value: specValue,
@@ -268,7 +268,7 @@ describe('SpecService', () => {
       });
 
       // THEN the promise resolves
-      await expect(returnedSpecPromise).resolves.toEqual(undefined);
+      await expect(returnedPromise).resolves.toEqual(undefined);
     });
 
     test('should throw error if a 400 error is returned', async () => {
@@ -283,7 +283,7 @@ describe('SpecService', () => {
         .replyOnce(400, btoa(message));
 
       // WHEN put is called
-      const returnedSpecPromise = service.put({
+      const returnedPromise = service.put({
         accessToken,
         id: specId,
         value: specValue,
@@ -294,13 +294,13 @@ describe('SpecService', () => {
       const expectedError = new SpecError(
         `error whilst creating or updating the spec: ${message}`
       );
-      await expect(returnedSpecPromise).rejects.toEqual(expectedError);
+      await expect(returnedPromise).rejects.toEqual(expectedError);
     });
   });
 
   describe('delete', () => {
-    test('should return specs when 200 is returned', async () => {
-      // GIVE mocked axios that returns 200
+    test('should return when 204 is returned', async () => {
+      // GIVE mocked axios that returns 204
       const accessToken = 'token 1';
       const specId = 'spec id 1';
       mockAdaptor
@@ -315,14 +315,14 @@ describe('SpecService', () => {
         });
 
       // WHEN delete is called
-      const returnedSpecPromise = service.delete({ accessToken, id: specId });
+      const returnedPromise = service.delete({ accessToken, id: specId });
 
       // THEN the promise resolves
-      await expect(returnedSpecPromise).resolves.toEqual(undefined);
+      await expect(returnedPromise).resolves.toEqual(undefined);
     });
 
-    test('should return specs when 200 is returned', async () => {
-      // GIVE mocked axios that returns 200
+    test('should return when 204 is returned', async () => {
+      // GIVE mocked axios that returns 204
       const accessToken = 'token 1';
       const specId = 'spec id 1';
       mockAdaptor
@@ -330,12 +330,12 @@ describe('SpecService', () => {
         .replyOnce(204);
 
       // WHEN delete is called
-      const returnedSpecPromise = service
+      const returnedPromise = service
         .delete$({ accessToken, id: specId })
         .toPromise();
 
       // THEN the promise resolves
-      await expect(returnedSpecPromise).resolves.toEqual(undefined);
+      await expect(returnedPromise).resolves.toEqual(undefined);
     });
 
     test('should throw error if a 400 error is returned', async () => {
@@ -348,13 +348,13 @@ describe('SpecService', () => {
         .replyOnce(400, btoa(message));
 
       // WHEN delete is called
-      const returnedSpecPromise = service.delete({ accessToken, id: specId });
+      const returnedPromise = service.delete({ accessToken, id: specId });
 
       // THEN the expected error is thrown
       const expectedError = new SpecError(
         `error whilst deleting the spec: ${message}`
       );
-      await expect(returnedSpecPromise).rejects.toEqual(expectedError);
+      await expect(returnedPromise).rejects.toEqual(expectedError);
     });
   });
 });

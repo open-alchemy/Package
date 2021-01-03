@@ -18,3 +18,10 @@ export class SpecError extends BaseError {
     this.name = 'SpecError';
   }
 }
+
+export class CredentialsError extends BaseError {
+  constructor(message: string) {
+    super(message);
+    this.name = 'CredentialsError';
+  }
+}

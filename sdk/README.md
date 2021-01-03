@@ -51,3 +51,15 @@ const specVersions = await service.getVersions({
   id: 'employee',
 });
 ```
+
+To retrieve credentials:
+
+```typescript
+import { CredentialsService } from '@open-alchemy/package-sdk';
+
+const service = new CredentialsService();
+// Get the value of credentials
+const employeeSpec = await service.get({ accessToken });
+// Delete credentials
+await service.delete({ accessToken });
+```
