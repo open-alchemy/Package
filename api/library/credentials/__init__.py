@@ -2,10 +2,10 @@
 
 import json
 
-from .. import types
-from ..facades import server
+from open_alchemy import package_database, package_security
 
-# from open_alchemy import package_database, package_security
+from .. import config, types
+from ..facades import server
 
 
 def get(user: types.TUser) -> server.Response:
@@ -19,12 +19,36 @@ def get(user: types.TUser) -> server.Response:
         The credentials for the user.
 
     """
-    # stored_credentials = package_database.get().get_credentials(
-    # sub=user, id_="default")
+    public_key: str
+    secret_key: str
+    id_ = config.get().default_credentials_id
 
-    print(user)  # allow-print
+    # Retrieve or create credentials
+    stored_credentials = package_database.get().get_credentials(sub=user, id_=id_)
+    if stored_credentials is not None:
+        public_key = stored_credentials["public_key"]
+        secret_key = package_security.retrieve_secret_key(
+            sub=user, salt=stored_credentials["salt"]
+        )
+    else:
+        created_credentials = package_security.create(sub=user)
+        public_key = created_credentials.public_key
+        secret_key = created_credentials.secret_key
+        package_database.get().create_update_credentials(
+            sub=user,
+            id_=id_,
+            public_key=public_key,
+            secret_key_hash=created_credentials.secret_key_hash,
+            salt=created_credentials.salt,
+        )
+
     return server.Response(
-        json.dumps({"public_key": "pk_test", "secret_key": "sk_test"}),
+        json.dumps(
+            {
+                "public_key": public_key,
+                "secret_key": secret_key,
+            }
+        ),
         status=200,
         mimetype="application/json",
     )
@@ -41,5 +65,7 @@ def delete(user: types.TUser) -> server.Response:
         The credentials for the user.
 
     """
-    print(user)  # allow-print
+    package_database.get().delete_credentials(
+        sub=user, id_=config.get().default_credentials_id
+    )
     return server.Response(status=204)

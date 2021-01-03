@@ -14,6 +14,7 @@ OPTIONS_TESTS = [
 
 
 @pytest.mark.parametrize("path, method", OPTIONS_TESTS)
+@pytest.mark.integration
 def test_endpoint_options(client, path, method):
     """
     GIVEN path and method
@@ -42,8 +43,10 @@ def test_endpoint_options(client, path, method):
         "/v1/specs/spec 1",
         "/v1/specs/spec 1/versions",
         "/v1/specs/spec 1/versions/version 1",
+        "/v1/credentials/default",
     ],
 )
+@pytest.mark.integration
 def test_get_unauthorized(client, url):
     """
     GIVEN url and data
@@ -56,6 +59,7 @@ def test_get_unauthorized(client, url):
 
 
 @pytest.mark.parametrize("url", ["/v1/specs/spec 1"])
+@pytest.mark.integration
 def test_delete_unauthorized(client, url):
     """
     GIVEN url and data
@@ -70,6 +74,7 @@ def test_delete_unauthorized(client, url):
 @pytest.mark.parametrize(
     "url", ["/v1/specs/spec 1", "/v1/specs/spec 1/versions/version 1"]
 )
+@pytest.mark.integration
 def test_put_unauthorized(client, url):
     """
     GIVEN url and data
@@ -83,6 +88,7 @@ def test_put_unauthorized(client, url):
     assert response.status_code == 401
 
 
+@pytest.mark.integration
 def test_specs_get(client, _clean_specs_table):
     """
     GIVEN database with a single spec
@@ -116,6 +122,7 @@ def test_specs_get(client, _clean_specs_table):
     assert "updated_at" in spec_info
 
 
+@pytest.mark.integration
 def test_specs_spec_id_get(client, _clean_specs_table):
     """
     GIVEN database and storage with a single spec
@@ -151,6 +158,7 @@ def test_specs_spec_id_get(client, _clean_specs_table):
     assert "key: value" in response.data.decode()
 
 
+@pytest.mark.integration
 def test_specs_spec_id_put(client, _clean_specs_table):
     """
     GIVEN spec id, data and token
@@ -190,6 +198,7 @@ def test_specs_spec_id_put(client, _clean_specs_table):
     )
 
 
+@pytest.mark.integration
 def test_specs_spec_id_delete(client, _clean_specs_table):
     """
     GIVEN database and storage with a single spec
@@ -229,6 +238,7 @@ def test_specs_spec_id_delete(client, _clean_specs_table):
     assert package_database.get().count_customer_models(sub=sub) == 0
 
 
+@pytest.mark.integration
 def test_specs_spec_id_versions_get(client, _clean_specs_table):
     """
     GIVEN database and storage with a single spec
@@ -264,6 +274,7 @@ def test_specs_spec_id_versions_get(client, _clean_specs_table):
     assert "updated_at" in spec_info
 
 
+@pytest.mark.integration
 def test_specs_spec_id_version_version_get(client):
     """
     GIVEN storage with a single spec
@@ -298,6 +309,7 @@ def test_specs_spec_id_version_version_get(client):
     assert "key: value" in response.data.decode()
 
 
+@pytest.mark.integration
 def test_specs_spec_id_versions_version_put(client, _clean_specs_table):
     """
     GIVEN spec id, data, version and token
@@ -335,4 +347,68 @@ def test_specs_spec_id_versions_version_put(client, _clean_specs_table):
 
     assert '"x-tablename":"schema"' in storage.get_storage_facade().get_spec(
         user=sub, spec_id=spec_id, version=version
+    )
+
+
+@pytest.mark.integration
+def test_credentials_default_get(client):
+    """
+    GIVEN
+    WHEN GET /v1/credentials/default is called with the Authorization header
+    THEN credentials are returned.
+    """
+    sub = "sub 1"
+    token = jwt.encode({"sub": sub}, "secret 1")
+
+    response = client.get(
+        f"/v1/credentials/{config.get().default_credentials_id}",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    assert "Access-Control-Allow-Origin" in response.headers
+    assert (
+        response.headers["Access-Control-Allow-Origin"]
+        == config.get().access_control_allow_origin
+    )
+
+    response_data = json.loads(response.data.decode())
+    assert "public_key" in response_data
+    assert "secret_key" in response_data
+
+
+@pytest.mark.integration
+def test_credentials_default_delete(client):
+    """
+    GIVEN database with credentials
+    WHEN DELETE /v1/credentials/default is called with the Authorization header
+    THEN the credentials are deleted.
+    """
+    sub = "sub 1"
+    package_database.get().create_update_credentials(
+        sub=sub,
+        id_=config.get().default_credentials_id,
+        public_key="public key 1",
+        secret_key_hash=b"secret key hash 1",
+        salt=b"salt 1",
+    )
+    token = jwt.encode({"sub": sub}, "secret 1")
+
+    response = client.delete(
+        f"/v1/credentials/{config.get().default_credentials_id}",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 204
+    assert "Access-Control-Allow-Origin" in response.headers
+    assert (
+        response.headers["Access-Control-Allow-Origin"]
+        == config.get().access_control_allow_origin
+    )
+
+    assert (
+        package_database.get().get_credentials(
+            sub=sub, id_=config.get().default_credentials_id
+        )
+        is None
     )

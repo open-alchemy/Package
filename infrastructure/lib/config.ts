@@ -7,6 +7,7 @@ export const CONFIG = {
     throttlingBurstLimit: 200,
     throttlingRateLimit: 100,
     additionalAllowHeaders: ['x-language'],
+    defaultCredentialsId: 'default',
   },
   web: {
     recordName: 'package',
