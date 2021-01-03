@@ -254,6 +254,16 @@ export class ApiStack extends cdk.Stack {
         authorizerId: cdk.Fn.ref(authorizer.logicalId),
       },
     });
+    credentialsDefaultResource.addMethod('DELETE', integration, {
+      authorizationScopes: [
+        `https://${CONFIG.api.recordName}.${CONFIG.domainName}/credentials.write`,
+        cognito.OAuthScope.COGNITO_ADMIN.scopeName,
+      ],
+      authorizationType: apigateway.AuthorizationType.COGNITO,
+      authorizer: {
+        authorizerId: cdk.Fn.ref(authorizer.logicalId),
+      },
+    });
 
     // DNS listing
     const zone = route53.PublicHostedZone.fromLookup(this, 'PublicHostedZone', {
