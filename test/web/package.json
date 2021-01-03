@@ -56,6 +56,7 @@
   },
   "dependencies": {
     "@open-alchemy/package-sdk": "^2.1.0",
+    "clipboardy": "^2.3.0",
     "cypress": "^6.2.0"
   }
 }

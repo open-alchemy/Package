@@ -9,6 +9,7 @@
     Delete
   </button>
   <a
+    [attr.data-cy]="'edit-' + specId"
     mat-raised-button
     color="basic"
     href="https://editor.openalchemy.io/specs/{{ specId }}"

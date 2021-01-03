@@ -14,7 +14,7 @@ on:
       - "!**.md"
 
 jobs:
-  web-test:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -38,7 +38,7 @@ jobs:
         run: |
           npm run test:ci
 
-  web-lint:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -62,7 +62,7 @@ jobs:
         run: |
           npm run lint
 
-  web-build:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -97,15 +97,15 @@ jobs:
       - name: upload artifacts for release
         uses: actions/upload-artifact@v2
         with:
-          name: web-artifacts
+          name: dist-package
           path: web/dist/package/
 
-  web-deploy:
+  deploy:
     runs-on: ubuntu-latest
     needs:
-      - web-test
-      - web-lint
-      - web-build
+      - test
+      - lint
+      - build
     steps:
       - uses: actions/checkout@v2
       - name: set up node
@@ -127,7 +127,7 @@ jobs:
       - name: retrieve web assets
         uses: actions/download-artifact@v2
         with:
-          name: web-artifacts
+          name: dist-package
           path: infrastructure/resources/web/
       - name: deploy
         working-directory: ./infrastructure
@@ -146,7 +146,7 @@ jobs:
   production-test:
     runs-on: ubuntu-latest
     needs:
-      - web-deploy
+      - deploy
     steps:
       - uses: actions/checkout@v2
       - name: set up node
