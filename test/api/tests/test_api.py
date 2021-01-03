@@ -39,6 +39,14 @@ import pytest
             data=b"data 1",
             method="PUT",
         ),
+        request.Request(
+            "https://package.api.openalchemy.io/v1/credentials/default",
+            method="GET",
+        ),
+        request.Request(
+            "https://package.api.openalchemy.io/v1/credentials/default",
+            method="DELETE",
+        ),
     ],
 )
 def test_unauthorized(test_request):
@@ -281,3 +289,48 @@ def test_specs_versions_create_get_delete(access_token, spec_id):
         assert "Schema:" in spec_str
         assert "x-tablename:" in spec_str
         assert ": schema" in spec_str
+
+
+def test_credentials_default_get_delete_get(access_token, credentials_id):
+    """
+    GIVEN credentials
+    WHEN they are retrieved, deleted and retrieved again
+    THEN the public and private key are returned and are different after delete is
+        called.
+    """
+    # Get the credentials
+    test_request = request.Request(
+        f"https://package.api.openalchemy.io/v1/credentials/{credentials_id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    with request.urlopen(test_request) as response:
+        assert response.status == 200
+        response_data = json.loads(response.read().decode())
+        assert "public_key" in response_data
+        public_key = response_data["public_key"]
+        assert "private_key" in response_data
+        private_key = response_data["private_key"]
+
+    # Delete the credentials
+    test_request = request.Request(
+        f"https://package.api.openalchemy.io/v1/credentials/{credentials_id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+        method="DELETE",
+    )
+
+    with request.urlopen(test_request) as response:
+        assert response.status == 204
+    # Get the again credentials
+    test_request = request.Request(
+        f"https://package.api.openalchemy.io/v1/credentials/{credentials_id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    with request.urlopen(test_request) as response:
+        assert response.status == 200
+        response_data = json.loads(response.read().decode())
+        assert "public_key" in response_data
+        assert response_data["public_key"] != public_key
+        assert "private_key" in response_data
+        assert response_data["private_key"] != private_key

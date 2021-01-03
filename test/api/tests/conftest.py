@@ -55,3 +55,19 @@ def spec_id(access_token):
     )
     with request.urlopen(delete_request) as response:
         assert response.status == 204
+
+
+@pytest.fixture()
+def credentials_id(access_token):
+    """Returns a credentials id that is cleaned up at the end."""
+    credentials_id = "default"
+
+    yield credentials_id
+
+    delete_request = request.Request(
+        f"https://package.api.openalchemy.io/v1/credentials/{credentials_id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+        method="DELETE",
+    )
+    with request.urlopen(delete_request) as response:
+        assert response.status == 204
