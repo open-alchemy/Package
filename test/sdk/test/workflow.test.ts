@@ -138,22 +138,24 @@ describe('get delete credentials', () => {
     await credentialsService.delete({ accessToken });
   });
 
-  describe('get delete get', async () => {
-    // Retrieve credentials
-    const firstCredentials = await credentialsService.get({ accessToken });
-    expect(firstCredentials.public_key).toBeTruthy();
-    expect(firstCredentials.secret_key).toBeTruthy();
+  describe('get delete get', () => {
+    it('should retrieve the credentials, delete and the retrieve different credentials', async () => {
+      // Retrieve credentials
+      const firstCredentials = await credentialsService.get({ accessToken });
+      expect(firstCredentials.public_key).toBeTruthy();
+      expect(firstCredentials.secret_key).toBeTruthy();
 
-    // Delete credentials
-    await credentialsService.delete({ accessToken });
+      // Delete credentials
+      await credentialsService.delete({ accessToken });
 
-    // Retrieve credentials again, should be different now
-    const secondCredentials = await credentialsService.get({ accessToken });
-    expect(secondCredentials.public_key).not.toEqual(
-      firstCredentials.public_key
-    );
-    expect(secondCredentials.secret_key).not.toEqual(
-      firstCredentials.secret_key
-    );
+      // Retrieve credentials again, should be different now
+      const secondCredentials = await credentialsService.get({ accessToken });
+      expect(secondCredentials.public_key).not.toEqual(
+        firstCredentials.public_key
+      );
+      expect(secondCredentials.secret_key).not.toEqual(
+        firstCredentials.secret_key
+      );
+    });
   });
 });
