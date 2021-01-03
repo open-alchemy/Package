@@ -105,14 +105,13 @@ with the service. The following algorithm is used:
 
 The secret key itself is not stored but a value that is derived from it but
 hard to reverse is. The following function is used to calculate it:
-<https://docs.python.org/3/library/hashlib.html#hashlib.scrypt>
+<https://docs.python.org/3/library/hashlib.html#hashlib.pbkdf2_hmac>
 where:
 
+- `hash_name` is `sha256`,
 - `password` is the `secret_key`,
 - `salt` is the credential salt,
-- `n` is `2 ** 14`,
-- `r` is 8 and
-- `p` is 1.
+- `iterations` is 10k.
 
 ## CI-CD
 

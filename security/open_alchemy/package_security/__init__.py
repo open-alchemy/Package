@@ -46,7 +46,9 @@ def calculate_secret_key_hash(
     *, secret_key: types.TSecretKey, salt: types.TSalt
 ) -> types.TSecretKeyHash:
     """Generate the secret key hash."""
-    return hashlib.scrypt(secret_key.encode(), salt=salt, n=2 ** 14, r=9, p=1)
+    return hashlib.pbkdf2_hmac(
+        "sha256", secret_key.encode(), salt=salt, iterations=10000
+    )
 
 
 def create(*, sub: types.TSub) -> types.Credentials:
