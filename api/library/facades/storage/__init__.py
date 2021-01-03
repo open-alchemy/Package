@@ -1,5 +1,7 @@
 """Storage facade."""
 
+import typing
+
 from ... import config
 from ... import types as library_types
 from . import exceptions, memory, s3, types
@@ -7,23 +9,32 @@ from . import exceptions, memory, s3, types
 
 def _construct_storage() -> types.TStorage:
     """Construct the storage facade."""
-    environment = config.get_env()
+    config_instance = config.get()
 
-    if environment.stage == config.Stage.TEST:
+    if config_instance.stage == config.Stage.TEST:
         return memory.Storage()
 
-    if environment.stage == config.Stage.PROD:
-        return s3.Storage(environment.package_storage_bucket_name)
+    if config_instance.stage == config.Stage.PROD:
+        return s3.Storage(config_instance.package_storage_bucket_name)
 
-    raise AssertionError(f"unsupported stage {environment.stage}")
+    raise AssertionError(f"unsupported stage {config_instance.stage}")
 
 
-_STORAGE = _construct_storage()
+class TCache(typing.TypedDict, total=True):
+    """Cache for storage."""
+
+    storage: typing.Optional[types.TStorage]
+
+
+_CACHE: TCache = {"storage": None}
 
 
 def get_storage() -> types.TStorage:
     """Return a facade for the storage."""
-    return _STORAGE
+    if _CACHE["storage"] is None:
+        _CACHE["storage"] = _construct_storage()
+    assert _CACHE["storage"] is not None
+    return _CACHE["storage"]
 
 
 class _StorageFacade:
@@ -46,7 +57,7 @@ class _StorageFacade:
             spec_str: The value of the spec.
 
         """
-        _STORAGE.set(
+        get_storage().set(
             key=f"{user}/{spec_id}/{version}-spec.json",
             value=spec_str,
         )
@@ -66,7 +77,7 @@ class _StorageFacade:
             version: The version of the spec.
 
         """
-        return _STORAGE.get(key=f"{user}/{spec_id}/{version}-spec.json")
+        return get_storage().get(key=f"{user}/{spec_id}/{version}-spec.json")
 
     @staticmethod
     def delete_spec(
@@ -81,10 +92,10 @@ class _StorageFacade:
             spec_id: Unique identifier for the spec.
 
         """
-        delete_keys = _STORAGE.list(prefix=f"{user}/{spec_id}")
+        delete_keys = get_storage().list(prefix=f"{user}/{spec_id}")
         if not delete_keys:
             raise exceptions.StorageError("no keys to delete")
-        _STORAGE.delete_all(keys=delete_keys)
+        get_storage().delete_all(keys=delete_keys)
 
     @staticmethod
     def get_spec_versions(
@@ -105,7 +116,7 @@ class _StorageFacade:
         """
         prefix = f"{user}/{spec_id}/"
         suffix = "-spec.json"
-        keys = _STORAGE.list(prefix=prefix, suffix=suffix)
+        keys = get_storage().list(prefix=prefix, suffix=suffix)
 
         if not keys:
             raise exceptions.ObjectNotFoundError(

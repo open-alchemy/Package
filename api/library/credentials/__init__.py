@@ -5,6 +5,8 @@ import json
 from .. import types
 from ..facades import server
 
+# from open_alchemy import package_database, package_security
+
 
 def get(user: types.TUser) -> server.Response:
     """
@@ -17,6 +19,9 @@ def get(user: types.TUser) -> server.Response:
         The credentials for the user.
 
     """
+    # stored_credentials = package_database.get().get_credentials(
+    # sub=user, id_="default")
+
     print(user)  # allow-print
     return server.Response(
         json.dumps({"public_key": "pk_test", "secret_key": "sk_test"}),

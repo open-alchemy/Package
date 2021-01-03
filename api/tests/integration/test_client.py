@@ -31,7 +31,7 @@ def test_endpoint_options(client, path, method):
     assert "Access-Control-Allow-Headers" in response.headers
     assert (
         response.headers["Access-Control-Allow-Headers"]
-        == config.get_env().access_control_allow_headers
+        == config.get().access_control_allow_headers
     )
 
 
@@ -104,7 +104,7 @@ def test_specs_get(client, _clean_specs_table):
     assert "Access-Control-Allow-Origin" in response.headers
     assert (
         response.headers["Access-Control-Allow-Origin"]
-        == config.get_env().access_control_allow_origin
+        == config.get().access_control_allow_origin
     )
 
     spec_infos = json.loads(response.data.decode())
@@ -145,7 +145,7 @@ def test_specs_spec_id_get(client, _clean_specs_table):
     assert "Access-Control-Allow-Origin" in response.headers
     assert (
         response.headers["Access-Control-Allow-Origin"]
-        == config.get_env().access_control_allow_origin
+        == config.get().access_control_allow_origin
     )
 
     assert "key: value" in response.data.decode()
@@ -182,7 +182,7 @@ def test_specs_spec_id_put(client, _clean_specs_table):
     assert "Access-Control-Allow-Origin" in response.headers
     assert (
         response.headers["Access-Control-Allow-Origin"]
-        == config.get_env().access_control_allow_origin
+        == config.get().access_control_allow_origin
     )
 
     assert '"x-tablename":"schema"' in storage.get_storage_facade().get_spec(
@@ -219,7 +219,7 @@ def test_specs_spec_id_delete(client, _clean_specs_table):
     assert "Access-Control-Allow-Origin" in response.headers
     assert (
         response.headers["Access-Control-Allow-Origin"]
-        == config.get_env().access_control_allow_origin
+        == config.get().access_control_allow_origin
     )
 
     with pytest.raises(storage.exceptions.StorageError):
@@ -252,7 +252,7 @@ def test_specs_spec_id_versions_get(client, _clean_specs_table):
     assert "Access-Control-Allow-Origin" in response.headers
     assert (
         response.headers["Access-Control-Allow-Origin"]
-        == config.get_env().access_control_allow_origin
+        == config.get().access_control_allow_origin
     )
 
     spec_infos = json.loads(response.data.decode())
@@ -292,7 +292,7 @@ def test_specs_spec_id_version_version_get(client):
     assert "Access-Control-Allow-Origin" in response.headers
     assert (
         response.headers["Access-Control-Allow-Origin"]
-        == config.get_env().access_control_allow_origin
+        == config.get().access_control_allow_origin
     )
 
     assert "key: value" in response.data.decode()
@@ -330,7 +330,7 @@ def test_specs_spec_id_versions_version_put(client, _clean_specs_table):
     assert "Access-Control-Allow-Origin" in response.headers
     assert (
         response.headers["Access-Control-Allow-Origin"]
-        == config.get_env().access_control_allow_origin
+        == config.get().access_control_allow_origin
     )
 
     assert '"x-tablename":"schema"' in storage.get_storage_facade().get_spec(
