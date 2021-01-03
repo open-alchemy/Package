@@ -29,7 +29,7 @@ export class CredentialsService {
       .get<Credentials>(URL, {
         headers: { Authorization: `Bearer ${params.accessToken}` },
       })
-      .catch(error => {
+      .catch((error) => {
         const message = decodeResponse(error.response.data);
         throw new CredentialsError(`error whilst loading the spec: ${message}`);
       });
@@ -52,7 +52,7 @@ export class CredentialsService {
       .delete<void>(URL, {
         headers: { Authorization: `Bearer ${params.accessToken}` },
       })
-      .catch(error => {
+      .catch((error) => {
         const message = decodeResponse(error.response.data);
         throw new CredentialsError(
           `error whilst deleting the spec: ${message}`
