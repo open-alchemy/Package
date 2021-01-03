@@ -295,7 +295,7 @@ def test_credentials_default_get_delete_get(access_token, credentials_id):
     """
     GIVEN credentials
     WHEN they are retrieved, deleted and retrieved again
-    THEN the public and private key are returned and are different after delete is
+    THEN the public and secret key are returned and are different after delete is
         called.
     """
     # Get the credentials
@@ -309,8 +309,8 @@ def test_credentials_default_get_delete_get(access_token, credentials_id):
         response_data = json.loads(response.read().decode())
         assert "public_key" in response_data
         public_key = response_data["public_key"]
-        assert "private_key" in response_data
-        private_key = response_data["private_key"]
+        assert "secret_key" in response_data
+        secret_key = response_data["secret_key"]
 
     # Delete the credentials
     test_request = request.Request(
@@ -332,5 +332,5 @@ def test_credentials_default_get_delete_get(access_token, credentials_id):
         response_data = json.loads(response.read().decode())
         assert "public_key" in response_data
         assert response_data["public_key"] != public_key
-        assert "private_key" in response_data
-        assert response_data["private_key"] != private_key
+        assert "secret_key" in response_data
+        assert response_data["secret_key"] != secret_key
