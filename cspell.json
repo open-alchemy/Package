@@ -44,7 +44,9 @@
     "pynamodb",
     "Popen",
     "SDIST",
-    "scrypt"
+    "scrypt",
+    "delenv",
+    "setenv"
   ],
   "dictionaries": [
     "python",
