@@ -8,9 +8,17 @@ import {
   initialState as initialPackageState,
   SpecsState,
   CredentialsState,
+  Credentials,
 } from './package.reducer';
 import { PackageService } from './package.service';
 import * as PackageActions from './package.actions';
+
+const CREDENTIALS: Credentials = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  public_key: 'public key 1',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  secret_key: 'secret key 1',
+};
 
 describe('PackageService', () => {
   let service: PackageService;
@@ -64,7 +72,7 @@ describe('PackageService', () => {
       testScheduler.run((helpers) => {
         // GIVEN store with initial state and then a different state
         const credentialsState: CredentialsState = {
-          value: { public_key: 'public key 1', secret_key: 'secret key 1' },
+          value: CREDENTIALS,
           loading: true,
           success: null,
         };
@@ -83,12 +91,10 @@ describe('PackageService', () => {
         // WHEN
 
         // THEN the credentials state is returned
-        helpers
-          .expectObservable(service.credentials$)
-          .toBe('ab', {
-            a: initialPackageState.credentials,
-            b: credentialsState,
-          });
+        helpers.expectObservable(service.credentials$).toBe('ab', {
+          a: initialPackageState.credentials,
+          b: credentialsState,
+        });
       });
     });
   });

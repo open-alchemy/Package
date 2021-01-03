@@ -30,7 +30,7 @@ describe('CredentialsComponent', () => {
     clipboardServiceSpy = jasmine.createSpyObj('ClipboardService', [
       'copyText',
       'destroy',
-      'deleteButtonClick',
+      'pushCopyResponse',
     ]);
 
     TestBed.configureTestingModule({
@@ -121,9 +121,12 @@ describe('CredentialsComponent', () => {
                 );
                 if (p !== null) {
                   expect(p.innerText).toContain('pip install');
-                  if (specId !== null) expect(p.innerText).toContain(specId);
-                  if (specVersion !== null)
+                  if (specId !== null) {
+                    expect(p.innerText).toContain(specId);
+                  }
+                  if (specVersion !== null) {
                     expect(p.innerText).toContain(specVersion);
+                  }
                   if (credentials !== null) {
                     expect(p.innerText).toContain(credentials.public_key);
                     expect(p.innerText).toContain(credentials.secret_key);
@@ -140,4 +143,39 @@ describe('CredentialsComponent', () => {
       });
     }
   );
+
+  describe('copy button', () => {
+    it('should copy to clipboard on copy click', () => {
+      const specId = 'spec id 1';
+      const specVersion = 'version 1';
+
+      testScheduler.run((helpers) => {
+        // GIVEN credentials$ that returns credentials, specId and version
+        packageServiceSpy.credentials$ = helpers.cold('a', {
+          a: { value: CREDENTIALS, loading: false, success: null },
+        });
+        component.specId = specId;
+        component.specVersion = specVersion;
+
+        // WHEN changes are detected and the button isclicked
+        fixture.detectChanges();
+        const componentSpecInfos$ = helpers.cold('a').pipe(
+          map(() => {
+            fixture.detectChanges();
+            const button: HTMLButtonElement = fixture.nativeElement.querySelector(
+              'button'
+            );
+            button.click();
+            return true;
+          })
+        );
+        helpers.expectObservable(componentSpecInfos$).toBe('a', {
+          a: true,
+        });
+      });
+
+      // THEN copyText has been called
+      expect(clipboardServiceSpy.pushCopyResponse).toHaveBeenCalledTimes(1);
+    });
+  });
 });
