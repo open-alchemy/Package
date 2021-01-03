@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 
-import { SpecInfo, SpecId } from './types';
+import { SpecInfo, SpecId, Credentials } from './types';
 
 export const specsComponentOnInit = createAction('[specs component] on init');
 export const specsComponentRefresh = createAction('[specs component] refresh');
@@ -24,7 +24,7 @@ export const packageApiDeleteSpecsSpecIdError = createAction(
 );
 export const packageApiGetCredentialsSuccess = createAction(
   '[package api] get credentials success',
-  props<{ specInfos: SpecInfo[] }>()
+  props<{ credentials: Credentials }>()
 );
 export const packageApiGetCredentialsError = createAction(
   '[package api] get credentials error'

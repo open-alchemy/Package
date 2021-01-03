@@ -43,7 +43,7 @@ describe('PackageService', () => {
           .cold('-b', {
             b: {
               ...initialState,
-              package: { specs: specsState },
+              package: { ...initialState.package, specs: specsState },
             },
           })
           .subscribe((newState) => store.setState(newState));

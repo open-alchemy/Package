@@ -1,7 +1,7 @@
 import { Action, createReducer, on } from '@ngrx/store';
-import { SpecInfo } from '@open-alchemy/package-sdk';
+import { SpecInfo, Credentials } from '@open-alchemy/package-sdk';
 
-export { SpecInfo };
+export { SpecInfo, Credentials };
 
 import * as PackageActions from './package.actions';
 
@@ -10,12 +10,23 @@ export interface SpecsState {
   success: boolean | null;
   loading: boolean;
 }
+export interface CredentialsState {
+  value: Credentials | null;
+  success: boolean | null;
+  loading: boolean;
+}
 export interface PackageState {
   specs: SpecsState;
+  credentials: CredentialsState;
 }
 export const initialState: PackageState = {
   specs: {
     specInfos: [],
+    success: null,
+    loading: false,
+  },
+  credentials: {
+    value: null,
     success: null,
     loading: false,
   },
@@ -26,6 +37,7 @@ const packageReducerValue = createReducer(
   on(PackageActions.specsComponentOnInit, (state) => ({
     ...state,
     specs: { specInfos: [], success: null, loading: true },
+    credentials: { value: null, success: null, loading: true },
   })),
   on(PackageActions.specsComponentRefresh, (state) => ({
     ...state,
@@ -38,6 +50,18 @@ const packageReducerValue = createReducer(
   on(PackageActions.packageApiListSpecsError, (state) => ({
     ...state,
     specs: { specInfos: [], success: false, loading: false },
+  })),
+  on(PackageActions.packageApiGetCredentialsSuccess, (state, action) => ({
+    ...state,
+    credentials: {
+      value: action.credentials,
+      success: true,
+      loading: false,
+    },
+  })),
+  on(PackageActions.packageApiGetCredentialsError, (state) => ({
+    ...state,
+    credentials: { value: null, success: false, loading: false },
   }))
 );
 
