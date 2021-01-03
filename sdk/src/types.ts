@@ -1,1 +1,9 @@
-export { SpecInfo, SpecId, SpecValue, SpecVersion } from './openapi/models';
+export {
+  SpecInfo,
+  SpecId,
+  SpecValue,
+  SpecVersion,
+  PublicKey,
+  SecretKey,
+  Credentials,
+} from './openapi/models';

@@ -22,3 +22,10 @@ export const packageApiDeleteSpecsSpecIdSuccess = createAction(
 export const packageApiDeleteSpecsSpecIdError = createAction(
   '[package api] delete specs spec id error'
 );
+export const packageApiGetCredentialsSuccess = createAction(
+  '[package api] get credentials success',
+  props<{ specInfos: SpecInfo[] }>()
+);
+export const packageApiGetCredentialsError = createAction(
+  '[package api] get credentials error'
+);
