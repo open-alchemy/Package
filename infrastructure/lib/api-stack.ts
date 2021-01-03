@@ -143,11 +143,12 @@ export class ApiStack extends cdk.Stack {
 
     // Protect resources with cognito
     const versionResource = api.root.addResource('v1');
+
+    // Add UI resources
     const uiResource = versionResource.addResource('ui');
     uiResource.addMethod('GET', integration);
     const openapiResource = versionResource.addResource('openapi.json');
     openapiResource.addMethod('GET', integration);
-    // Add UI resources
     const uiSubResources = [
       'swagger-ui-standalone-preset.js',
       'swagger-ui-bundle.js',
@@ -159,10 +160,12 @@ export class ApiStack extends cdk.Stack {
       const uiSubResource = uiResource.addResource(uiSubResourcePath);
       uiSubResource.addMethod('GET', integration);
     });
+
+    // Add specs endpoints
     const specsResource = versionResource.addResource('specs');
     specsResource.addMethod('GET', integration, {
       authorizationScopes: [
-        'https://package.api.openalchemy.io/spec.read',
+        `https://${CONFIG.api.recordName}.${CONFIG.domainName}/spec.read`,
         cognito.OAuthScope.COGNITO_ADMIN.scopeName,
       ],
       authorizationType: apigateway.AuthorizationType.COGNITO,
@@ -173,7 +176,7 @@ export class ApiStack extends cdk.Stack {
     const specsSpecIdResource = specsResource.addResource('{spec_id}');
     specsSpecIdResource.addMethod('GET', integration, {
       authorizationScopes: [
-        'https://package.api.openalchemy.io/spec.read',
+        `https://${CONFIG.api.recordName}.${CONFIG.domainName}/spec.read`,
         cognito.OAuthScope.COGNITO_ADMIN.scopeName,
       ],
       authorizationType: apigateway.AuthorizationType.COGNITO,
@@ -183,7 +186,7 @@ export class ApiStack extends cdk.Stack {
     });
     specsSpecIdResource.addMethod('PUT', integration, {
       authorizationScopes: [
-        'https://package.api.openalchemy.io/spec.write',
+        `https://${CONFIG.api.recordName}.${CONFIG.domainName}/spec.write`,
         cognito.OAuthScope.COGNITO_ADMIN.scopeName,
       ],
       authorizationType: apigateway.AuthorizationType.COGNITO,
@@ -193,7 +196,7 @@ export class ApiStack extends cdk.Stack {
     });
     specsSpecIdResource.addMethod('DELETE', integration, {
       authorizationScopes: [
-        'https://package.api.openalchemy.io/spec.write',
+        `https://${CONFIG.api.recordName}.${CONFIG.domainName}/spec.write`,
         cognito.OAuthScope.COGNITO_ADMIN.scopeName,
       ],
       authorizationType: apigateway.AuthorizationType.COGNITO,
@@ -204,7 +207,7 @@ export class ApiStack extends cdk.Stack {
     const specsIdVersionsResource = specsSpecIdResource.addResource('versions');
     specsIdVersionsResource.addMethod('GET', integration, {
       authorizationScopes: [
-        'https://package.api.openalchemy.io/spec.read',
+        `https://${CONFIG.api.recordName}.${CONFIG.domainName}/spec.read`,
         cognito.OAuthScope.COGNITO_ADMIN.scopeName,
       ],
       authorizationType: apigateway.AuthorizationType.COGNITO,
@@ -217,7 +220,7 @@ export class ApiStack extends cdk.Stack {
     );
     specsIdVersionsVersionResource.addMethod('GET', integration, {
       authorizationScopes: [
-        'https://package.api.openalchemy.io/spec.read',
+        `https://${CONFIG.api.recordName}.${CONFIG.domainName}/spec.read`,
         cognito.OAuthScope.COGNITO_ADMIN.scopeName,
       ],
       authorizationType: apigateway.AuthorizationType.COGNITO,
@@ -227,7 +230,23 @@ export class ApiStack extends cdk.Stack {
     });
     specsIdVersionsVersionResource.addMethod('PUT', integration, {
       authorizationScopes: [
-        'https://package.api.openalchemy.io/spec.write',
+        `https://${CONFIG.api.recordName}.${CONFIG.domainName}/spec.write`,
+        cognito.OAuthScope.COGNITO_ADMIN.scopeName,
+      ],
+      authorizationType: apigateway.AuthorizationType.COGNITO,
+      authorizer: {
+        authorizerId: cdk.Fn.ref(authorizer.logicalId),
+      },
+    });
+
+    // Add credentials resource
+    const credentialsResource = versionResource.addResource('credentials');
+    const credentialsDefaultResource = credentialsResource.addResource(
+      'default'
+    );
+    credentialsDefaultResource.addMethod('GET', integration, {
+      authorizationScopes: [
+        `https://${CONFIG.api.recordName}.${CONFIG.domainName}/credentials.read`,
         cognito.OAuthScope.COGNITO_ADMIN.scopeName,
       ],
       authorizationType: apigateway.AuthorizationType.COGNITO,
