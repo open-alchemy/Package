@@ -33,6 +33,17 @@
     </td>
   </ng-container>
 
+  <!-- pip install Column -->
+  <ng-container matColumnDef="install">
+    <th mat-header-cell *matHeaderCellDef>pip install</th>
+    <td mat-cell *matCellDef="let element">
+      <app-credentials
+        [specId]="element.id"
+        [specVersion]="element.version"
+      ></app-credentials>
+    </td>
+  </ng-container>
+
   <!-- Model Count Column -->
   <ng-container matColumnDef="model_count">
     <th mat-header-cell *matHeaderCellDef>Model Count</th>

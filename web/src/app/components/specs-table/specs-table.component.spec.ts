@@ -5,8 +5,14 @@ import { By } from '@angular/platform-browser';
 
 import { MatTableModule } from '@angular/material/table';
 
-import { SpecInfo, SpecId } from '../../services/package/types';
+import { SpecInfo, SpecId, SpecVersion } from '../../services/package/types';
 import { SpecsTableComponent } from './specs-table.component';
+
+@Component({ selector: 'app-credentials', template: '' })
+class AppCredentialsStubComponent {
+  @Input() specId: SpecId | null = null;
+  @Input() specVersion: SpecVersion | null = null;
+}
 
 @Component({ selector: 'app-specs-manage-spec', template: '' })
 class AppSpecsManageSpecStubComponent {
@@ -37,7 +43,11 @@ describe('SpecsTableComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SpecsTableComponent, AppSpecsManageSpecStubComponent],
+      declarations: [
+        SpecsTableComponent,
+        AppSpecsManageSpecStubComponent,
+        AppCredentialsStubComponent,
+      ],
       imports: [MatTableModule],
     });
 
@@ -95,6 +105,16 @@ describe('SpecsTableComponent', () => {
       AppSpecsManageSpecStubComponent
     );
     expect(specsManageSpecComponent.specId).toEqual(SPEC_INFO_1.id);
+    // AND the specId and specVersion is passed to app-credentials
+    const credentialsDebugElement = fixture.debugElement.query(
+      By.directive(AppCredentialsStubComponent)
+    );
+    expect(credentialsDebugElement).toBeTruthy();
+    const credentialsComponent = credentialsDebugElement.injector.get(
+      AppCredentialsStubComponent
+    );
+    expect(credentialsComponent.specId).toEqual(SPEC_INFO_1.id);
+    expect(credentialsComponent.specVersion).toEqual(SPEC_INFO_1.version);
   });
 
   it('should only show a single row with optional values shown if a single spec is provided with optional values', () => {

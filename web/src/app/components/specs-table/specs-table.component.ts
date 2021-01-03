@@ -15,6 +15,7 @@ export class SpecsTableComponent {
     'description',
     'version',
     'updated_at',
+    'install',
     'model_count',
     'management',
   ];

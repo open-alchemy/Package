@@ -8,7 +8,10 @@ const AUTH_CODE_FLOW_CONFIG: AuthConfig = {
   clientId: '334j6ddju1hkt6gdb1nodfidmb',
   responseType: 'code',
   scope:
-    'https://package.api.openalchemy.io/spec.read https://package.api.openalchemy.io/spec.write',
+    'https://package.api.openalchemy.io/spec.read ' +
+    'https://package.api.openalchemy.io/spec.write ' +
+    'https://package.api.openalchemy.io/credentials.read ' +
+    'https://package.api.openalchemy.io/credentials.write',
   showDebugInformation: true,
   strictDiscoveryDocumentValidation: false,
 };

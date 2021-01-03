@@ -28,6 +28,7 @@
     "@ngrx/store": "^10.1.0",
     "@open-alchemy/package-sdk": "^3.1.1",
     "angular-oauth2-oidc": "^10.0.3",
+    "ngx-clipboard": "^14.0.1",
     "rxjs": "~6.6.3",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"

@@ -1,2 +1,2 @@
 export { SpecInfo, Credentials } from './package.reducer';
-export { SpecId } from '@open-alchemy/package-sdk';
+export { SpecId, SpecVersion } from '@open-alchemy/package-sdk';

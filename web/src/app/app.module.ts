@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { OAuthModule } from 'angular-oauth2-oidc';
+import { ClipboardModule } from 'ngx-clipboard';
 import {
   SpecsService,
   SpecService,
@@ -30,6 +31,7 @@ import { SpecsTableComponent } from './components/specs-table/specs-table.compon
 import { SpecsRefreshButtonComponent } from './components/specs-refresh-button/specs-refresh-button.component';
 import { SpecsCreateButtonComponent } from './components/specs-create-button/specs-create-button.component';
 import { SpecsManageSpecComponent } from './components/specs-manage-spec/specs-manage-spec.component';
+import { CredentialsComponent } from './components/credentials/credentials.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +42,7 @@ import { SpecsManageSpecComponent } from './components/specs-manage-spec/specs-m
     SpecsRefreshButtonComponent,
     SpecsCreateButtonComponent,
     SpecsManageSpecComponent,
+    CredentialsComponent,
   ],
   imports: [
     BrowserModule,
@@ -47,6 +50,7 @@ import { SpecsManageSpecComponent } from './components/specs-manage-spec/specs-m
     BrowserAnimationsModule,
     HttpClientModule,
     OAuthModule.forRoot(),
+    ClipboardModule,
 
     StoreModule.forRoot({ package: packageReducer }),
     EffectsModule.forRoot([PackageEffects]),
