@@ -35,7 +35,7 @@ def test_list_(_clean_specs_table):
     assert "updated_at" in spec_info
 
 
-def test_list_not_found():
+def test_list_not_found(_clean_specs_table):
     """
     GIVEN user, spec id and empty storage
     WHEN list_ is called with the user and spec id

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "84aa95df673dd0ec6838da585b31aa527bbc021fbf17a968c1eacc521578ddc8"
+            "sha256": "9e1cdaeb14605353974775b77cdcd031c300f5c8e327c908f894ed9c68d563a4"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -304,11 +304,11 @@
         },
         "open-alchemy.package-security": {
             "hashes": [
-                "sha256:b88cbfdacec66db42bddf0ad40a00bcf21581ac434d95c93c1b30e962e6fd013",
-                "sha256:bb6e1975af609b55d11e8dfb0ef64ea45e0c13231a96c684aed1180018d2e58e"
+                "sha256:750dac4f2173192b4233498d409ef90813567377a15fcb21bb9bff5606d91936",
+                "sha256:e1ee7a33c33143673039298e3c919002a367f725bf2dd3dbb824119a27185687"
             ],
             "index": "pypi",
-            "version": "==1.1.0"
+            "version": "==1.1.1"
         },
         "openalchemy": {
             "hashes": [
