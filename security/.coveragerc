@@ -1,6 +1,6 @@
 [run]
 omit =
-    **/conftest.py
+    **/pytest_plugin.py
 branch = True
 
 [report]

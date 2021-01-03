@@ -41,7 +41,7 @@ jobs:
         if: steps.cache-poetry.outputs.cache-hit != 'true'
         working-directory: ./security
         run: |
-          poetry install
+          poetry install --no-root
       - name: Test with pytest
         working-directory: ./security
         env:
