@@ -14,6 +14,7 @@ import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
 import * as iam from '@aws-cdk/aws-iam';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as sns from '@aws-cdk/aws-sns';
+import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 import * as s3Notifications from '@aws-cdk/aws-s3-notifications';
 
 import { ENVIRONMENT } from './environment';
@@ -53,6 +54,13 @@ export class ApiStack extends cdk.Stack {
       }
     );
 
+    // Secret for credentials
+    const secret = secretsmanager.Secret.fromSecretNameV2(
+      this,
+      'CredentialsSecret',
+      CONFIG.security.secretName
+    );
+
     // Lambda function
     const deploymentPackage = 'resources/api/deployment-package.zip';
     const deploymentPackageContents = fs.readFileSync(deploymentPackage);
@@ -75,11 +83,6 @@ export class ApiStack extends cdk.Stack {
       logRetention: logs.RetentionDays.ONE_WEEK,
       timeout: cdk.Duration.seconds(10),
     });
-    bucket.grantReadWrite(func);
-    specTable.grantReadWriteData(func);
-    specTable.grant(func, 'dynamodb:DescribeTable');
-    credentialsTable.grantReadWriteData(func);
-    credentialsTable.grant(func, 'dynamodb:DescribeTable');
     const version = new lambda.Version(
       this,
       `LambdaVersion-${deploymentPackageHash}`,
@@ -97,6 +100,14 @@ export class ApiStack extends cdk.Stack {
       deploymentConfig: codedeploy.LambdaDeploymentConfig.ALL_AT_ONCE,
     });
     const integration = new apigateway.LambdaIntegration(alias);
+
+    // Permissions for lambda function
+    bucket.grantReadWrite(func);
+    specTable.grantReadWriteData(func);
+    specTable.grant(func, 'dynamodb:DescribeTable');
+    credentialsTable.grantReadWriteData(func);
+    credentialsTable.grant(func, 'dynamodb:DescribeTable');
+    secret.grantRead(func);
 
     // Certificate
     const certificateArn = ENVIRONMENT.AWS_OPEN_ALCHEMY_API_CERTIFICATE_ARN;
