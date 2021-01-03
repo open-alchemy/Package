@@ -351,7 +351,7 @@ def test_specs_spec_id_versions_version_put(client, _clean_specs_table):
 
 
 @pytest.mark.integration
-def test_credentials_default_get(client):
+def test_credentials_default_get(client, _clean_credentials_table):
     """
     GIVEN
     WHEN GET /v1/credentials/default is called with the Authorization header
@@ -378,7 +378,7 @@ def test_credentials_default_get(client):
 
 
 @pytest.mark.integration
-def test_credentials_default_delete(client):
+def test_credentials_default_delete(client, _clean_credentials_table):
     """
     GIVEN database with credentials
     WHEN DELETE /v1/credentials/default is called with the Authorization header
