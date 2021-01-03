@@ -11,7 +11,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { OAuthModule } from 'angular-oauth2-oidc';
-import { SpecsService, SpecService } from '@open-alchemy/package-sdk';
+import {
+  SpecsService,
+  SpecService,
+  CredentialsService,
+} from '@open-alchemy/package-sdk';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -56,6 +60,7 @@ import { SpecsManageSpecComponent } from './components/specs-manage-spec/specs-m
     AuthGuard,
     { provide: SpecsService, useValue: new SpecsService() },
     { provide: SpecService, useValue: new SpecService() },
+    { provide: CredentialsService, useValue: new CredentialsService() },
   ],
   bootstrap: [AppComponent],
 })

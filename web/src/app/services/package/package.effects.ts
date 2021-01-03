@@ -3,7 +3,11 @@ import { of } from 'rxjs';
 import { map, catchError, switchMap, mergeMap } from 'rxjs/operators';
 
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { SpecsService, SpecService } from '@open-alchemy/package-sdk';
+import {
+  SpecsService,
+  SpecService,
+  CredentialsService,
+} from '@open-alchemy/package-sdk';
 import { OAuthService } from 'angular-oauth2-oidc';
 
 import * as PackageActions from './package.actions';
@@ -51,10 +55,29 @@ export class PackageEffects {
     )
   );
 
+  getCredentials$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(PackageActions.specsComponentOnInit.type),
+      switchMap(() =>
+        this.credentialsService
+          .get$({
+            accessToken: this.oAuthService.getAccessToken(),
+          })
+          .pipe(
+            map((credentials) =>
+              PackageActions.packageApiGetCredentialsSuccess({ credentials })
+            ),
+            catchError(() => of(PackageActions.packageApiGetCredentialsError()))
+          )
+      )
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private oAuthService: OAuthService,
     private specsService: SpecsService,
-    private specService: SpecService
+    private specService: SpecService,
+    private credentialsService: CredentialsService
   ) {}
 }

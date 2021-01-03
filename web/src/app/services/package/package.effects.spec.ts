@@ -3,7 +3,13 @@ import { TestScheduler } from 'rxjs/testing';
 
 import { Action } from '@ngrx/store';
 import { OAuthService } from 'angular-oauth2-oidc';
-import { SpecsService, SpecService, SpecInfo } from '@open-alchemy/package-sdk';
+import {
+  SpecsService,
+  SpecService,
+  SpecInfo,
+  Credentials,
+  CredentialsService,
+} from '@open-alchemy/package-sdk';
 
 import { PackageEffects } from './package.effects';
 import * as PackageActions from './package.actions';
@@ -25,6 +31,18 @@ const SPEC_INFOS_2: SpecInfo[] = [
     model_count: 2,
   },
 ];
+const CREDENTIALS_1: Credentials = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  public_key: 'public key 1',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  secret_key: 'secret key 1',
+};
+const CREDENTIALS_2: Credentials = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  public_key: 'public key 2',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  secret_key: 'secret key 2',
+};
 
 describe('PackageEffects', () => {
   let actions$: Observable<Action>;
@@ -32,6 +50,7 @@ describe('PackageEffects', () => {
   let oAuthServiceSpy: jasmine.SpyObj<OAuthService>;
   let specsServiceSpy: jasmine.SpyObj<SpecsService>;
   let specServiceSpy: jasmine.SpyObj<SpecService>;
+  let credentialsServiceSpy: jasmine.SpyObj<CredentialsService>;
   let testScheduler: TestScheduler;
 
   const accessToken = 'access token 1';
@@ -41,6 +60,9 @@ describe('PackageEffects', () => {
     oAuthServiceSpy.getAccessToken.and.returnValue(accessToken);
     specsServiceSpy = jasmine.createSpyObj('SpecsService', ['list$']);
     specServiceSpy = jasmine.createSpyObj('SpecService', ['delete$']);
+    credentialsServiceSpy = jasmine.createSpyObj('CredentialsService', [
+      'get$',
+    ]);
 
     testScheduler = new TestScheduler((actual, expected) => {
       expect(actual).toEqual(expected);
@@ -167,9 +189,6 @@ describe('PackageEffects', () => {
         ],
         expectedMarbles: '----e',
         expectedValues: {
-          b: PackageActions.packageApiListSpecsSuccess({
-            specInfos: SPEC_INFOS_1,
-          }),
           e: PackageActions.packageApiListSpecsSuccess({
             specInfos: SPEC_INFOS_2,
           }),
@@ -213,7 +232,8 @@ describe('PackageEffects', () => {
                 actions$,
                 oAuthServiceSpy,
                 specsServiceSpy,
-                specServiceSpy
+                specServiceSpy,
+                credentialsServiceSpy
               );
               const returnedActions = effects.listSpecs$;
 
@@ -378,7 +398,8 @@ describe('PackageEffects', () => {
                 actions$,
                 oAuthServiceSpy,
                 specsServiceSpy,
-                specServiceSpy
+                specServiceSpy,
+                credentialsServiceSpy
               );
               const returnedActions = effects.deleteSpecsSpecId$;
 
@@ -395,6 +416,161 @@ describe('PackageEffects', () => {
             expectedCalls.forEach((expectedCall) =>
               expect(specServiceSpy.delete$).toHaveBeenCalledWith(expectedCall)
             );
+          });
+        });
+      }
+    );
+  });
+
+  describe('getCredentials$', () => {
+    ([
+      {
+        description: 'empty actions',
+        expectation: 'should return empty actions',
+        actionsMarbles: '',
+        actionsValues: {},
+        credentialsServiceGetReturnValues: [],
+        expectedMarbles: '',
+        expectedValues: {},
+      },
+      {
+        description: 'different action actions',
+        expectation: 'should return empty actions',
+        actionsMarbles: 'a',
+        actionsValues: { a: PackageActions.packageApiListSpecsError() },
+        credentialsServiceGetReturnValues: [],
+        expectedMarbles: '',
+        expectedValues: {},
+      },
+      {
+        description:
+          'single specs component on init action actions get$ returns credentials',
+        expectation: 'should return single success action actions',
+        actionsMarbles: 'a',
+        actionsValues: { a: PackageActions.specsComponentOnInit() },
+        credentialsServiceGetReturnValues: [
+          { marbles: '-b|', values: { b: CREDENTIALS_1 } },
+        ],
+        expectedMarbles: '-b',
+        expectedValues: {
+          b: PackageActions.packageApiGetCredentialsSuccess({
+            credentials: CREDENTIALS_1,
+          }),
+        },
+      },
+      {
+        description:
+          'single specs component on init action actions get$ throws error',
+        expectation: 'should return single error action actions',
+        actionsMarbles: 'a',
+        actionsValues: { a: PackageActions.specsComponentOnInit() },
+        credentialsServiceGetReturnValues: [{ marbles: '-#|' }],
+        expectedMarbles: '-b',
+        expectedValues: {
+          b: PackageActions.packageApiGetCredentialsError(),
+        },
+      },
+      {
+        description:
+          'multiple specs component on init action actions get$ returns credentials before next',
+        expectation: 'should return multiple success action actions',
+        actionsMarbles: 'a--d',
+        actionsValues: {
+          a: PackageActions.specsComponentOnInit(),
+          d: PackageActions.specsComponentOnInit(),
+        },
+        credentialsServiceGetReturnValues: [
+          { marbles: '-b|', values: { b: CREDENTIALS_1 } },
+          { marbles: '-e|', values: { e: CREDENTIALS_2 } },
+        ],
+        expectedMarbles: '-b--e',
+        expectedValues: {
+          b: PackageActions.packageApiGetCredentialsSuccess({
+            credentials: CREDENTIALS_1,
+          }),
+          e: PackageActions.packageApiGetCredentialsSuccess({
+            credentials: CREDENTIALS_2,
+          }),
+        },
+      },
+      {
+        description:
+          'multiple specs component on init action actions get$ returns credentials after next',
+        expectation: 'should return single success actions',
+        actionsMarbles: 'a--d',
+        actionsValues: {
+          a: PackageActions.specsComponentOnInit(),
+          d: PackageActions.specsComponentOnInit(),
+        },
+        credentialsServiceGetReturnValues: [
+          { marbles: '----e|', values: { e: CREDENTIALS_1 } },
+          { marbles: '-e|', values: { e: CREDENTIALS_2 } },
+        ],
+        expectedMarbles: '----e',
+        expectedValues: {
+          e: PackageActions.packageApiGetCredentialsSuccess({
+            credentials: CREDENTIALS_2,
+          }),
+        },
+      },
+    ] as {
+      description: string;
+      expectation: string;
+      actionsMarbles: string;
+      actionsValues: { [key: string]: Action };
+      credentialsServiceGetReturnValues: {
+        marbles: string;
+        values: { [key: string]: Credentials };
+      }[];
+      expectedMarbles: string;
+      expectedValues: { [key: string]: Action };
+    }[]).forEach(
+      ({
+        description,
+        expectation,
+        actionsMarbles,
+        actionsValues,
+        credentialsServiceGetReturnValues,
+        expectedMarbles,
+        expectedValues,
+      }) => {
+        describe(description, () => {
+          it(expectation, () => {
+            testScheduler.run((helpers) => {
+              // GIVEN actions
+              actions$ = helpers.cold(actionsMarbles, actionsValues);
+              // AND SpecsService get that returns values
+              credentialsServiceSpy.get$.and.returnValues(
+                ...credentialsServiceGetReturnValues.map(
+                  ({ marbles, values }) => helpers.cold(marbles, values)
+                )
+              );
+
+              // WHEN getCredentials$ is called
+              effects = new PackageEffects(
+                actions$,
+                oAuthServiceSpy,
+                specsServiceSpy,
+                specServiceSpy,
+                credentialsServiceSpy
+              );
+              const returnedActions = effects.getCredentials$;
+
+              // THEN the expected actions are returned
+              helpers
+                .expectObservable(returnedActions)
+                .toBe(expectedMarbles, expectedValues);
+            });
+
+            // AND specsService get$ has been called
+            expect(credentialsServiceSpy.get$).toHaveBeenCalledTimes(
+              credentialsServiceGetReturnValues.length
+            );
+            if (credentialsServiceGetReturnValues.length > 0) {
+              expect(credentialsServiceSpy.get$).toHaveBeenCalledWith({
+                accessToken,
+              });
+            }
           });
         });
       }
