@@ -264,7 +264,7 @@ def test_create_install_response_value():
 
     returned_value = library.create_install_response_value(uri=uri, auth_info=auth_info)
 
-    assert returned_value == f"/{sub}{uri}"
+    assert returned_value == f"{sub}{uri}"
 
 
 def test_create_response_list(_clean_specs_table):

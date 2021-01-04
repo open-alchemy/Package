@@ -275,4 +275,4 @@ def test_main_install(_clean_credentials_table):
 
     returned_response = app.main(event, None)
 
-    assert returned_response == {**request, "uri": f"/{credentials.sub}{uri}"}
+    assert returned_response == {**request, "uri": f"{credentials.sub}{uri}"}
