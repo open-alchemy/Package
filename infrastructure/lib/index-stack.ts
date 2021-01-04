@@ -24,7 +24,7 @@ export class IndexStack extends cdk.Stack {
     const bucket = s3.Bucket.fromBucketName(
       this,
       'PackageBucket',
-      CONFIG.storage.bucketName
+      CONFIG.storage.newBucketName
     );
 
     // Database for the packages
@@ -93,7 +93,6 @@ export class IndexStack extends cdk.Stack {
       'OriginAccessIdentity',
       'EJTD32Z8MBLSK'
     );
-    bucket.grantRead(originAccessIdentity);
     const distribution = new cloudfront.Distribution(this, 'Distribution', {
       defaultBehavior: {
         origin: new cloudfrontOrigins.S3Origin(bucket, {

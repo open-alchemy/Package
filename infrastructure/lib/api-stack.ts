@@ -90,7 +90,7 @@ export class ApiStack extends cdk.Stack {
         STAGE: 'PROD',
         ACCESS_CONTROL_ALLOW_ORIGIN: '*',
         ACCESS_CONTROL_ALLOW_HEADERS: 'x-language',
-        PACKAGE_STORAGE_BUCKET_NAME: CONFIG.storage.bucketName,
+        PACKAGE_STORAGE_BUCKET_NAME: CONFIG.storage.newBucketName,
         DEFAULT_CREDENTIALS_ID: CONFIG.api.defaultCredentialsId,
       },
       logRetention: logs.RetentionDays.ONE_WEEK,
