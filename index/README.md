@@ -3,7 +3,11 @@
 The package index customers use to install their package. For example, using
 the following command:
 
-`pip install -f https://{public_key}:{secret_key}@index.package.openalchemy.io "{specId}=={version}"`
+<!-- markdownlint-disable line-length -->
+
+```bash
+pip install --index-url https://{public_key}:{secret_key}@index.package.openalchemy.io --extra-index-url https://pypi.org/simple "{specId}=={version}"
+```
 
 ## Components
 
@@ -15,13 +19,39 @@ the following command:
 
 ### Function
 
-Input:
-The function receives requests from CloudFront, for example:
+#### Input
 
-Output:
+The function receives requests from CloudFront, examples are below where only
+the relevant pieces are shown.
+
+##### List Request
+
+The first step is that pip issues a request to list all available packages.
+
+```python
+{
+    "Records": [
+        {
+            "cf": {
+                "request": {
+                    "headers": {
+                        "authorization": [
+                            {"key": "Authorization", "value": "Basic <token>"}
+                        ]
+                    },
+                    "uri": "/",
+                }
+            }
+        }
+    ]
+}
+```
+
+#### Output
+
 Either unauthorized or the path to retrieve from S3 by returning, for example:
 
-Algorithm:
+#### Algorithm
 
 1. extracts the `public_key` and `secret_key` from the request,
 1. use `open-alchemy.package-database` to retrieve the `sub`, `salt` and

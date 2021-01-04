@@ -1,4 +1,5 @@
 import * as cdk from '@aws-cdk/core';
+import * as regionInfo from '@aws-cdk/region-info';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
 
 import { CONFIG } from './config';
@@ -19,6 +20,9 @@ export class DatabaseStack extends cdk.Stack {
         type: dynamodb.AttributeType.STRING,
       },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      replicationRegions: regionInfo.RegionInfo.regions.map(
+        (region) => region.name
+      ),
     });
     specsTable.addLocalSecondaryIndex({
       indexName: CONFIG.database.spec.localSecondaryIndexName,
@@ -38,6 +42,9 @@ export class DatabaseStack extends cdk.Stack {
         type: dynamodb.AttributeType.STRING,
       },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      replicationRegions: regionInfo.RegionInfo.regions.map(
+        (region) => region.name
+      ),
     });
     credentialsTable.addGlobalSecondaryIndex({
       indexName: CONFIG.database.credentials.globalSecondaryIndexName,

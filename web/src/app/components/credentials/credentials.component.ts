@@ -22,8 +22,8 @@ export class CredentialsComponent implements OnInit {
     version: SpecVersion
   ): string {
     return (
-      `pip install -f https://${credentials.public_key}:${credentials.secret_key}` +
-      `@index.package.openalchemy.io "${specId}==${version}"`
+      `pip install --index-url https://${credentials.public_key}:${credentials.secret_key}@index.package.openalchemy.io ` +
+      `--extra-index-url https://pypi.org/simple "${specId}==${version}"`
     );
   }
 }
