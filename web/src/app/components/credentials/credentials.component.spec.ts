@@ -157,7 +157,7 @@ describe('CredentialsComponent', () => {
         component.specId = specId;
         component.specVersion = specVersion;
 
-        // WHEN changes are detected and the button isclicked
+        // WHEN changes are detected and the button is clicked
         fixture.detectChanges();
         const componentSpecInfos$ = helpers.cold('a').pipe(
           map(() => {

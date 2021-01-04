@@ -53,6 +53,8 @@ jobs:
           key: ${{ runner.os }}-npm-${{ hashFiles('index/package-lock.json') }}
       - name: run tests
         working-directory: ./index
+        env:
+          AWS_DEFAULT_REGION: "us-east-1"
         run: |
           pipenv run test
 
