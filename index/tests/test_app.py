@@ -1,5 +1,7 @@
 """Tests for the app."""
 
+import copy
+
 import app
 import pytest
 
@@ -108,24 +110,16 @@ def test_parse_event():
     """
     authorization_value = "value 1"
     uri = "uri 1"
-    event = {
-        "Records": [
-            {
-                "cf": {
-                    "request": {
-                        "headers": {
-                            "authorization": [
-                                {"key": "Authorization", "value": authorization_value}
-                            ]
-                        },
-                        "uri": uri,
-                    }
-                }
-            }
-        ]
+    request = {
+        "headers": {
+            "authorization": [{"key": "Authorization", "value": authorization_value}]
+        },
+        "uri": uri,
     }
+    event = {"Records": [{"cf": {"request": copy.deepcopy(request)}}]}
 
     returned_event = app.parse_event(event=event)
 
     assert returned_event.request.authorization_value == authorization_value
     assert returned_event.request.uri == uri
+    assert returned_event.request_dict == request

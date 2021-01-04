@@ -37,6 +37,7 @@ class Event:
     """
 
     request: Request
+    request_dict: typing.Dict
 
 
 def parse_request(
@@ -161,7 +162,7 @@ def parse_event(event: typing.Dict) -> Event:
         event=event,
     )
 
-    return Event(request=request_info)
+    return Event(request=request_info, request_dict=request)
 
 
 def main(event, context):
