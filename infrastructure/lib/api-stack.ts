@@ -13,48 +13,19 @@ import * as route53Targets from '@aws-cdk/aws-route53-targets';
 import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
 import * as iam from '@aws-cdk/aws-iam';
 import * as s3 from '@aws-cdk/aws-s3';
-import * as sns from '@aws-cdk/aws-sns';
-import * as cloudfront from '@aws-cdk/aws-cloudfront';
 import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
-import * as s3Notifications from '@aws-cdk/aws-s3-notifications';
 
 import { ENVIRONMENT } from './environment';
 import { CONFIG } from './config';
 
-interface IParams {
-  storageBucket: s3.Bucket;
-}
-
 export class ApiStack extends cdk.Stack {
-  constructor(
-    scope: cdk.Construct,
-    id: string,
-    props: cdk.StackProps,
-    params: IParams
-  ) {
+  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // Storage for the packages
-    const bucket = new s3.Bucket(this, 'PackageBucket', {
-      bucketName: CONFIG.storage.bucketName,
-    });
-
-    // Grant package index distribution access to the bucket
-    const originAccessIdentity = new cloudfront.OriginAccessIdentity(
+    const bucket = s3.Bucket.fromBucketName(
       this,
-      'AccessIdentity'
-    );
-    bucket.grantRead(originAccessIdentity);
-
-    // Notifications for object create
-    const topic = new sns.Topic(this, 'Topic', {
-      displayName: CONFIG.storage.topicName,
-      topicName: CONFIG.storage.topicName,
-    });
-    bucket.addEventNotification(
-      s3.EventType.OBJECT_CREATED,
-      new s3Notifications.SnsDestination(topic),
-      { suffix: '.json' }
+      'Bucket',
+      CONFIG.storage.newBucketName
     );
 
     // Database for the packages
@@ -120,7 +91,6 @@ export class ApiStack extends cdk.Stack {
 
     // Permissions for lambda function
     bucket.grantReadWrite(func);
-    params.storageBucket.grantReadWrite(func);
     specTable.grantReadWriteData(func);
     specTable.grant(func, 'dynamodb:DescribeTable');
     credentialsTable.grantReadWriteData(func);
