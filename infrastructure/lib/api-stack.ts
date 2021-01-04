@@ -22,7 +22,12 @@ import { ENVIRONMENT } from './environment';
 import { CONFIG } from './config';
 
 export class ApiStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(
+    scope: cdk.Construct,
+    id: string,
+    props: cdk.StackProps,
+    storageBucket: s3.Bucket
+  ) {
     super(scope, id, props);
 
     // Storage for the packages
@@ -111,6 +116,7 @@ export class ApiStack extends cdk.Stack {
 
     // Permissions for lambda function
     bucket.grantReadWrite(func);
+    storageBucket.grantReadWrite(func);
     specTable.grantReadWriteData(func);
     specTable.grant(func, 'dynamodb:DescribeTable');
     credentialsTable.grantReadWriteData(func);

@@ -6,12 +6,13 @@ import { CONFIG } from './config';
 
 export class StorageStack extends cdk.Stack {
   originAccessIdentity: cloudfront.OriginAccessIdentity;
+  bucket: s3.Bucket;
 
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     // Storage for the packages
-    const bucket = new s3.Bucket(this, 'PackageBucket', {
+    this.bucket = new s3.Bucket(this, 'PackageBucket', {
       bucketName: CONFIG.storage.newBucketName,
     });
 
@@ -20,6 +21,6 @@ export class StorageStack extends cdk.Stack {
       this,
       'AccessIdentity'
     );
-    bucket.grantRead(this.originAccessIdentity);
+    this.bucket.grantRead(this.originAccessIdentity);
   }
 }
