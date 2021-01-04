@@ -27,7 +27,7 @@ export class StorageStack extends cdk.Stack {
     this.bucket.grantRead(this.originAccessIdentity);
     new ssm.StringParameter(this, 'Parameter', {
       stringValue: this.originAccessIdentity.originAccessIdentityName,
-      parameterName: 'Package/Storage/OriginAccessIdentity/Name',
+      parameterName: '/Package/Storage/OriginAccessIdentity/Name',
     });
 
     // Notifications for object create
