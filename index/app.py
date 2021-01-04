@@ -3,6 +3,8 @@
 import dataclasses
 import typing
 
+import library
+
 
 @dataclasses.dataclass
 class Request:
@@ -158,4 +160,9 @@ def parse_event(event: typing.Dict) -> Event:
 def main(event, context):
     """Handle request."""
     print({"event": event, "context": context})  ## allow-print
-    print({"event_info": parse_event(event)})  ## allow-print
+    event_info = parse_event(event)
+    print({"event_info": event_info})  ## allow-print
+    library.process(
+        _uri=event_info.request.uri,
+        authorization_value=event_info.request.authorization_value,
+    )

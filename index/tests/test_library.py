@@ -127,3 +127,37 @@ def test_authorize_user():
     )
 
     library.authorize_user(authorization=authorization, auth_info=auth_info)
+
+
+def test_process_invalid_secret_key_error(_clean_credentials_table):
+    """
+    GIVEN invalid authorization value
+    WHEN process is called
+    THEN UnauthorizedError is raised.
+    """
+    credentials = factory.CredentialsFactory()
+    credentials.save()
+    token = base64.b64encode(f"{credentials.public_key}:invalid".encode()).decode()
+    authorization_value = f"Basic {token}"
+
+    with pytest.raises(exceptions.UnauthorizedError):
+        library.process(_uri="", authorization_value=authorization_value)
+
+
+def test_process(_clean_credentials_table):
+    """
+    GIVEN valid authorization value
+    WHEN process is called
+    THEN UnauthorizedError is not raised.
+    """
+    secret_key = "secret key 1"
+    salt = b"salt 1"
+    secret_key_hash = package_security.calculate_secret_key_hash(
+        secret_key=secret_key, salt=salt
+    )
+    credentials = factory.CredentialsFactory(secret_key_hash=secret_key_hash, salt=salt)
+    credentials.save()
+    token = base64.b64encode(f"{credentials.public_key}:{secret_key}".encode()).decode()
+    authorization_value = f"Basic {token}"
+
+    library.process(_uri="", authorization_value=authorization_value)

@@ -2,6 +2,7 @@
 omit =
     **/conftest.py
     **/pytest_plugin.py
+    app.py
 branch = True
 
 [report]

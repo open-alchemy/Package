@@ -104,7 +104,17 @@ def authorize_user(
         )
 
 
-# def foo(*, uri: str, authorization_value: str) -> None:
-#     """Does something."""
-#     authorization = parse_authorization_header(authorization_value)
-#     user = package_database.get().get_user(public_key=authorization.public_key)
+def process(*, _uri: str, authorization_value: str) -> None:
+    """
+    Process the request.
+
+    Raises UnauthorizedError if anything goes wrong.
+
+    Args:
+        uri: The requested uri.
+        authorization_value: The value of the Authorization header.
+
+    """
+    authorization = parse_authorization_header(authorization_value)
+    auth_info = get_user(authorization=authorization)
+    authorize_user(authorization=authorization, auth_info=auth_info)
