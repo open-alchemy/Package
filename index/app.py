@@ -158,3 +158,4 @@ def parse_event(event: typing.Dict) -> Event:
 def main(event, context):
     """Handle request."""
     print({"event": event, "context": context})  ## allow-print
+    print({"event_info": parse_event(event)})  ## allow-print

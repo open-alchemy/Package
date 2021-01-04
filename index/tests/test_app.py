@@ -70,3 +70,62 @@ def test_parse_request():
 
     assert returned_request.authorization_value == authorization_value
     assert returned_request.uri == uri
+
+
+PARSE_EVENT_ERROR_TESTS = [
+    pytest.param(None, id="not dict"),
+    pytest.param({}, id="Records missing"),
+    pytest.param({"Records": None}, id="Records not list"),
+    pytest.param({"Records": []}, id="Records empty"),
+    pytest.param({"Records": [None, None]}, id="Records multiple items"),
+    pytest.param({"Records": [None]}, id="Records item not dict"),
+    pytest.param({"Records": [{}]}, id="Records item cf missing"),
+    pytest.param({"Records": [{"cf": None}]}, id="Records item cf not dict"),
+    pytest.param({"Records": [{"cf": {}}]}, id="Records item cf request missing"),
+    pytest.param(
+        {"Records": [{"cf": {"request": None}}]}, id="Records item cf request not dict"
+    ),
+    pytest.param({"Records": [{"cf": {"request": {}}}]}, id="Records headers missing"),
+]
+
+
+@pytest.mark.parametrize("event", PARSE_EVENT_ERROR_TESTS)
+def test_parse_event_error(event):
+    """
+    GIVEN event that is not valid
+    WHEN parse_event is called with the event
+    THEN AssertionError is raised.
+    """
+    with pytest.raises(AssertionError):
+        app.parse_event(event=event)
+
+
+def test_parse_event():
+    """
+    GIVEN lambda event event
+    WHEN parse_event is called with the event
+    THEN the authorization value and uri are returned.
+    """
+    authorization_value = "value 1"
+    uri = "uri 1"
+    event = {
+        "Records": [
+            {
+                "cf": {
+                    "request": {
+                        "headers": {
+                            "authorization": [
+                                {"key": "Authorization", "value": authorization_value}
+                            ]
+                        },
+                        "uri": uri,
+                    }
+                }
+            }
+        ]
+    }
+
+    returned_event = app.parse_event(event=event)
+
+    assert returned_event.request.authorization_value == authorization_value
+    assert returned_event.request.uri == uri
