@@ -193,7 +193,7 @@ def create_install_response_value(
         Rewritten uri.
 
     """
-    return f"{auth_info.sub}{uri}"
+    return f"/{auth_info.sub}{uri}"
 
 
 def create_response(
