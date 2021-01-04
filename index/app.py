@@ -187,7 +187,6 @@ def main(event, _context):
             authorization_value=event_info.request.authorization_value,
         )
     except exceptions.UnauthorizedError as exc:
-        print(exc)  # allow-print
         return {
             "status": "401",
             "statusDescription": "UNAUTHORIZED",
@@ -222,4 +221,5 @@ def main(event, _context):
     assert response.type == types.TRequestType.INSTALL
     request = event_info.request_dict
     request["uri"] = response.value
+    print(request)  # allow-print
     return request
