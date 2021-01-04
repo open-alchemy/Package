@@ -1,12 +1,15 @@
 """Main function for lambda."""
 
-import dataclasses
+# pylint: disable=wrong-import-position
+
 import os
+
+os.environ["STAGE"] = "PROD"
+
+import dataclasses
 import typing
 
 import library
-
-os.environ["STAGE"] = "PROD"
 
 
 @dataclasses.dataclass

@@ -4,9 +4,10 @@ import base64
 
 import library
 import pytest
-from library import exceptions
+from library import exceptions, types
 from open_alchemy import package_security
-from open_alchemy.package_database import factory, types
+from open_alchemy.package_database import factory
+from open_alchemy.package_database import types as database_types
 
 PARSE_AUTHORIZATION_HEADER_ERROR_TESTS = [
     pytest.param("invalid", id="Bearer missing"),
@@ -64,7 +65,7 @@ def test_get_user_error(_clean_credentials_table):
     WHEN get_user is called
     THEN UnauthorizedError is raised.
     """
-    authorization = library.Authorization(
+    authorization = types.TAuthorization(
         public_key="public key 1", secret_key="secret key 1"
     )
 
@@ -80,7 +81,7 @@ def test_get_user(_clean_credentials_table):
     """
     credentials = factory.CredentialsFactory()
     credentials.save()
-    authorization = library.Authorization(
+    authorization = types.TAuthorization(
         public_key=credentials.public_key, secret_key="secret key 1"
     )
 
@@ -97,10 +98,10 @@ def test_authorize_user_error():
     WHEN authorize_user is called
     THEN UnauthorizedError is raised.
     """
-    authorization = library.Authorization(
+    authorization = types.TAuthorization(
         public_key="public key 1", secret_key="secret key 1"
     )
-    auth_info = types.CredentialsAuthInfo(
+    auth_info = database_types.CredentialsAuthInfo(
         sub="sub 1", secret_key_hash=b"invalid", salt=b"salt 1"
     )
 
@@ -119,10 +120,10 @@ def test_authorize_user():
     secret_key_hash = package_security.calculate_secret_key_hash(
         secret_key=secret_key, salt=salt
     )
-    authorization = library.Authorization(
+    authorization = types.TAuthorization(
         public_key="public key 1", secret_key=secret_key
     )
-    auth_info = types.CredentialsAuthInfo(
+    auth_info = database_types.CredentialsAuthInfo(
         sub="sub 1", secret_key_hash=secret_key_hash, salt=salt
     )
 
@@ -161,3 +162,39 @@ def test_process(_clean_credentials_table):
     authorization_value = f"Basic {token}"
 
     library.process(_uri="", authorization_value=authorization_value)
+
+
+CALCULATE_REQUEST_TYPE_ERROR_TESTS = [
+    pytest.param("", id="no /"),
+    pytest.param("/", id="single /"),
+    pytest.param("////", id="too many /"),
+]
+
+
+@pytest.mark.parametrize("uri", CALCULATE_REQUEST_TYPE_ERROR_TESTS)
+def test_calculate_request_type_error(uri):
+    """
+    GIVEN invalid uri
+    WHEN calculate_request_type is called with the uri
+    THEN NotFoundError is raises.
+    """
+    with pytest.raises(exceptions.NotFoundError):
+        library.calculate_request_type(uri)
+
+
+CALCULATE_REQUEST_TYPE_TESTS = [
+    pytest.param("//", types.TRequestType.LIST, id="list"),
+    pytest.param("///", types.TRequestType.INSTALL, id="install"),
+]
+
+
+@pytest.mark.parametrize("uri, expected_type", CALCULATE_REQUEST_TYPE_TESTS)
+def test_calculate_request_type(uri, expected_type):
+    """
+    GIVEN uri
+    WHEN calculate_request_type is called with the uri
+    THEN the expected type is returned.
+    """
+    returned_type = library.calculate_request_type(uri)
+
+    assert returned_type == expected_type

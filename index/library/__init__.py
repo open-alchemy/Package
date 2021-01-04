@@ -1,23 +1,16 @@
 """Library for the index application."""
 
 import base64
-import dataclasses
 
 from open_alchemy import package_database, package_security
-from open_alchemy.package_database import types
+from open_alchemy.package_database import types as database_types
 
-from . import exceptions
-
-
-@dataclasses.dataclass
-class Authorization:
-    """Authorization information."""
-
-    public_key: str
-    secret_key: str
+from . import exceptions, types
 
 
-def parse_authorization_header(value: str) -> Authorization:
+def parse_authorization_header(
+    value: types.TAuthorizationValue,
+) -> types.TAuthorization:
     """
     Parse the authorization header.
 
@@ -56,10 +49,12 @@ def parse_authorization_header(value: str) -> Authorization:
     if len(secret_key) == 0:
         raise exceptions.UnauthorizedError(f"secret key empty, {secret_key=}, {value=}")
 
-    return Authorization(public_key=public_key, secret_key=secret_key)
+    return types.TAuthorization(public_key=public_key, secret_key=secret_key)
 
 
-def get_user(*, authorization: Authorization) -> types.CredentialsAuthInfo:
+def get_user(
+    *, authorization: types.TAuthorization
+) -> database_types.CredentialsAuthInfo:
     """
     Retrieve the user based on the authorization.
 
@@ -81,7 +76,9 @@ def get_user(*, authorization: Authorization) -> types.CredentialsAuthInfo:
 
 
 def authorize_user(
-    *, authorization: Authorization, auth_info: types.CredentialsAuthInfo
+    *,
+    authorization: types.TAuthorization,
+    auth_info: database_types.CredentialsAuthInfo,
 ) -> None:
     """
     Check that the secret key that was submitted matches the stored secret key.
@@ -104,7 +101,32 @@ def authorize_user(
         )
 
 
-def process(*, _uri: str, authorization_value: str) -> None:
+def calculate_request_type(uri: types.TUri) -> types.TRequestType:
+    """
+    Calculate the request type based on the uri.
+
+    Raises NotFoundError when the uri does not match any expected type.
+
+    Args:
+        uri: The request uri.
+
+    Returns:
+        The type of request.
+
+    """
+    forward_slash_count = uri.count("/")
+
+    if forward_slash_count == 2:
+        return types.TRequestType.LIST
+    if forward_slash_count == 3:
+        return types.TRequestType.INSTALL
+
+    raise exceptions.NotFoundError(f"could not find package with {uri=}")
+
+
+def process(
+    *, _uri: types.TUri, authorization_value: types.TAuthorizationValue
+) -> None:
     """
     Process the request.
 
