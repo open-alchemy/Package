@@ -18,7 +18,7 @@ const env = {
 
 const app = new cdk.App();
 
-new StorageStack(app, 'PackageApiStack', { env });
+new StorageStack(app, 'PackageStorageStack', { env });
 if (ENVIRONMENT.STACK === 'PackageApiStack') {
   new ApiStack(app, 'PackageApiStack', { env });
 }
