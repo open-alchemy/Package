@@ -10,6 +10,8 @@ import * as cloudfrontOrigins from '@aws-cdk/aws-cloudfront-origins';
 import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
 import * as route53 from '@aws-cdk/aws-route53';
 import * as route53Targets from '@aws-cdk/aws-route53-targets';
+import * as dynamodb from '@aws-cdk/aws-dynamodb';
+import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 
 import { CONFIG } from './config';
 import { ENVIRONMENT } from './environment';
@@ -23,6 +25,27 @@ export class IndexStack extends cdk.Stack {
       this,
       'PackageBucket',
       CONFIG.storage.bucketName
+    );
+
+    // Database for the packages
+    const specTable = dynamodb.Table.fromTableAttributes(this, 'SpecTable', {
+      tableName: CONFIG.database.spec.tableName,
+      localIndexes: [CONFIG.database.spec.localSecondaryIndexName],
+    });
+    const credentialsTable = dynamodb.Table.fromTableAttributes(
+      this,
+      'CredentialsTable',
+      {
+        tableName: CONFIG.database.credentials.tableName,
+        globalIndexes: [CONFIG.database.credentials.globalSecondaryIndexName],
+      }
+    );
+
+    // Secret for credentials
+    const secret = secretsmanager.Secret.fromSecretNameV2(
+      this,
+      'CredentialsSecret',
+      CONFIG.security.secretName
     );
 
     // Lambda function
@@ -48,6 +71,13 @@ export class IndexStack extends cdk.Stack {
         removalPolicy: cdk.RemovalPolicy.RETAIN,
       }
     );
+
+    // Permissions for lambda function
+    specTable.grantReadData(func);
+    specTable.grant(func, 'dynamodb:DescribeTable');
+    credentialsTable.grantReadData(func);
+    credentialsTable.grant(func, 'dynamodb:DescribeTable');
+    secret.grantRead(func);
 
     // Certificate
     const certificateArn = ENVIRONMENT.AWS_OPEN_ALCHEMY_CERTIFICATE_ARN;
