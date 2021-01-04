@@ -26,7 +26,7 @@ export class ApiStack extends cdk.Stack {
     const bucket = s3.Bucket.fromBucketName(
       this,
       'Bucket',
-      CONFIG.storage.newBucketName
+      CONFIG.storage.bucketName
     );
 
     // Database for the packages
@@ -66,7 +66,7 @@ export class ApiStack extends cdk.Stack {
         STAGE: 'PROD',
         ACCESS_CONTROL_ALLOW_ORIGIN: '*',
         ACCESS_CONTROL_ALLOW_HEADERS: 'x-language',
-        PACKAGE_STORAGE_BUCKET_NAME: CONFIG.storage.newBucketName,
+        PACKAGE_STORAGE_BUCKET_NAME: CONFIG.storage.bucketName,
         DEFAULT_CREDENTIALS_ID: CONFIG.api.defaultCredentialsId,
       },
       logRetention: logs.RetentionDays.ONE_WEEK,

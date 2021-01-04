@@ -20,17 +20,17 @@ export class BuildStack extends cdk.Stack {
     const bucket = s3.Bucket.fromBucketName(
       this,
       'PackageBucket',
-      CONFIG.storage.newBucketName
+      CONFIG.storage.bucketName
     );
 
     // Configuration for lambda event source
     const topicArn = cdk.Arn.format(
-      { resource: CONFIG.storage.newTopicName, service: 'sns' },
+      { resource: CONFIG.storage.topicName, service: 'sns' },
       this
     );
     const topic = sns.Topic.fromTopicArn(this, 'Topic', topicArn);
     const deadLetterQueue = new sqs.Queue(this, 'Queue', {
-      queueName: `${CONFIG.storage.newTopicName}-dead-letter`,
+      queueName: `${CONFIG.storage.topicName}-dead-letter`,
     });
 
     // Lambda function
@@ -47,7 +47,7 @@ export class BuildStack extends cdk.Stack {
       handler: 'app.main',
       environment: {
         STAGE: 'PROD',
-        PACKAGE_STORAGE_BUCKET_NAME: CONFIG.storage.newBucketName,
+        PACKAGE_STORAGE_BUCKET_NAME: CONFIG.storage.bucketName,
       },
       logRetention: logs.RetentionDays.ONE_WEEK,
       timeout: cdk.Duration.minutes(1),

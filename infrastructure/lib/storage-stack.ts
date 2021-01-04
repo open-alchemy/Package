@@ -8,34 +8,31 @@ import * as s3Notifications from '@aws-cdk/aws-s3-notifications';
 import { CONFIG } from './config';
 
 export class StorageStack extends cdk.Stack {
-  originAccessIdentity: cloudfront.OriginAccessIdentity;
-  bucket: s3.Bucket;
-
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     // Storage for the packages
-    this.bucket = new s3.Bucket(this, 'PackageBucket', {
-      bucketName: CONFIG.storage.newBucketName,
+    const bucket = new s3.Bucket(this, 'PackageBucket', {
+      bucketName: CONFIG.storage.bucketName,
     });
 
     // Grant package index distribution access to the bucket
-    this.originAccessIdentity = new cloudfront.OriginAccessIdentity(
+    const originAccessIdentity = new cloudfront.OriginAccessIdentity(
       this,
       'AccessIdentity'
     );
-    this.bucket.grantRead(this.originAccessIdentity);
+    bucket.grantRead(originAccessIdentity);
     new ssm.StringParameter(this, 'Parameter', {
-      stringValue: this.originAccessIdentity.originAccessIdentityName,
-      parameterName: '/Package/Storage/OriginAccessIdentity/Name',
+      stringValue: originAccessIdentity.originAccessIdentityName,
+      parameterName: CONFIG.storage.originAccessIdentityParameterName,
     });
 
     // Notifications for object create
     const topic = new sns.Topic(this, 'Topic', {
-      displayName: CONFIG.storage.newTopicName,
-      topicName: CONFIG.storage.newTopicName,
+      displayName: CONFIG.storage.topicName,
+      topicName: CONFIG.storage.topicName,
     });
-    this.bucket.addEventNotification(
+    bucket.addEventNotification(
       s3.EventType.OBJECT_CREATED,
       new s3Notifications.SnsDestination(topic),
       { suffix: '.json' }

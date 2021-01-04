@@ -13,8 +13,10 @@ export const CONFIG = {
     recordName: 'package',
   },
   storage: {
-    newBucketName: `storage.package.${domainName}`,
-    newTopicName: 'storage-package-object-created-json',
+    bucketName: `storage.package.${domainName}`,
+    topicName: 'storage-package-object-created-json',
+    originAccessIdentityParameterName:
+      '/Package/Storage/OriginAccessIdentity/Name',
   },
   database: {
     spec: {

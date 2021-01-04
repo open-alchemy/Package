@@ -25,14 +25,14 @@ export class IndexStack extends cdk.Stack {
     const bucket = s3.Bucket.fromBucketName(
       this,
       'Bucket',
-      CONFIG.storage.newBucketName
+      CONFIG.storage.bucketName
     );
 
     // Origin access identity
     const parameter = ssm.StringParameter.fromStringParameterName(
       this,
       'Parameter',
-      '/Package/Storage/OriginAccessIdentity/Name'
+      CONFIG.storage.originAccessIdentityParameterName
     );
     const originAccessIdentity = cloudfront.OriginAccessIdentity.fromOriginAccessIdentityName(
       this,
