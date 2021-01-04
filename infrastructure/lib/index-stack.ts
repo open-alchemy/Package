@@ -39,7 +39,7 @@ export class IndexStack extends cdk.Stack {
       code: lambda.Code.fromAsset(deploymentPackage),
       handler: 'app.main',
       logRetention: logs.RetentionDays.ONE_WEEK,
-      timeout: cdk.Duration.seconds(15),
+      timeout: cdk.Duration.seconds(5),
     });
     const version = new lambda.Version(
       this,
