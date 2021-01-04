@@ -32,3 +32,6 @@ if (ENVIRONMENT.STACK === 'PackageDatabaseStack') {
 if (ENVIRONMENT.STACK === 'PackageSecurityStack') {
   new SecurityStack(app, 'PackageSecurityStack', { env });
 }
+if (ENVIRONMENT.STACK === 'PackageIndexStack') {
+  new IndexStack(app, 'PackageIndexStack', { env });
+}
