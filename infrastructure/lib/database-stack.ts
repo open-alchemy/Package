@@ -21,7 +21,6 @@ export class DatabaseStack extends cdk.Stack {
         type: dynamodb.AttributeType.STRING,
       },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
     });
     specsTable.addLocalSecondaryIndex({
       indexName: CONFIG.database.spec.localSecondaryIndexName,
@@ -41,7 +40,6 @@ export class DatabaseStack extends cdk.Stack {
         type: dynamodb.AttributeType.STRING,
       },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
     });
     credentialsTable.addGlobalSecondaryIndex({
       indexName: CONFIG.database.credentials.globalSecondaryIndexName,
