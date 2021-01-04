@@ -26,4 +26,9 @@ def clean_storage():
     storage.get_storage().delete_all(keys=keys)
 
 
+@pytest.fixture(autouse=True)
+def use_service_secret(_service_secret):
+    """Always uses the _service_secret open-alchemy.package-security fixture."""
+
+
 preset_config()
