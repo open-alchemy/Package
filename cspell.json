@@ -46,7 +46,8 @@
     "SDIST",
     "scrypt",
     "delenv",
-    "setenv"
+    "setenv",
+    "markdownlint"
   ],
   "dictionaries": [
     "python",
