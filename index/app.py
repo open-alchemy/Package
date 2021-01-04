@@ -10,6 +10,7 @@ import dataclasses
 import typing
 
 import library
+from library import types
 
 
 @dataclasses.dataclass
@@ -173,3 +174,14 @@ def main(event, context):
         authorization_value=event_info.request.authorization_value,
     )
     print({"response": response})  ## allow-print
+    if response.type == types.TRequestType.LIST:
+        return {
+            "status": "200",
+            "statusDescription": "OK",
+            "headers": {
+                "cache-control": [{"key": "Cache-Control", "value": "max-age=0"}],
+                "content-type": [{"key": "Content-Type", "value": "text/html"}],
+            },
+            "body": response.value,
+        }
+    return None
