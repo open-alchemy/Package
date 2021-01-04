@@ -113,7 +113,6 @@ jobs:
           AWS_DEFAULT_REGION: "us-east-1"
           AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
           AWS_OPEN_ALCHEMY_CERTIFICATE_ARN: ${{ secrets.AWS_OPEN_ALCHEMY_CERTIFICATE_ARN }}
-          AWS_OPEN_ALCHEMY_API_CERTIFICATE_ARN: ${{ secrets.AWS_OPEN_ALCHEMY_API_CERTIFICATE_ARN }}
           AWS_IDENTITY_PROVIDER_ARN: ${{ secrets.AWS_IDENTITY_PROVIDER_ARN }}
         run: |
           npm run deploy:security
