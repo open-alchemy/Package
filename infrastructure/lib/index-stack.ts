@@ -88,9 +88,10 @@ export class IndexStack extends cdk.Stack {
     );
 
     // CloudFront
-    const originAccessIdentity = new cloudfront.OriginAccessIdentity(
+    const originAccessIdentity = cloudfront.OriginAccessIdentity.fromOriginAccessIdentityName(
       this,
-      'AccessIdentity'
+      'OriginAccessIdentity',
+      'EJTD32Z8MBLSK'
     );
     bucket.grantRead(originAccessIdentity);
     const distribution = new cloudfront.Distribution(this, 'Distribution', {
