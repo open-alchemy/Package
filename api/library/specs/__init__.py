@@ -144,7 +144,8 @@ def put(body: bytearray, spec_id: types.TSpecId, user: types.TUser) -> server.Re
             status=400,
             mimetype="text/plain",
         )
-    except storage.exceptions.StorageError:
+    except storage.exceptions.StorageError as exc:
+        print(exc)  # allow-print
         return server.Response(
             "something went wrong whilst storing the spec",
             status=500,

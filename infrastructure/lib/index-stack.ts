@@ -12,6 +12,7 @@ import * as route53 from '@aws-cdk/aws-route53';
 import * as route53Targets from '@aws-cdk/aws-route53-targets';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
 import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
+import * as ssm from '@aws-cdk/aws-ssm';
 
 import { CONFIG } from './config';
 import { ENVIRONMENT } from './environment';
@@ -25,6 +26,18 @@ export class IndexStack extends cdk.Stack {
       this,
       'Bucket',
       CONFIG.storage.newBucketName
+    );
+
+    // Origin access identity
+    const parameter = ssm.StringParameter.fromStringParameterName(
+      this,
+      'Parameter',
+      '/Package/Storage/OriginAccessIdentity/Name'
+    );
+    const originAccessIdentity = cloudfront.OriginAccessIdentity.fromOriginAccessIdentityName(
+      this,
+      'AccessIdentity',
+      parameter.stringValue
     );
 
     // Database for the packages
@@ -91,7 +104,7 @@ export class IndexStack extends cdk.Stack {
     const distribution = new cloudfront.Distribution(this, 'Distribution', {
       defaultBehavior: {
         origin: new cloudfrontOrigins.S3Origin(bucket, {
-          // originAccessIdentity: params.originAccessIdentity,
+          originAccessIdentity,
         }),
         edgeLambdas: [
           {
