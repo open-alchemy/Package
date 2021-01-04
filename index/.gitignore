@@ -4,3 +4,4 @@ test-db
 node_modules
 .venv
 .vscode
+.coverage
