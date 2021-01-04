@@ -4,7 +4,6 @@ import * as crypto from 'crypto';
 import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as logs from '@aws-cdk/aws-logs';
-import * as codedeploy from '@aws-cdk/aws-codedeploy';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as cloudfront from '@aws-cdk/aws-cloudfront';
 import * as cloudfrontOrigins from '@aws-cdk/aws-cloudfront-origins';
@@ -49,14 +48,6 @@ export class IndexStack extends cdk.Stack {
         removalPolicy: cdk.RemovalPolicy.RETAIN,
       }
     );
-    const alias = new lambda.Alias(this, 'LambdaAlias', {
-      aliasName: 'prod',
-      version,
-    });
-    new codedeploy.LambdaDeploymentGroup(this, 'DeploymentGroup', {
-      alias,
-      deploymentConfig: codedeploy.LambdaDeploymentConfig.ALL_AT_ONCE,
-    });
 
     // Certificate
     const certificateArn = ENVIRONMENT.AWS_OPEN_ALCHEMY_CERTIFICATE_ARN;
@@ -73,7 +64,7 @@ export class IndexStack extends cdk.Stack {
         edgeLambdas: [
           {
             functionVersion: version,
-            eventType: cloudfront.LambdaEdgeEventType.VIEWER_REQUEST,
+            eventType: cloudfront.LambdaEdgeEventType.ORIGIN_REQUEST,
           },
         ],
       },
