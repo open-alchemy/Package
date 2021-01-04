@@ -27,7 +27,7 @@ jobs:
         working-directory: test/database
         env:
           PYPI_MIRROR: ${{ matrix.PYPI_MIRROR }}
-          VERSION: "1.3.1"
+          VERSION: "1.3.2"
         run: |
           # Check that project version equal requested version
           cd ../../database

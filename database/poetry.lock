@@ -52,7 +52,7 @@ d = ["aiohttp (>=3.3.2)", "aiohttp-cors"]
 
 [[package]]
 name = "botocore"
-version = "1.19.46"
+version = "1.19.47"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -94,7 +94,7 @@ toml = ["toml"]
 name = "factory-boy"
 version = "3.2.0"
 description = "A versatile test fixtures replacement based on thoughtbot's factory_bot for Ruby."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -109,7 +109,7 @@ doc = ["sphinx", "sphinx-rtd-theme", "sphinxcontrib-spelling"]
 name = "faker"
 version = "5.3.0"
 description = "Faker is a Python package that generates fake data for you."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -281,7 +281,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 name = "text-unidecode"
 version = "1.3"
 description = "The most basic Text::Unidecode port"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -325,7 +325,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "886dc64dc2b5f3700d2833417f5c9053b0a4f7c7cee36734f583b511fa77cb0a"
+content-hash = "28d9575b3a85fb3aae985c72b6e71e898e5dc89531d0b087d26104d3ef8e72cb"
 
 [metadata.files]
 appdirs = [
@@ -344,8 +344,8 @@ black = [
     {file = "black-20.8b1.tar.gz", hash = "sha256:1c02557aa099101b9d21496f8a914e9ed2222ef70336404eeeac8edba836fbea"},
 ]
 botocore = [
-    {file = "botocore-1.19.46-py2.py3-none-any.whl", hash = "sha256:f7d365c689070368a5a0857aa35a81d7c950556189f23065f42798f810a59cae"},
-    {file = "botocore-1.19.46.tar.gz", hash = "sha256:85ca6915ad5471e7f6cd1b00610b74601d2970cbf8e9b1bf255697154cf621a3"},
+    {file = "botocore-1.19.47-py2.py3-none-any.whl", hash = "sha256:4989ff6ca4104f641d966f6bb2f3c4207f1a7a8d879b2e21224c7713dd9dc9b8"},
+    {file = "botocore-1.19.47.tar.gz", hash = "sha256:15584a86d6cb1f94ea785e8d3c98faeff8ddd0105356e1c106118d9ac12fa891"},
 ]
 click = [
     {file = "click-7.1.2-py2.py3-none-any.whl", hash = "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"},
