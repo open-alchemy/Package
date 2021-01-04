@@ -128,9 +128,87 @@ def test_parse_event():
     assert returned_event.request_dict == request
 
 
+def test_main_event_invalid():
+    """
+    GIVEN install event with invalid event
+    WHEN main is called with an invalid event
+    THEN 401 is returned.
+    """
+    event = {}
+
+    returned_response = app.main(event, None)
+
+    assert returned_response["status"] == "401"
+    assert returned_response["statusDescription"] == "UNAUTHORIZED"
+    assert returned_response["headers"]["cache-control"][0]["value"] == "max-age=0"
+    assert returned_response["headers"]["content-type"][0]["value"] == "text/plain"
+    assert "Records not in event" in returned_response["body"]
+
+
+def test_main_unauthorized(_clean_credentials_table):
+    """
+    GIVEN install event with invalid credentials
+    WHEN main is called with an invalid event
+    THEN 401 is returned.
+    """
+    authorization_value = "Basic invalid"
+    spec_id = "spec 1"
+    version = "version 1"
+    uri = f"/{spec_id}/{spec_id}-{version}.tar.gz"
+    request = {
+        "headers": {
+            "authorization": [{"key": "Authorization", "value": authorization_value}]
+        },
+        "uri": uri,
+    }
+    event = {"Records": [{"cf": {"request": copy.deepcopy(request)}}]}
+
+    returned_response = app.main(event, None)
+
+    assert returned_response["status"] == "401"
+    assert returned_response["statusDescription"] == "UNAUTHORIZED"
+    assert returned_response["headers"]["cache-control"][0]["value"] == "max-age=0"
+    assert returned_response["headers"]["content-type"][0]["value"] == "text/plain"
+    assert "Invalid credentials" in returned_response["body"]
+
+
+def test_main_list_not_found(_clean_credentials_table, _clean_specs_table):
+    """
+    GIVEN list event and empty database
+    WHEN main is called with the event
+    THEN 404 is returned.
+    """
+    secret_key = "secret key 1"
+    salt = b"salt 1"
+    secret_key_hash = package_security.calculate_secret_key_hash(
+        secret_key=secret_key, salt=salt
+    )
+    credentials = factory.CredentialsFactory(secret_key_hash=secret_key_hash, salt=salt)
+    credentials.save()
+    token = base64.b64encode(f"{credentials.public_key}:{secret_key}".encode()).decode()
+    authorization_value = f"Basic {token}"
+    spec_id = "spec 1"
+    uri = f"/{spec_id}/"
+    request = {
+        "headers": {
+            "authorization": [{"key": "Authorization", "value": authorization_value}]
+        },
+        "uri": uri,
+    }
+    event = {"Records": [{"cf": {"request": copy.deepcopy(request)}}]}
+
+    returned_response = app.main(event, None)
+
+    assert returned_response["status"] == "404"
+    assert returned_response["statusDescription"] == "NOT FOUND"
+    assert returned_response["headers"]["cache-control"][0]["value"] == "max-age=0"
+    assert returned_response["headers"]["content-type"][0]["value"] == "text/plain"
+    assert spec_id in returned_response["body"]
+
+
 def test_main_list(_clean_credentials_table, _clean_specs_table):
     """
-    GIVEN list event
+    GIVEN list event and database with the spec
     WHEN main is called with the event
     THEN a list response is returned.
     """

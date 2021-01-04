@@ -10,7 +10,7 @@ import dataclasses
 import typing
 
 import library
-from library import types
+from library import exceptions, types
 
 
 @dataclasses.dataclass
@@ -167,11 +167,48 @@ def parse_event(event: typing.Dict) -> Event:
 
 def main(event, _context):
     """Handle request."""
-    event_info = parse_event(event)
-    response = library.process(
-        uri=event_info.request.uri,
-        authorization_value=event_info.request.authorization_value,
-    )
+    try:
+        event_info = parse_event(event)
+    except AssertionError as exc:
+        print(exc)  # allow-print
+        return {
+            "status": "401",
+            "statusDescription": "UNAUTHORIZED",
+            "headers": {
+                "cache-control": [{"key": "Cache-Control", "value": "max-age=0"}],
+                "content-type": [{"key": "Content-Type", "value": "text/plain"}],
+            },
+            "body": str(exc),
+        }
+
+    try:
+        response = library.process(
+            uri=event_info.request.uri,
+            authorization_value=event_info.request.authorization_value,
+        )
+    except exceptions.UnauthorizedError as exc:
+        print(exc)  # allow-print
+        return {
+            "status": "401",
+            "statusDescription": "UNAUTHORIZED",
+            "headers": {
+                "cache-control": [{"key": "Cache-Control", "value": "max-age=0"}],
+                "content-type": [{"key": "Content-Type", "value": "text/plain"}],
+            },
+            "body": "Invalid credentials",
+        }
+    except exceptions.NotFoundError as exc:
+        print(exc)  # allow-print
+        return {
+            "status": "404",
+            "statusDescription": "NOT FOUND",
+            "headers": {
+                "cache-control": [{"key": "Cache-Control", "value": "max-age=0"}],
+                "content-type": [{"key": "Content-Type", "value": "text/plain"}],
+            },
+            "body": str(exc),
+        }
+
     if response.type == types.TRequestType.LIST:
         return {
             "status": "200",
