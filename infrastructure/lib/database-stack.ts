@@ -15,7 +15,7 @@ export class DatabaseStack extends cdk.Stack {
     // Database for the specs
     const tableReplicationRegions = regionInfo.RegionInfo.regions
       .map((region) => region.name)
-      .filter((region) => region == ENVIRONMENT.AWS_DEFAULT_REGION);
+      .filter((region) => region != ENVIRONMENT.AWS_DEFAULT_REGION);
     const specsTable = new dynamodb.Table(this, 'SpecsTable', {
       partitionKey: { ...sub },
       tableName: CONFIG.database.spec.tableName,
