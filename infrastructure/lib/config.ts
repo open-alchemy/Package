@@ -29,4 +29,7 @@ export const CONFIG = {
   security: {
     secretName: 'package-service',
   },
+  index: {
+    recordName: 'index.package',
+  },
 };

@@ -7,6 +7,7 @@ import { WebStack } from '../lib/web-stack';
 import { BuildStack } from '../lib/build-stack';
 import { DatabaseStack } from '../lib/database-stack';
 import { SecurityStack } from '../lib/security-stack';
+import { IndexStack } from '../lib/index-stack';
 import { ENVIRONMENT } from '../lib/environment';
 
 const env = {

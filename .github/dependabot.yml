@@ -22,6 +22,38 @@ updates:
     schedule:
       interval: "weekly"
 
+  # Maintain Python dependencies for database.
+  - package-ecosystem: "pip"
+    directory: "database/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "database/"
+    schedule:
+      interval: "weekly"
+
+  # Maintain Python dependencies for index.
+  - package-ecosystem: "pip"
+    directory: "index/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "index/"
+    schedule:
+      interval: "weekly"
+
+  # Maintain Python dependencies for database test.
+  - package-ecosystem: "npm"
+    directory: "test/database/"
+    schedule:
+      interval: "weekly"
+
+  # Maintain npm dependencies for infrastructure.
+  - package-ecosystem: "npm"
+    directory: "infrastructure/"
+    schedule:
+      interval: "weekly"
+
   # Maintain npm dependencies for sdk.
   - package-ecosystem: "npm"
     directory: "sdk/"
@@ -34,19 +66,13 @@ updates:
     schedule:
       interval: "weekly"
 
-  # Maintain Python dependencies for database.
+  # Maintain Python dependencies for security.
   - package-ecosystem: "pip"
-    directory: "database/"
+    directory: "security/"
     schedule:
       interval: "weekly"
   - package-ecosystem: "npm"
-    directory: "database/"
-    schedule:
-      interval: "weekly"
-
-  # Maintain Python dependencies for database test.
-  - package-ecosystem: "npm"
-    directory: "test/database/"
+    directory: "security/"
     schedule:
       interval: "weekly"
 
@@ -59,12 +85,6 @@ updates:
   # Maintain Python dependencies for web test.
   - package-ecosystem: "npm"
     directory: "test/web/"
-    schedule:
-      interval: "weekly"
-
-  # Maintain npm dependencies for infrastructure.
-  - package-ecosystem: "npm"
-    directory: "infrastructure/"
     schedule:
       interval: "weekly"
 
