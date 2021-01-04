@@ -84,16 +84,6 @@ jobs:
         run: |
           pipenv lock -r > requirements.txt
           # remove what is already available in lambda
-          echo initial
-          cat requirements.txt
-          echo proposed change
-          cat requirements.txt\
-            | sed '/boto/d' \
-            | sed '/jmespath/d' \
-            | sed '/python-dateutil/d' \
-            | sed '/s3transfer/d' \
-            | sed '/urllib3/d' \
-            | sed '/six/d'
           cat requirements.txt \
             | sed '/boto/d' \
             | sed '/jmespath/d' \
@@ -106,7 +96,7 @@ jobs:
           cat lambda-requirements.txt
           # install
           echo installing
-          pip install -r lambda-requirements.txt --target dist
+          pip install --no-deps -r lambda-requirements.txt --target dist
           cp -r app.py library dist/
           cd dist
           zip -r deployment-package.zip .
