@@ -8,6 +8,7 @@ import { BuildStack } from '../lib/build-stack';
 import { DatabaseStack } from '../lib/database-stack';
 import { SecurityStack } from '../lib/security-stack';
 import { IndexStack } from '../lib/index-stack';
+import { StorageStack } from '../lib/storage-stack';
 import { ENVIRONMENT } from '../lib/environment';
 
 const env = {
@@ -17,6 +18,7 @@ const env = {
 
 const app = new cdk.App();
 
+new StorageStack(app, 'PackageApiStack', { env });
 if (ENVIRONMENT.STACK === 'PackageApiStack') {
   new ApiStack(app, 'PackageApiStack', { env });
 }

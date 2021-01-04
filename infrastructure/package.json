@@ -14,7 +14,8 @@
     "deploy:build": "STACK=PackageBuildStack cdk deploy PackageBuildStack --require-approval never",
     "deploy:database": "STACK=PackageDatabaseStack cdk deploy PackageDatabaseStack --require-approval never",
     "deploy:security": "STACK=PackageSecurityStack cdk deploy PackageSecurityStack --require-approval never",
-    "deploy:index": "STACK=PackageIndexStack cdk deploy PackageIndexStack --require-approval never"
+    "deploy:index": "STACK=PackageIndexStack cdk deploy PackageIndexStack --require-approval never",
+    "deploy:storage": "cdk deploy PackageStorageStack --require-approval never"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.80.0",
