@@ -16,12 +16,15 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9]
     steps:
       - uses: actions/checkout@v2
-      - name: set up python
+      - name: set up python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-          python-version: 3.9
+          python-version: ${{ matrix.python-version }}
       - name: install pipenv
         run: |
           python -m pip install --upgrade pip
@@ -31,7 +34,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: index/.venv
-          key: ${{ runner.os }}-pipenv-${{ hashFiles('index/Pipfile.lock') }}
+          key: ${{ runner.os }}-${{ matrix.python-version }}-pipenv-${{ hashFiles('index/Pipfile.lock') }}
       - name: install dependencies
         working-directory: ./index
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
@@ -51,6 +54,10 @@ jobs:
         with:
           path: index/node_modules
           key: ${{ runner.os }}-npm-${{ hashFiles('index/package-lock.json') }}
+      - name: install dependencies
+        if: steps.cache-node_modules.outputs.cache-hit != 'true'
+        working-directory: ./index
+        run: npm install
       - name: run tests
         working-directory: ./index
         env:
