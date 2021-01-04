@@ -28,7 +28,8 @@ the relevant pieces are shown.
 
 ##### List Request
 
-The first step is that pip issues a request to list all available packages.
+The first step is that pip issues a request to list all available versions of a
+package:
 
 ```python
 {
@@ -41,7 +42,7 @@ The first step is that pip issues a request to list all available packages.
                             {"key": "Authorization", "value": "Basic <token>"}
                         ]
                     },
-                    "uri": "/",
+                    "uri": "/{specId}/",
                 }
             }
         }
@@ -64,6 +65,7 @@ Either unauthorized or the path to retrieve from S3 by returning, for example:
 1. use `open-alchemy.package-security` to compare the `secret_key_hash`
    retrieved from the database and calculated based on the received
    `secret_key`,
-1. return unauthorized of the comparison fails and
-1. calculate and return the object key/ path to list keys for based on the
-   request.
+1. return unauthorized of the comparison fails,
+1. if it is a list request, retrieve the versions of the requested spec from
+   the database, construct the response and return it and
+1. rewrite the request path to include `sub`.
