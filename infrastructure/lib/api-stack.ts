@@ -14,6 +14,7 @@ import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
 import * as iam from '@aws-cdk/aws-iam';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as sns from '@aws-cdk/aws-sns';
+import * as cloudfront from '@aws-cdk/aws-cloudfront';
 import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 import * as s3Notifications from '@aws-cdk/aws-s3-notifications';
 
@@ -28,6 +29,13 @@ export class ApiStack extends cdk.Stack {
     const bucket = new s3.Bucket(this, 'PackageBucket', {
       bucketName: CONFIG.storage.bucketName,
     });
+
+    // Grant package index distribution access to the bucket
+    const originAccessIdentity = new cloudfront.OriginAccessIdentity(
+      this,
+      'AccessIdentity'
+    );
+    bucket.grantRead(originAccessIdentity);
 
     // Notifications for object create
     const topic = new sns.Topic(this, 'Topic', {
