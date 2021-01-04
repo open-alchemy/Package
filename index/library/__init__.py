@@ -112,18 +112,17 @@ def calculate_request_type(*, uri: types.TUri) -> types.TRequestType:
 
     """
     forward_slash_count = uri.count("/")
+    if not forward_slash_count == 2:
+        raise exceptions.NotFoundError(f"could not find package with {uri=}")
 
-    if forward_slash_count == 2:
+    if uri.endswith("/"):
         return types.TRequestType.LIST
-    if forward_slash_count == 3:
-        return types.TRequestType.INSTALL
-
-    raise exceptions.NotFoundError(f"could not find package with {uri=}")
+    return types.TRequestType.INSTALL
 
 
 def create_list_response_value(
     *, uri: types.TUri, auth_info: types.CredentialsAuthInfo
-) -> str:
+) -> types.TResponseValue:
     """
     Calculate the response for a list type response.
 
@@ -175,9 +174,54 @@ def create_list_response_value(
 """
 
 
+def create_install_response_value(
+    *, uri: types.TUri, auth_info: types.CredentialsAuthInfo
+) -> types.TResponseValue:
+    """
+    Calculate the response for a install type response.
+
+    Args:
+        uri: The requested uri.
+        auth_info: Information about the user.
+
+    Returns:
+        Rewritten uri.
+
+    """
+    return f"/{auth_info.sub}{uri}"
+
+
+def create_response(
+    *,
+    request_type: types.TRequestType,
+    uri: types.TUri,
+    auth_info: types.CredentialsAuthInfo,
+) -> types.TResponse:
+    """
+    Create the response.
+
+    Args:
+        request_type: The type of request.
+        uri: The requested uri.
+        auth_info: Information about the user.
+
+    Returns:
+        The response.
+
+    """
+    response_value: types.TResponseValue
+    if request_type == types.TRequestType.LIST:
+        response_value = create_list_response_value(uri=uri, auth_info=auth_info)
+    else:
+        assert request_type == types.TRequestType.INSTALL
+        response_value = create_install_response_value(uri=uri, auth_info=auth_info)
+
+    return types.TResponse(type=request_type, value=response_value)
+
+
 def process(
-    *, _uri: types.TUri, authorization_value: types.TAuthorizationValue
-) -> None:
+    *, uri: types.TUri, authorization_value: types.TAuthorizationValue
+) -> types.TResponse:
     """
     Process the request.
 
@@ -191,3 +235,5 @@ def process(
     authorization = parse_authorization_header(authorization_value)
     auth_info = get_user(authorization=authorization)
     authorize_user(authorization=authorization, auth_info=auth_info)
+    request_type = calculate_request_type(uri=uri)
+    return create_response(request_type=request_type, uri=uri, auth_info=auth_info)

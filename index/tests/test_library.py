@@ -131,44 +131,10 @@ def test_authorize_user():
     library.authorize_user(authorization=authorization, auth_info=auth_info)
 
 
-def test_process_invalid_secret_key_error(_clean_credentials_table):
-    """
-    GIVEN invalid authorization value
-    WHEN process is called
-    THEN UnauthorizedError is raised.
-    """
-    credentials = factory.CredentialsFactory()
-    credentials.save()
-    token = base64.b64encode(f"{credentials.public_key}:invalid".encode()).decode()
-    authorization_value = f"Basic {token}"
-
-    with pytest.raises(exceptions.UnauthorizedError):
-        library.process(_uri="", authorization_value=authorization_value)
-
-
-def test_process(_clean_credentials_table):
-    """
-    GIVEN valid authorization value
-    WHEN process is called
-    THEN UnauthorizedError is not raised.
-    """
-    secret_key = "secret key 1"
-    salt = b"salt 1"
-    secret_key_hash = package_security.calculate_secret_key_hash(
-        secret_key=secret_key, salt=salt
-    )
-    credentials = factory.CredentialsFactory(secret_key_hash=secret_key_hash, salt=salt)
-    credentials.save()
-    token = base64.b64encode(f"{credentials.public_key}:{secret_key}".encode()).decode()
-    authorization_value = f"Basic {token}"
-
-    library.process(_uri="", authorization_value=authorization_value)
-
-
 CALCULATE_REQUEST_TYPE_ERROR_TESTS = [
     pytest.param("", id="no /"),
     pytest.param("/", id="single /"),
-    pytest.param("////", id="too many /"),
+    pytest.param("///", id="too many /"),
 ]
 
 
@@ -184,8 +150,8 @@ def test_calculate_request_type_error(uri):
 
 
 CALCULATE_REQUEST_TYPE_TESTS = [
-    pytest.param("//", types.TRequestType.LIST, id="list"),
-    pytest.param("///", types.TRequestType.INSTALL, id="install"),
+    pytest.param("/spec 1/", types.TRequestType.LIST, id="list"),
+    pytest.param("/spec 1/package.tar.gz", types.TRequestType.INSTALL, id="install"),
 ]
 
 
@@ -264,3 +230,107 @@ def test_create_list_response_value(_clean_specs_table, monkeypatch):
         f'{spec_id}/{spec_id}-{version_2}.tar.gz">'
         f"{spec_id}-{version_2}.tar.gz</a><br>"
     ) in returned_value
+
+
+def test_create_install_response_value():
+    """
+    GIVEN uri and authorization value
+    WHEN create_install_response_value is called
+    THEN the uri prefixed with the user is returned.
+    """
+    uri = "/uri 1"
+    sub = "sub 1"
+    auth_info = types.CredentialsAuthInfo(
+        sub=sub, secret_key_hash=b"secret key 1", salt=b"salt 1"
+    )
+
+    returned_value = library.create_install_response_value(uri=uri, auth_info=auth_info)
+
+    assert returned_value == f"/{sub}{uri}"
+
+
+def test_create_response_list(_clean_specs_table):
+    """
+    GIVEN database with single spec and list type request, authorization info and uri
+    WHEN create_response is called with the type, uri and authorization info
+    THEN a list response is returned.
+    """
+    spec_id = "spec 1"
+    version = "version 1"
+    uri = f"/{spec_id}/"
+    sub = "sub 1"
+    auth_info = types.CredentialsAuthInfo(
+        sub=sub, secret_key_hash=b"secret key 1", salt=b"salt 1"
+    )
+    request_type = types.TRequestType.LIST
+    package_database.get().create_update_spec(
+        sub=sub, id_=spec_id, version=version, model_count=1
+    )
+
+    returned_response = library.create_response(
+        request_type=request_type, uri=uri, auth_info=auth_info
+    )
+
+    assert returned_response.type == request_type
+    assert "<body>" in returned_response.value
+    assert spec_id in returned_response.value
+    assert version in returned_response.value
+
+
+def test_create_response_install():
+    """
+    GIVEN install type request, authorization info and uri
+    WHEN create_response is called with the type, uri and authorization info
+    THEN an install response is returned.
+    """
+    uri = "uri 1"
+    sub = "sub 1"
+    auth_info = types.CredentialsAuthInfo(
+        sub=sub, secret_key_hash=b"secret key 1", salt=b"salt 1"
+    )
+    request_type = types.TRequestType.INSTALL
+
+    returned_response = library.create_response(
+        request_type=request_type, uri=uri, auth_info=auth_info
+    )
+
+    assert returned_response.type == request_type
+    assert uri in returned_response.value
+    assert sub in returned_response.value
+
+
+def test_process_invalid_secret_key_error(_clean_credentials_table):
+    """
+    GIVEN invalid authorization value
+    WHEN process is called
+    THEN UnauthorizedError is raised.
+    """
+    credentials = factory.CredentialsFactory()
+    credentials.save()
+    token = base64.b64encode(f"{credentials.public_key}:invalid".encode()).decode()
+    authorization_value = f"Basic {token}"
+
+    with pytest.raises(exceptions.UnauthorizedError):
+        library.process(uri="", authorization_value=authorization_value)
+
+
+def test_process(_clean_credentials_table):
+    """
+    GIVEN valid authorization value
+    WHEN process is called
+    THEN UnauthorizedError is not raised.
+    """
+    secret_key = "secret key 1"
+    salt = b"salt 1"
+    secret_key_hash = package_security.calculate_secret_key_hash(
+        secret_key=secret_key, salt=salt
+    )
+    spec_id = "spec 1"
+    version = "version 1"
+    uri = f"/{spec_id}/{spec_id}-{version}.tar.gz"
+    credentials = factory.CredentialsFactory(secret_key_hash=secret_key_hash, salt=salt)
+    credentials.save()
+    token = base64.b64encode(f"{credentials.public_key}:{secret_key}".encode()).decode()
+    authorization_value = f"Basic {token}"
+
+    library.process(uri=uri, authorization_value=authorization_value)

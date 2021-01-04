@@ -8,6 +8,7 @@ from open_alchemy.package_database import types as database_types
 TAuthorizationValue = str
 TUri = str
 CredentialsAuthInfo = database_types.CredentialsAuthInfo
+TResponseValue = str
 
 
 @dataclasses.dataclass
@@ -31,3 +32,18 @@ class TRequestType(str, enum.Enum):
 
     LIST = "LIST"
     INSTALL = "INSTALL"
+
+
+@dataclasses.dataclass
+class TResponse:
+    """
+    Information for the response to the request.
+
+    Attrs:
+        type: The type of response.
+        value: The value to create the response.
+
+    """
+
+    type: TRequestType
+    value: TResponseValue
