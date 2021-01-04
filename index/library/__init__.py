@@ -1,6 +1,7 @@
 """Library for the index application."""
 
 import base64
+import binascii
 import dataclasses
 
 from . import exceptions
