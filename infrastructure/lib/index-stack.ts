@@ -64,7 +64,7 @@ export class IndexStack extends cdk.Stack {
         edgeLambdas: [
           {
             functionVersion: version,
-            eventType: cloudfront.LambdaEdgeEventType.ORIGIN_REQUEST,
+            eventType: cloudfront.LambdaEdgeEventType.VIEWER_REQUEST,
           },
         ],
       },
