@@ -165,16 +165,13 @@ def parse_event(event: typing.Dict) -> Event:
     return Event(request=request_info, request_dict=request)
 
 
-def main(event, context):
+def main(event, _context):
     """Handle request."""
-    print({"event": event, "context": context})  ## allow-print
     event_info = parse_event(event)
-    print({"event_info": event_info})  ## allow-print
     response = library.process(
         uri=event_info.request.uri,
         authorization_value=event_info.request.authorization_value,
     )
-    print({"response": response})  ## allow-print
     if response.type == types.TRequestType.LIST:
         return {
             "status": "200",

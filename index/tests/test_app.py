@@ -1,9 +1,12 @@
 """Tests for the app."""
 
+import base64
 import copy
 
 import app
 import pytest
+from open_alchemy import package_database, package_security
+from open_alchemy.package_database import factory
 
 PARSE_REQUEST_ERROR_TESTS = [
     pytest.param({}, id="headers missing"),
@@ -123,3 +126,73 @@ def test_parse_event():
     assert returned_event.request.authorization_value == authorization_value
     assert returned_event.request.uri == uri
     assert returned_event.request_dict == request
+
+
+def test_main_list(_clean_credentials_table, _clean_specs_table):
+    """
+    GIVEN list event
+    WHEN main is called with the event
+    THEN a list response is returned.
+    """
+    secret_key = "secret key 1"
+    salt = b"salt 1"
+    secret_key_hash = package_security.calculate_secret_key_hash(
+        secret_key=secret_key, salt=salt
+    )
+    credentials = factory.CredentialsFactory(secret_key_hash=secret_key_hash, salt=salt)
+    credentials.save()
+    token = base64.b64encode(f"{credentials.public_key}:{secret_key}".encode()).decode()
+    authorization_value = f"Basic {token}"
+    spec_id = "spec 1"
+    version = "version 1"
+    uri = f"/{spec_id}/"
+    package_database.get().create_update_spec(
+        sub=credentials.sub, id_=spec_id, version=version, model_count=1
+    )
+    request = {
+        "headers": {
+            "authorization": [{"key": "Authorization", "value": authorization_value}]
+        },
+        "uri": uri,
+    }
+    event = {"Records": [{"cf": {"request": copy.deepcopy(request)}}]}
+
+    returned_response = app.main(event, None)
+
+    assert returned_response["status"] == "200"
+    assert returned_response["statusDescription"] == "OK"
+    assert returned_response["headers"]["cache-control"][0]["value"] == "max-age=0"
+    assert returned_response["headers"]["content-type"][0]["value"] == "text/html"
+    assert spec_id in returned_response["body"]
+    assert version in returned_response["body"]
+
+
+def test_main_install(_clean_credentials_table):
+    """
+    GIVEN install event
+    WHEN main is called with the event
+    THEN a install response is returned.
+    """
+    secret_key = "secret key 1"
+    salt = b"salt 1"
+    secret_key_hash = package_security.calculate_secret_key_hash(
+        secret_key=secret_key, salt=salt
+    )
+    credentials = factory.CredentialsFactory(secret_key_hash=secret_key_hash, salt=salt)
+    credentials.save()
+    token = base64.b64encode(f"{credentials.public_key}:{secret_key}".encode()).decode()
+    authorization_value = f"Basic {token}"
+    spec_id = "spec 1"
+    version = "version 1"
+    uri = f"/{spec_id}/{spec_id}-{version}.tar.gz"
+    request = {
+        "headers": {
+            "authorization": [{"key": "Authorization", "value": authorization_value}]
+        },
+        "uri": uri,
+    }
+    event = {"Records": [{"cf": {"request": copy.deepcopy(request)}}]}
+
+    returned_response = app.main(event, None)
+
+    assert returned_response == {**request, "uri": f"/{credentials.sub}{uri}"}
