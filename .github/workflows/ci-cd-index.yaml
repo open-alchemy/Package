@@ -83,6 +83,14 @@ jobs:
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: |
           pipenv lock -r > requirements.txt
+          # remove what is already available in lambda
+          sed '/boto/d' requirements.txt > requirements.txt
+          sed '/jmespath/d' requirements.txt > requirements.txt
+          sed '/python-dateutil/d' requirements.txt > requirements.txt
+          sed '/s3transfer/d' requirements.txt > requirements.txt
+          sed '/urllib3/d' requirements.txt > requirements.txt
+          sed '/six/d' requirements.txt > requirements.txt
+          # install
           pip install -r requirements.txt --target dist
           cp -r app.py library dist/
           cd dist
