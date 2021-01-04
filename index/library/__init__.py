@@ -3,7 +3,7 @@
 import base64
 import dataclasses
 
-from open_alchemy import package_database
+from open_alchemy import package_database, package_security
 from open_alchemy.package_database import types
 
 from . import exceptions
@@ -69,7 +69,7 @@ def get_user(*, authorization: Authorization) -> types.CredentialsAuthInfo:
         authorization: The authorization for the request.
 
     Returns:
-        Informationabout the user.
+        Information about the public key such as the user tied to it.
 
     """
     auth_info = package_database.get().get_user(public_key=authorization.public_key)
@@ -78,6 +78,30 @@ def get_user(*, authorization: Authorization) -> types.CredentialsAuthInfo:
             f"no user with the public key, {authorization.public_key=}"
         )
     return auth_info
+
+
+def authorize_user(
+    *, authorization: Authorization, auth_info: types.CredentialsAuthInfo
+) -> None:
+    """
+    Check that the secret key that was submitted matches the stored secret key.
+
+    Raises UnauthorizedError is the secret key is not valid.
+
+    Args:
+        authorization: The authorization for the request.
+        auth_info: Authorization information about the user.
+
+    """
+    secret_key_hash = package_security.calculate_secret_key_hash(
+        secret_key=authorization.secret_key, salt=auth_info.salt
+    )
+    if not package_security.compare_secret_key_hashes(
+        left=secret_key_hash, right=auth_info.secret_key_hash
+    ):
+        raise exceptions.UnauthorizedError(
+            "the hash of the secret key from the request does not match the stored hash"
+        )
 
 
 # def foo(*, uri: str, authorization_value: str) -> None:

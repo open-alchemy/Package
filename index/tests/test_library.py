@@ -5,7 +5,8 @@ import base64
 import library
 import pytest
 from library import exceptions
-from open_alchemy.package_database import factory
+from open_alchemy import package_security
+from open_alchemy.package_database import factory, types
 
 PARSE_AUTHORIZATION_HEADER_ERROR_TESTS = [
     pytest.param("invalid", id="Bearer missing"),
@@ -88,3 +89,41 @@ def test_get_user(_clean_credentials_table):
     assert returned_user.sub == credentials.sub
     assert returned_user.salt == credentials.salt
     assert returned_user.secret_key_hash == credentials.secret_key_hash
+
+
+def test_authorize_user_error():
+    """
+    GIVEN invalid authorization
+    WHEN authorize_user is called
+    THEN UnauthorizedError is raised.
+    """
+    authorization = library.Authorization(
+        public_key="public key 1", secret_key="secret key 1"
+    )
+    auth_info = types.CredentialsAuthInfo(
+        sub="sub 1", secret_key_hash=b"invalid", salt=b"salt 1"
+    )
+
+    with pytest.raises(exceptions.UnauthorizedError):
+        library.authorize_user(authorization=authorization, auth_info=auth_info)
+
+
+def test_authorize_user():
+    """
+    GIVEN valid authorization
+    WHEN authorize_user is called
+    THEN UnauthorizedError is not raised.
+    """
+    secret_key = "secret key 1"
+    salt = b"salt 1"
+    secret_key_hash = package_security.calculate_secret_key_hash(
+        secret_key=secret_key, salt=salt
+    )
+    authorization = library.Authorization(
+        public_key="public key 1", secret_key=secret_key
+    )
+    auth_info = types.CredentialsAuthInfo(
+        sub="sub 1", secret_key_hash=secret_key_hash, salt=salt
+    )
+
+    library.authorize_user(authorization=authorization, auth_info=auth_info)
