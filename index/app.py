@@ -185,4 +185,7 @@ def main(event, context):
             },
             "body": response.value,
         }
-    return None
+    assert response.type == types.TRequestType.INSTALL
+    request = event_info.request_dict
+    request["uri"] = response.value
+    return request
