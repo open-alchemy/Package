@@ -18,7 +18,6 @@ const env = {
 
 const app = new cdk.App();
 
-const storageStack = new StorageStack(app, 'PackageStorageStack', { env });
 if (ENVIRONMENT.STACK === 'PackageApiStack') {
   new ApiStack(app, 'PackageApiStack', { env });
 }
@@ -35,13 +34,8 @@ if (ENVIRONMENT.STACK === 'PackageSecurityStack') {
   new SecurityStack(app, 'PackageSecurityStack', { env });
 }
 if (ENVIRONMENT.STACK === 'PackageIndexStack') {
-  new IndexStack(
-    app,
-    'PackageIndexStack',
-    { env },
-    {
-      storageBucket: storageStack.bucket,
-      originAccessIdentity: storageStack.originAccessIdentity,
-    }
-  );
+  new IndexStack(app, 'PackageIndexStack', { env });
+}
+if (ENVIRONMENT.STACK === 'PackageStorageStack') {
+  new StorageStack(app, 'PackageStorageStack', { env });
 }

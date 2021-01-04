@@ -22,6 +22,7 @@ export class ApiStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    // package storage
     const bucket = s3.Bucket.fromBucketName(
       this,
       'Bucket',
