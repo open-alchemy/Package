@@ -3,6 +3,7 @@ import * as regionInfo from '@aws-cdk/region-info';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
 
 import { CONFIG } from './config';
+import { ENVIRONMENT } from './environment';
 
 export class DatabaseStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -12,6 +13,9 @@ export class DatabaseStack extends cdk.Stack {
     const sub = { name: 'sub', type: dynamodb.AttributeType.STRING };
 
     // Database for the specs
+    const tableReplicationRegions = regionInfo.RegionInfo.regions
+      .map((region) => region.name)
+      .filter((region) => region == ENVIRONMENT.AWS_DEFAULT_REGION);
     const specsTable = new dynamodb.Table(this, 'SpecsTable', {
       partitionKey: { ...sub },
       tableName: CONFIG.database.spec.tableName,
@@ -20,9 +24,7 @@ export class DatabaseStack extends cdk.Stack {
         type: dynamodb.AttributeType.STRING,
       },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      replicationRegions: regionInfo.RegionInfo.regions.map(
-        (region) => region.name
-      ),
+      replicationRegions: tableReplicationRegions,
     });
     specsTable.addLocalSecondaryIndex({
       indexName: CONFIG.database.spec.localSecondaryIndexName,
@@ -42,9 +44,7 @@ export class DatabaseStack extends cdk.Stack {
         type: dynamodb.AttributeType.STRING,
       },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      replicationRegions: regionInfo.RegionInfo.regions.map(
-        (region) => region.name
-      ),
+      replicationRegions: tableReplicationRegions,
     });
     credentialsTable.addGlobalSecondaryIndex({
       indexName: CONFIG.database.credentials.globalSecondaryIndexName,
