@@ -3,8 +3,11 @@
 import dataclasses
 import enum
 
+from open_alchemy.package_database import types as database_types
+
 TAuthorizationValue = str
 TUri = str
+CredentialsAuthInfo = database_types.CredentialsAuthInfo
 
 
 @dataclasses.dataclass

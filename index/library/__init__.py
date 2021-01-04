@@ -3,7 +3,6 @@
 import base64
 
 from open_alchemy import package_database, package_security
-from open_alchemy.package_database import types as database_types
 
 from . import exceptions, types
 
@@ -52,9 +51,7 @@ def parse_authorization_header(
     return types.TAuthorization(public_key=public_key, secret_key=secret_key)
 
 
-def get_user(
-    *, authorization: types.TAuthorization
-) -> database_types.CredentialsAuthInfo:
+def get_user(*, authorization: types.TAuthorization) -> types.CredentialsAuthInfo:
     """
     Retrieve the user based on the authorization.
 
@@ -78,7 +75,7 @@ def get_user(
 def authorize_user(
     *,
     authorization: types.TAuthorization,
-    auth_info: database_types.CredentialsAuthInfo,
+    auth_info: types.CredentialsAuthInfo,
 ) -> None:
     """
     Check that the secret key that was submitted matches the stored secret key.
@@ -101,7 +98,7 @@ def authorize_user(
         )
 
 
-def calculate_request_type(uri: types.TUri) -> types.TRequestType:
+def calculate_request_type(*, uri: types.TUri) -> types.TRequestType:
     """
     Calculate the request type based on the uri.
 
@@ -122,6 +119,60 @@ def calculate_request_type(uri: types.TUri) -> types.TRequestType:
         return types.TRequestType.INSTALL
 
     raise exceptions.NotFoundError(f"could not find package with {uri=}")
+
+
+def create_list_response_value(
+    *, uri: types.TUri, auth_info: types.CredentialsAuthInfo
+) -> str:
+    """
+    Calculate the response for a list type response.
+
+    Raises NotFoundError when the uri is not linked to a known spec.
+
+    Args:
+        uri: The requested uri.
+        auth_info: Information about the user.
+
+    Returns:
+        The html to return to the user for the request.
+
+    """
+    assert uri.startswith("/")
+    assert uri.endswith("/")
+    spec_id = uri[1:-1]
+
+    try:
+        version_infos = package_database.get().list_spec_versions(
+            sub=auth_info.sub, id_=spec_id
+        )
+    except package_database.exceptions.NotFoundError as exc:
+        raise exceptions.NotFoundError(
+            f"could not find package with {spec_id=}"
+        ) from exc
+
+    host = "index.package.openalchemy.io"
+
+    def package_name(version: str) -> str:
+        """Calculate the name of the package."""
+        return f"{spec_id}-{version}.tar.gz"
+
+    install_links = list(
+        map(
+            lambda version_info: (
+                f'<a href="https://{host}/{spec_id}/'
+                f'{package_name(version_info["version"])}">'
+                f'{package_name(version_info["version"])}</a><br>'
+            ),
+            version_infos,
+        )
+    )
+    joined_install_links = "\n".join(install_links)
+
+    return f"""
+<body>
+{joined_install_links}
+</body>
+"""
 
 
 def process(

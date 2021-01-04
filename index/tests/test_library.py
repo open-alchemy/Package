@@ -1,13 +1,14 @@
 """Tests for the library."""
 
 import base64
+import time
+from unittest import mock
 
 import library
 import pytest
 from library import exceptions, types
-from open_alchemy import package_security
+from open_alchemy import package_database, package_security
 from open_alchemy.package_database import factory
-from open_alchemy.package_database import types as database_types
 
 PARSE_AUTHORIZATION_HEADER_ERROR_TESTS = [
     pytest.param("invalid", id="Bearer missing"),
@@ -101,7 +102,7 @@ def test_authorize_user_error():
     authorization = types.TAuthorization(
         public_key="public key 1", secret_key="secret key 1"
     )
-    auth_info = database_types.CredentialsAuthInfo(
+    auth_info = types.CredentialsAuthInfo(
         sub="sub 1", secret_key_hash=b"invalid", salt=b"salt 1"
     )
 
@@ -123,7 +124,7 @@ def test_authorize_user():
     authorization = types.TAuthorization(
         public_key="public key 1", secret_key=secret_key
     )
-    auth_info = database_types.CredentialsAuthInfo(
+    auth_info = types.CredentialsAuthInfo(
         sub="sub 1", secret_key_hash=secret_key_hash, salt=salt
     )
 
@@ -179,7 +180,7 @@ def test_calculate_request_type_error(uri):
     THEN NotFoundError is raises.
     """
     with pytest.raises(exceptions.NotFoundError):
-        library.calculate_request_type(uri)
+        library.calculate_request_type(uri=uri)
 
 
 CALCULATE_REQUEST_TYPE_TESTS = [
@@ -195,6 +196,71 @@ def test_calculate_request_type(uri, expected_type):
     WHEN calculate_request_type is called with the uri
     THEN the expected type is returned.
     """
-    returned_type = library.calculate_request_type(uri)
+    returned_type = library.calculate_request_type(uri=uri)
 
     assert returned_type == expected_type
+
+
+def test_create_list_response_value_error(_clean_specs_table):
+    """
+    GIVEN empty database and uri
+    WHEN create_list_response_value is called with the uri
+    THEN NotFoundError is raised.
+    """
+    uri = "/spec 1/"
+    auth_info = types.CredentialsAuthInfo(
+        sub="sub 1", secret_key_hash=b"secret key 1", salt=b"salt 1"
+    )
+
+    with pytest.raises(exceptions.NotFoundError):
+        library.create_list_response_value(uri=uri, auth_info=auth_info)
+
+
+def test_create_list_response_value(_clean_specs_table, monkeypatch):
+    """
+    GIVEN database with single then multiple specs and uri that points to the spec
+    WHEN create_list_response_value is called with the uri
+    THEN a HTML response with links to the packages are returned.
+    """
+    mock_time = mock.MagicMock()
+    monkeypatch.setattr(time, "time", mock_time)
+    mock_time.return_value = 1000000
+    spec_id = "spec 1"
+    version_1 = "version 1"
+    uri = f"/{spec_id}/"
+    sub = "sub 1"
+    auth_info = types.CredentialsAuthInfo(
+        sub=sub, secret_key_hash=b"secret key 1", salt=b"salt 1"
+    )
+    package_database.get().create_update_spec(
+        sub=sub, id_=spec_id, version=version_1, model_count=1
+    )
+
+    returned_value = library.create_list_response_value(uri=uri, auth_info=auth_info)
+
+    assert "<body>" in returned_value
+    assert (
+        '<a href="https://index.package.openalchemy.io/'
+        f'{spec_id}/{spec_id}-{version_1}.tar.gz">'
+        f"{spec_id}-{version_1}.tar.gz</a><br>"
+    ) in returned_value
+    assert "</body>" in returned_value
+
+    mock_time.return_value = 2000000
+    version_2 = "version 2"
+    package_database.get().create_update_spec(
+        sub=sub, id_=spec_id, version=version_2, model_count=1
+    )
+
+    returned_value = library.create_list_response_value(uri=uri, auth_info=auth_info)
+
+    assert (
+        '<a href="https://index.package.openalchemy.io/'
+        f'{spec_id}/{spec_id}-{version_1}.tar.gz">'
+        f"{spec_id}-{version_1}.tar.gz</a><br>"
+    ) in returned_value
+    assert (
+        '<a href="https://index.package.openalchemy.io/'
+        f'{spec_id}/{spec_id}-{version_2}.tar.gz">'
+        f"{spec_id}-{version_2}.tar.gz</a><br>"
+    ) in returned_value
