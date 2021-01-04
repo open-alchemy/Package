@@ -1,9 +1,12 @@
 """Main function for lambda."""
 
 import dataclasses
+import os
 import typing
 
 import library
+
+os.environ["STAGE"] = "PROD"
 
 
 @dataclasses.dataclass
