@@ -9,6 +9,8 @@ the following command:
 pip install --index-url https://{public_key}:{secret_key}@index.package.openalchemy.io --extra-index-url https://pypi.org/simple "{specId}=={version}"
 ```
 
+<!-- markdownlint-enable line-length -->
+
 ## Components
 
 - storage: the packages are stored in an S3 bucket under the key
