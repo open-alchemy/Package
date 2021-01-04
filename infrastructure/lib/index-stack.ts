@@ -16,17 +16,19 @@ import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 import { CONFIG } from './config';
 import { ENVIRONMENT } from './environment';
 
+interface IParams {
+  storageBucket: s3.Bucket;
+  originAccessIdentity: cloudfront.OriginAccessIdentity;
+}
+
 export class IndexStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(
+    scope: cdk.Construct,
+    id: string,
+    props: cdk.StackProps,
+    params: IParams
+  ) {
     super(scope, id, props);
-
-    // Storage for the packages
-    const bucket = s3.Bucket.fromBucketName(
-      this,
-      'PackageBucket',
-      CONFIG.storage.newBucketName
-    );
-
     // Database for the packages
     const specTable = dynamodb.Table.fromTableAttributes(this, 'SpecTable', {
       tableName: CONFIG.database.spec.tableName,
@@ -88,15 +90,10 @@ export class IndexStack extends cdk.Stack {
     );
 
     // CloudFront
-    const originAccessIdentity = cloudfront.OriginAccessIdentity.fromOriginAccessIdentityName(
-      this,
-      'OriginAccessIdentity',
-      'EJTD32Z8MBLSK'
-    );
     const distribution = new cloudfront.Distribution(this, 'Distribution', {
       defaultBehavior: {
-        origin: new cloudfrontOrigins.S3Origin(bucket, {
-          originAccessIdentity,
+        origin: new cloudfrontOrigins.S3Origin(params.storageBucket, {
+          originAccessIdentity: params.originAccessIdentity,
         }),
         edgeLambdas: [
           {

@@ -21,12 +21,16 @@ import * as s3Notifications from '@aws-cdk/aws-s3-notifications';
 import { ENVIRONMENT } from './environment';
 import { CONFIG } from './config';
 
+interface IParams {
+  storageBucket: s3.Bucket;
+}
+
 export class ApiStack extends cdk.Stack {
   constructor(
     scope: cdk.Construct,
     id: string,
     props: cdk.StackProps,
-    storageBucket: s3.Bucket
+    params: IParams
   ) {
     super(scope, id, props);
 
@@ -116,7 +120,7 @@ export class ApiStack extends cdk.Stack {
 
     // Permissions for lambda function
     bucket.grantReadWrite(func);
-    storageBucket.grantReadWrite(func);
+    params.storageBucket.grantReadWrite(func);
     specTable.grantReadWriteData(func);
     specTable.grant(func, 'dynamodb:DescribeTable');
     credentialsTable.grantReadWriteData(func);
