@@ -54,6 +54,8 @@ jobs:
       - name: run tests
         working-directory: ./index
         env:
+          AWS_ACCESS_KEY_ID: invalid id
+          AWS_SECRET_ACCESS_KEY: invalid key
           AWS_DEFAULT_REGION: "us-east-1"
         run: |
           pipenv run test
