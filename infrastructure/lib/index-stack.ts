@@ -88,9 +88,16 @@ export class IndexStack extends cdk.Stack {
     );
 
     // CloudFront
+    const originAccessIdentity = new cloudfront.OriginAccessIdentity(
+      this,
+      'AccessIdentity'
+    );
+    bucket.grantRead(originAccessIdentity);
     const distribution = new cloudfront.Distribution(this, 'Distribution', {
       defaultBehavior: {
-        origin: new cloudfrontOrigins.S3Origin(bucket),
+        origin: new cloudfrontOrigins.S3Origin(bucket, {
+          originAccessIdentity,
+        }),
         edgeLambdas: [
           {
             functionVersion: version,
