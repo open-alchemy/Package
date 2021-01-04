@@ -121,7 +121,10 @@ def calculate_request_type(*, uri: types.TUri) -> types.TRequestType:
 
 
 def create_list_response_value(
-    *, uri: types.TUri, auth_info: types.CredentialsAuthInfo
+    *,
+    authorization: types.TAuthorization,
+    uri: types.TUri,
+    auth_info: types.CredentialsAuthInfo,
 ) -> types.TResponseValue:
     """
     Calculate the response for a list type response.
@@ -158,7 +161,9 @@ def create_list_response_value(
     install_links = list(
         map(
             lambda version_info: (
-                f'<a href="https://{host}/{spec_id}/'
+                f'<a href="https://'
+                f"{authorization.public_key}:{authorization.secret_key}"
+                f"@{host}/{spec_id}/"
                 f'{package_name(version_info["version"])}">'
                 f'{package_name(version_info["version"])}</a><br>'
             ),
@@ -193,6 +198,7 @@ def create_install_response_value(
 
 def create_response(
     *,
+    authorization: types.TAuthorization,
     request_type: types.TRequestType,
     uri: types.TUri,
     auth_info: types.CredentialsAuthInfo,
@@ -211,7 +217,9 @@ def create_response(
     """
     response_value: types.TResponseValue
     if request_type == types.TRequestType.LIST:
-        response_value = create_list_response_value(uri=uri, auth_info=auth_info)
+        response_value = create_list_response_value(
+            authorization=authorization, uri=uri, auth_info=auth_info
+        )
     else:
         assert request_type == types.TRequestType.INSTALL
         response_value = create_install_response_value(uri=uri, auth_info=auth_info)
@@ -236,4 +244,9 @@ def process(
     auth_info = get_user(authorization=authorization)
     authorize_user(authorization=authorization, auth_info=auth_info)
     request_type = calculate_request_type(uri=uri)
-    return create_response(request_type=request_type, uri=uri, auth_info=auth_info)
+    return create_response(
+        authorization=authorization,
+        request_type=request_type,
+        uri=uri,
+        auth_info=auth_info,
+    )

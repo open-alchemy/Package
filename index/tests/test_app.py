@@ -243,6 +243,8 @@ def test_main_list(_clean_credentials_table, _clean_specs_table):
     assert returned_response["headers"]["content-type"][0]["value"] == "text/html"
     assert spec_id in returned_response["body"]
     assert version in returned_response["body"]
+    assert credentials.public_key in returned_response["body"]
+    assert secret_key in returned_response["body"]
 
 
 def test_main_install(_clean_credentials_table):

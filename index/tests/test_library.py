@@ -177,9 +177,14 @@ def test_create_list_response_value_error(_clean_specs_table):
     auth_info = types.CredentialsAuthInfo(
         sub="sub 1", secret_key_hash=b"secret key 1", salt=b"salt 1"
     )
+    authorization = types.TAuthorization(
+        public_key="public key 1", secret_key="secret key 1"
+    )
 
     with pytest.raises(exceptions.NotFoundError):
-        library.create_list_response_value(uri=uri, auth_info=auth_info)
+        library.create_list_response_value(
+            authorization=authorization, uri=uri, auth_info=auth_info
+        )
 
 
 def test_create_list_response_value(_clean_specs_table, monkeypatch):
@@ -198,15 +203,22 @@ def test_create_list_response_value(_clean_specs_table, monkeypatch):
     auth_info = types.CredentialsAuthInfo(
         sub=sub, secret_key_hash=b"secret key 1", salt=b"salt 1"
     )
+    public_key = "public key 1"
+    secret_key = "secret key 1"
+    authorization = types.TAuthorization(public_key=public_key, secret_key=secret_key)
     package_database.get().create_update_spec(
         sub=sub, id_=spec_id, version=version_1, model_count=1
     )
 
-    returned_value = library.create_list_response_value(uri=uri, auth_info=auth_info)
+    returned_value = library.create_list_response_value(
+        authorization=authorization, uri=uri, auth_info=auth_info
+    )
 
     assert "<body>" in returned_value
     assert (
-        '<a href="https://index.package.openalchemy.io/'
+        '<a href="https://'
+        f"{public_key}:{secret_key}"
+        "@index.package.openalchemy.io/"
         f'{spec_id}/{spec_id}-{version_1}.tar.gz">'
         f"{spec_id}-{version_1}.tar.gz</a><br>"
     ) in returned_value
@@ -218,15 +230,21 @@ def test_create_list_response_value(_clean_specs_table, monkeypatch):
         sub=sub, id_=spec_id, version=version_2, model_count=1
     )
 
-    returned_value = library.create_list_response_value(uri=uri, auth_info=auth_info)
+    returned_value = library.create_list_response_value(
+        authorization=authorization, uri=uri, auth_info=auth_info
+    )
 
     assert (
-        '<a href="https://index.package.openalchemy.io/'
+        '<a href="https://'
+        f"{public_key}:{secret_key}"
+        "@index.package.openalchemy.io/"
         f'{spec_id}/{spec_id}-{version_1}.tar.gz">'
         f"{spec_id}-{version_1}.tar.gz</a><br>"
     ) in returned_value
     assert (
-        '<a href="https://index.package.openalchemy.io/'
+        '<a href="https://'
+        f"{public_key}:{secret_key}"
+        "@index.package.openalchemy.io/"
         f'{spec_id}/{spec_id}-{version_2}.tar.gz">'
         f"{spec_id}-{version_2}.tar.gz</a><br>"
     ) in returned_value
@@ -266,15 +284,23 @@ def test_create_response_list(_clean_specs_table):
     package_database.get().create_update_spec(
         sub=sub, id_=spec_id, version=version, model_count=1
     )
+    public_key = "public key 1"
+    secret_key = "secret key 1"
+    authorization = types.TAuthorization(public_key=public_key, secret_key=secret_key)
 
     returned_response = library.create_response(
-        request_type=request_type, uri=uri, auth_info=auth_info
+        authorization=authorization,
+        request_type=request_type,
+        uri=uri,
+        auth_info=auth_info,
     )
 
     assert returned_response.type == request_type
     assert "<body>" in returned_response.value
     assert spec_id in returned_response.value
     assert version in returned_response.value
+    assert public_key in returned_response.value
+    assert secret_key in returned_response.value
 
 
 def test_create_response_install():
@@ -289,9 +315,15 @@ def test_create_response_install():
         sub=sub, secret_key_hash=b"secret key 1", salt=b"salt 1"
     )
     request_type = types.TRequestType.INSTALL
+    public_key = "public key 1"
+    secret_key = "secret key 1"
+    authorization = types.TAuthorization(public_key=public_key, secret_key=secret_key)
 
     returned_response = library.create_response(
-        request_type=request_type, uri=uri, auth_info=auth_info
+        authorization=authorization,
+        request_type=request_type,
+        uri=uri,
+        auth_info=auth_info,
     )
 
     assert returned_response.type == request_type
