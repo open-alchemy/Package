@@ -5,6 +5,7 @@ import base64
 import library
 import pytest
 from library import exceptions
+from open_alchemy.package_database import factory
 
 PARSE_AUTHORIZATION_HEADER_ERROR_TESTS = [
     pytest.param("invalid", id="Bearer missing"),
@@ -54,3 +55,36 @@ def test_parse_authorization_header():
 
     assert returned_authorization.public_key == public_key
     assert returned_authorization.secret_key == secret_key
+
+
+def test_get_user_error(_clean_credentials_table):
+    """
+    GIVEN empty database
+    WHEN get_user is called
+    THEN UnauthorizedError is raised.
+    """
+    authorization = library.Authorization(
+        public_key="public key 1", secret_key="secret key 1"
+    )
+
+    with pytest.raises(exceptions.UnauthorizedError):
+        library.get_user(authorization=authorization)
+
+
+def test_get_user(_clean_credentials_table):
+    """
+    GIVEN database with credentials
+    WHEN get_user is called
+    THEN then user is returned.
+    """
+    credentials = factory.CredentialsFactory()
+    credentials.save()
+    authorization = library.Authorization(
+        public_key=credentials.public_key, secret_key="secret key 1"
+    )
+
+    returned_user = library.get_user(authorization=authorization)
+
+    assert returned_user.sub == credentials.sub
+    assert returned_user.salt == credentials.salt
+    assert returned_user.secret_key_hash == credentials.secret_key_hash

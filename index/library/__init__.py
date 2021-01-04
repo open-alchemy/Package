@@ -1,8 +1,10 @@
 """Library for the index application."""
 
 import base64
-import binascii
 import dataclasses
+
+from open_alchemy import package_database
+from open_alchemy.package_database import types
 
 from . import exceptions
 
@@ -18,6 +20,8 @@ class Authorization:
 def parse_authorization_header(value: str) -> Authorization:
     """
     Parse the authorization header.
+
+    Raises UnauthorizedError if the authorization value is invalid.
 
     Args:
         value: The value of the authorization header (in the form 'Basic <base 64
@@ -53,3 +57,30 @@ def parse_authorization_header(value: str) -> Authorization:
         raise exceptions.UnauthorizedError(f"secret key empty, {secret_key=}, {value=}")
 
     return Authorization(public_key=public_key, secret_key=secret_key)
+
+
+def get_user(*, authorization: Authorization) -> types.CredentialsAuthInfo:
+    """
+    Retrieve the user based on the authorization.
+
+    Raises UnauthorizedError if the user does not exist.
+
+    Args:
+        authorization: The authorization for the request.
+
+    Returns:
+        Informationabout the user.
+
+    """
+    auth_info = package_database.get().get_user(public_key=authorization.public_key)
+    if auth_info is None:
+        raise exceptions.UnauthorizedError(
+            f"no user with the public key, {authorization.public_key=}"
+        )
+    return auth_info
+
+
+# def foo(*, uri: str, authorization_value: str) -> None:
+#     """Does something."""
+#     authorization = parse_authorization_header(authorization_value)
+#     user = package_database.get().get_user(public_key=authorization.public_key)
