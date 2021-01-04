@@ -11,6 +11,8 @@ name = "pypi"
 black = "20.8b1"
 pytest = "6.2.0"
 pylint = "2.6.0"
+pytest-cov = "2.10.1"
+pytest-randomly = "3.5.0"
 
 [requires]
 python_version = "3.9"

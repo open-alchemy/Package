@@ -41,6 +41,9 @@ repos:
         name: mypy (database)
         files: ^database/
       - id: mypy
+        name: mypy (index)
+        files: ^index/
+      - id: mypy
         name: mypy (security)
         files: ^security/
       - id: mypy
