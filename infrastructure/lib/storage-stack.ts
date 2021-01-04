@@ -2,6 +2,7 @@ import * as cdk from '@aws-cdk/core';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as cloudfront from '@aws-cdk/aws-cloudfront';
 import * as sns from '@aws-cdk/aws-sns';
+import * as ssm from '@aws-cdk/aws-ssm';
 import * as s3Notifications from '@aws-cdk/aws-s3-notifications';
 
 import { CONFIG } from './config';
@@ -24,6 +25,10 @@ export class StorageStack extends cdk.Stack {
       'AccessIdentity'
     );
     this.bucket.grantRead(this.originAccessIdentity);
+    new ssm.StringParameter(this, 'Parameter', {
+      stringValue: this.originAccessIdentity.originAccessIdentityName,
+      parameterName: 'Package/Storage/OriginAccessIdentity/Name',
+    });
 
     // Notifications for object create
     const topic = new sns.Topic(this, 'Topic', {
