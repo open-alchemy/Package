@@ -1,5 +1,8 @@
 """Fixtures."""
 
+import os
+import subprocess
+import sys
 from urllib import request
 
 import pytest
@@ -19,3 +22,12 @@ def spec_id(access_token):
     )
     with request.urlopen(delete_request) as response:
         assert response.status == 204
+
+    subprocess.run(
+        [sys.executable, "-m", "pip", "uninstall", "-y", spec_id_value],
+        cwd=os.getcwd(),
+        check=False,
+        shell=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )

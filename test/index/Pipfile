@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 "open-alchemy.package-security" = "==1.2.1"
+openalchemy = "2.1.0"
 
 [dev-packages]
 pytest = "6.2.1"
