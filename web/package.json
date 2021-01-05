@@ -18,13 +18,13 @@
     "@angular/cdk": "^11.0.1",
     "@angular/common": "~11.0.3",
     "@angular/compiler": "~11.0.3",
-    "@angular/core": "~11.0.3",
+    "@angular/core": "~11.0.5",
     "@angular/forms": "~11.0.3",
     "@angular/material": "^11.0.1",
     "@angular/platform-browser": "~11.0.3",
     "@angular/platform-browser-dynamic": "~11.0.3",
     "@angular/router": "~11.0.3",
-    "@ngrx/effects": "^10.1.0",
+    "@ngrx/effects": "^10.1.2",
     "@ngrx/store": "^10.1.0",
     "@open-alchemy/package-sdk": "^3.1.1",
     "angular-oauth2-oidc": "^10.0.3",
@@ -48,7 +48,7 @@
     "@typescript-eslint/parser": "4.11.1",
     "eslint": "^7.17.0",
     "eslint-plugin-import": "2.22.1",
-    "eslint-plugin-jsdoc": "30.7.9",
+    "eslint-plugin-jsdoc": "30.7.13",
     "eslint-plugin-prefer-arrow": "1.2.2",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~6.0.0",
@@ -60,6 +60,6 @@
     "openapi-typescript": "^2.4.2",
     "protractor": "~7.0.0",
     "ts-node": "~9.1.1",
-    "typescript": "~4.0.2"
+    "typescript": "~4.0.3"
   }
 }
