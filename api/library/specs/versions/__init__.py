@@ -9,12 +9,12 @@ from ...facades import server, storage
 from ...helpers import spec
 
 
-def list_(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
+def list_(spec_name: types.TSpecId, user: types.TUser) -> server.Response:
     """
     List all available versions of a spec.
 
     Args:
-        spec_id: The id of the spec.
+        spec_name: The id of the spec.
         user: The user from the token.
 
     Returns:
@@ -24,14 +24,14 @@ def list_(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
     try:
         return server.Response(
             json.dumps(
-                package_database.get().list_spec_versions(sub=user, name=spec_id)
+                package_database.get().list_spec_versions(sub=user, name=spec_name)
             ),
             status=200,
             mimetype="application/json",
         )
     except package_database.exceptions.NotFoundError:
         return server.Response(
-            f"could not find spec with id {spec_id}",
+            f"could not find spec with id {spec_name}",
             status=404,
             mimetype="text/plain",
         )
@@ -44,13 +44,13 @@ def list_(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
 
 
 def get(
-    spec_id: types.TSpecId, version: types.TSpecVersion, user: types.TUser
+    spec_name: types.TSpecId, version: types.TSpecVersion, user: types.TUser
 ) -> server.Response:
     """
     Retrieve a version of a spec for a user.
 
     Args:
-        spec_id: The id of the spec.
+        spec_name: The id of the spec.
         version: The version of the spec.
         user: The user from the token.
 
@@ -60,7 +60,7 @@ def get(
     """
     try:
         spec_str = storage.get_storage_facade().get_spec(
-            user=user, name=spec_id, version=version
+            user=user, name=spec_name, version=version
         )
         prepared_spec_str = spec.prepare(spec_str=spec_str, version=version)
 
@@ -71,7 +71,7 @@ def get(
         )
     except storage.exceptions.ObjectNotFoundError:
         return server.Response(
-            f"could not find the spec with id {spec_id}",
+            f"could not find the spec with id {spec_name}",
             status=404,
             mimetype="text/plain",
         )
@@ -85,7 +85,7 @@ def get(
 
 def put(
     body: bytearray,
-    spec_id: types.TSpecId,
+    spec_name: types.TSpecId,
     version: types.TSpecVersion,
     user: types.TUser,
 ) -> server.Response:
@@ -99,7 +99,7 @@ def put(
 
     Args:
         body: The spec to store.
-        spec_id: The id of the spec.
+        spec_name: The id of the spec.
         user: The user from the token.
         version: The version of the spec.
 
@@ -136,7 +136,7 @@ def put(
         # Store the spec
         storage.get_storage_facade().create_update_spec(
             user=user,
-            name=spec_id,
+            name=spec_name,
             version=spec_info.version,
             spec_str=spec_info.spec_str,
         )
@@ -144,7 +144,7 @@ def put(
         # Write an update into the database
         package_database.get().create_update_spec(
             sub=user,
-            name=spec_id,
+            name=spec_name,
             version=spec_info.version,
             title=spec_info.title,
             description=spec_info.description,

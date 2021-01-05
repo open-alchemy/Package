@@ -31,12 +31,12 @@ paths:
             text/plain:
               schema:
                 type: string
-  /specs/{spec_id}:
+  /specs/{spec_name}:
     get:
       summary: Retrieve a spec
       operationId: library.specs.get
       parameters:
-        - $ref: "#/components/parameters/SpecId"
+        - $ref: "#/components/parameters/SpecName"
       responses:
         200:
           description: The requested spec
@@ -60,7 +60,7 @@ paths:
       summary: Create or update a spec
       operationId: library.specs.put
       parameters:
-        - $ref: "#/components/parameters/SpecId"
+        - $ref: "#/components/parameters/SpecName"
         - in: header
           name: X-LANGUAGE
           description: The language of the spec
@@ -108,7 +108,7 @@ paths:
       summary: Delete a spec
       operationId: library.specs.delete
       parameters:
-        - $ref: "#/components/parameters/SpecId"
+        - $ref: "#/components/parameters/SpecName"
       responses:
         204:
           description: The spec has been deleted
@@ -118,12 +118,12 @@ paths:
             text/plain:
               schema:
                 type: string
-  /specs/{spec_id}/versions:
+  /specs/{spec_name}/versions:
     get:
       summary: List all available versions for a spec
       operationId: library.specs.versions.list_
       parameters:
-        - $ref: "#/components/parameters/SpecId"
+        - $ref: "#/components/parameters/SpecName"
       responses:
         200:
           description: All the available versions for a spec
@@ -145,12 +145,12 @@ paths:
             text/plain:
               schema:
                 type: string
-  /specs/{spec_id}/versions/{version}:
+  /specs/{spec_name}/versions/{version}:
     get:
       summary: Retrieve a spec
       operationId: library.specs.versions.get
       parameters:
-        - $ref: "#/components/parameters/SpecId"
+        - $ref: "#/components/parameters/SpecName"
         - $ref: "#/components/parameters/SpecVersion"
       responses:
         200:
@@ -175,7 +175,7 @@ paths:
       summary: Create or update a specific versions of a spec
       operationId: library.specs.versions.put
       parameters:
-        - $ref: "#/components/parameters/SpecId"
+        - $ref: "#/components/parameters/SpecName"
         - $ref: "#/components/parameters/SpecVersion"
         - in: header
           name: X-LANGUAGE
@@ -252,13 +252,13 @@ paths:
 
 components:
   parameters:
-    SpecId:
+    SpecName:
       in: path
-      name: spec_id
+      name: spec_name
       schema:
-        $ref: "#/components/schemas/SpecId"
+        $ref: "#/components/schemas/SpecName"
       required: true
-      description: The id of the spec
+      description: The display name of the spec
     SpecVersion:
       in: path
       name: version
@@ -272,15 +272,21 @@ components:
       scheme: bearer
       x-bearerInfoFunc: library.helpers.token.decode
   schemas:
-    SpecId:
-      description: The id of an OpenAPI specification
+    SpecName:
+      description: The display name of an OpenAPI specification
       type: string
+      format: ^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9])$
+    SpecId:
+      description: The id of an OpenAPI specification (it is the canonical version of the spec name)
+      type: string
+      format: ^([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$
     SpecValue:
       description: The value of an OpenAPI specification
       type: string
     SpecVersion:
       description: The version of an OpenAPI specification
       type: string
+      format: ^([1-9][0-9]*!)?(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))*((a|b|rc)(0|[1-9][0-9]*))?(\.post(0|[1-9][0-9]*))?(\.dev(0|[1-9][0-9]*))?$
     SpecUpdatedAt:
       description: The last time the OpenAPI specification was updated
       type: integer
@@ -297,6 +303,8 @@ components:
       description: Information about a an OpenAPI specification
       type: object
       properties:
+        name:
+          $ref: "#/components/schemas/SpecName"
         id:
           $ref: "#/components/schemas/SpecId"
         version:
@@ -310,6 +318,7 @@ components:
         model_count:
           $ref: "#/components/schemas/SpecModelCount"
       required:
+        - name
         - id
         - version
         - model_count

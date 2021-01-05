@@ -3,11 +3,13 @@
 import json
 from unittest import mock
 
+import pytest
 from library.facades import server, storage
 from library.specs import versions
 from open_alchemy import package_database
 
 
+@pytest.mark.specs_versions
 def test_list_(_clean_specs_table):
     """
     GIVEN user, spec id and database with a single spec
@@ -15,26 +17,28 @@ def test_list_(_clean_specs_table):
     THEN the version of the spec is returned.
     """
     user = "user 1"
-    spec_id = "spec id 1"
+    spec_name = "spec name 1"
     version = "version 1"
     model_count = 1
     package_database.get().create_update_spec(
-        sub=user, name=spec_id, version=version, model_count=model_count
+        sub=user, name=spec_name, version=version, model_count=model_count
     )
 
-    response = versions.list_(user=user, spec_id=spec_id)
+    response = versions.list_(user=user, spec_name=spec_name)
 
     assert response.status_code == 200
     assert response.mimetype == "application/json"
     spec_infos = json.loads(response.data.decode())
     assert len(spec_infos) == 1
     spec_info = spec_infos[0]
-    assert spec_info["id"] == spec_id
+    assert spec_info["name"] == spec_name
+    assert spec_info["id"] == spec_name
     assert spec_info["version"] == version
     assert spec_info["model_count"] == model_count
     assert "updated_at" in spec_info
 
 
+@pytest.mark.specs_versions
 def test_list_not_found(_clean_specs_table):
     """
     GIVEN user, spec id and empty storage
@@ -42,15 +46,16 @@ def test_list_not_found(_clean_specs_table):
     THEN 404 is returned.
     """
     user = "user 1"
-    spec_id = "spec id 1"
+    spec_name = "spec name 1"
 
-    response = versions.list_(user=user, spec_id=spec_id)
+    response = versions.list_(user=user, spec_name=spec_name)
 
     assert response.status_code == 404
     assert response.mimetype == "text/plain"
-    assert spec_id in response.data.decode()
+    assert spec_name in response.data.decode()
 
 
+@pytest.mark.specs_versions
 def test_list_database_error(monkeypatch):
     """
     GIVEN user, spec id and database that raises a databaseError
@@ -58,7 +63,7 @@ def test_list_database_error(monkeypatch):
     THEN 500 is returned.
     """
     user = "user 1"
-    spec_id = "spec id 1"
+    spec_name = "spec name 1"
     mock_database_list_spec_versions = mock.MagicMock()
     mock_database_list_spec_versions.side_effect = package_database.exceptions.BaseError
     monkeypatch.setattr(
@@ -67,13 +72,14 @@ def test_list_database_error(monkeypatch):
         mock_database_list_spec_versions,
     )
 
-    response = versions.list_(user=user, spec_id=spec_id)
+    response = versions.list_(user=user, spec_name=spec_name)
 
     assert response.status_code == 500
     assert response.mimetype == "text/plain"
     assert "database" in response.data.decode()
 
 
+@pytest.mark.specs_versions
 def test_get():
     """
     GIVEN user and version and database and storage with a single spec
@@ -81,17 +87,17 @@ def test_get():
     THEN the spec value is returned.
     """
     user = "user 1"
-    spec_id = "spec id 1"
+    spec_name = "spec name 1"
     version = "version 1"
     spec = {"key": "value"}
     storage.get_storage_facade().create_update_spec(
         user=user,
-        name=spec_id,
+        name=spec_name,
         version=version,
         spec_str=json.dumps(spec, separators=(",", ":")),
     )
 
-    response = versions.get(user=user, spec_id=spec_id, version=version)
+    response = versions.get(user=user, spec_name=spec_name, version=version)
 
     assert response.status_code == 200
     assert response.mimetype == "text/plain"
@@ -99,6 +105,7 @@ def test_get():
     assert "key: value" in response.data.decode()
 
 
+@pytest.mark.specs_versions
 def test_get_storage_facade_error(monkeypatch):
     """
     GIVEN user and database with a spec but storage that raises an error
@@ -106,19 +113,20 @@ def test_get_storage_facade_error(monkeypatch):
     THEN a 500 is returned.
     """
     user = "user 1"
-    spec_id = "spec id 1"
+    spec_name = "spec name 1"
     version = "version 1"
     mock_storage_get_spec = mock.MagicMock()
     mock_storage_get_spec.side_effect = storage.exceptions.StorageError
     monkeypatch.setattr(storage.get_storage_facade(), "get_spec", mock_storage_get_spec)
 
-    response = versions.get(user=user, spec_id=spec_id, version=version)
+    response = versions.get(user=user, spec_name=spec_name, version=version)
 
     assert response.status_code == 500
     assert response.mimetype == "text/plain"
     assert "reading" in response.data.decode()
 
 
+@pytest.mark.specs_versions
 def test_get_storage_facade_miss(_clean_specs_table):
     """
     GIVEN user and database with a spec but empty storage
@@ -126,17 +134,18 @@ def test_get_storage_facade_miss(_clean_specs_table):
     THEN a 404 is returned.
     """
     user = "user 1"
-    spec_id = "spec id 1"
+    spec_name = "spec name 1"
     version = "version 1"
 
-    response = versions.get(user=user, spec_id=spec_id, version=version)
+    response = versions.get(user=user, spec_name=spec_name, version=version)
 
     assert response.status_code == 404
     assert response.mimetype == "text/plain"
-    assert spec_id in response.data.decode()
+    assert spec_name in response.data.decode()
     assert "not find" in response.data.decode()
 
 
+@pytest.mark.specs_versions
 def test_put(monkeypatch, _clean_specs_table):
     """
     GIVEN body, spec id, user and version
@@ -163,15 +172,15 @@ def test_put(monkeypatch, _clean_specs_table):
         },
     }
     body = json.dumps(spec)
-    spec_id = "id 1"
+    spec_name = "id 1"
     user = "user 1"
 
     response = versions.put(
-        body=body.encode(), spec_id=spec_id, version=version, user=user
+        body=body.encode(), spec_name=spec_name, version=version, user=user
     )
 
     spec_str = storage.get_storage_facade().get_spec(
-        user=user, name=spec_id, version=version
+        user=user, name=spec_name, version=version
     )
     assert f'"{version}"' in spec_str
     assert '"Schema"' in spec_str
@@ -182,7 +191,8 @@ def test_put(monkeypatch, _clean_specs_table):
     spec_infos = package_database.get().list_specs(sub=user)
     assert len(spec_infos) == 1
     spec_info = spec_infos[0]
-    assert spec_info["id"] == spec_id
+    assert spec_info["name"] == spec_name
+    assert spec_info["id"] == spec_name
     assert spec_info["version"] == version
     assert spec_info["title"] == title
     assert spec_info["description"] == description
@@ -192,6 +202,7 @@ def test_put(monkeypatch, _clean_specs_table):
     assert response.status_code == 204
 
 
+@pytest.mark.specs_versions
 def test_put_invalid_spec_error(monkeypatch):
     """
     GIVEN body with invalid spec, spec id, user and version
@@ -203,12 +214,12 @@ def test_put_invalid_spec_error(monkeypatch):
     mock_request.headers = mock_headers
     monkeypatch.setattr(server.Request, "request", mock_request)
     body = "body 1"
-    spec_id = "id 1"
+    spec_name = "id 1"
     user = "user 1"
     version = "version 1"
 
     response = versions.put(
-        body=body.encode(), spec_id=spec_id, version=version, user=user
+        body=body.encode(), spec_name=spec_name, version=version, user=user
     )
 
     assert response.status_code == 400
@@ -216,6 +227,7 @@ def test_put_invalid_spec_error(monkeypatch):
     assert "not valid" in response.data.decode()
 
 
+@pytest.mark.specs_versions
 def test_put_version_mismatch_error(monkeypatch):
     """
     GIVEN body, spec id, user and version different to that in the body
@@ -237,12 +249,12 @@ def test_put_version_mismatch_error(monkeypatch):
     body = json.dumps(
         {"info": {"version": version_1}, "components": {"schemas": schemas}}
     )
-    spec_id = "id 1"
+    spec_name = "id 1"
     user = "user 1"
     version_2 = "version 2"
 
     response = versions.put(
-        body=body.encode(), spec_id=spec_id, version=version_2, user=user
+        body=body.encode(), spec_name=spec_name, version=version_2, user=user
     )
 
     assert response.status_code == 400
@@ -251,6 +263,7 @@ def test_put_version_mismatch_error(monkeypatch):
     assert version_2 in response.data.decode()
 
 
+@pytest.mark.specs_versions
 def test_put_too_many_models_error(monkeypatch, _clean_specs_table):
     """
     GIVEN body, spec id, version and user that already has too many models
@@ -272,14 +285,14 @@ def test_put_too_many_models_error(monkeypatch, _clean_specs_table):
     body = json.dumps(
         {"info": {"version": version}, "components": {"schemas": schemas}}
     )
-    spec_id = "id 1"
+    spec_name = "id 1"
     user = "user 1"
     package_database.get().create_update_spec(
-        sub=user, name=spec_id, version="version 1", model_count=100
+        sub=user, name=spec_name, version="version 1", model_count=100
     )
 
     response = versions.put(
-        body=body.encode(), spec_id=spec_id, version=version, user=user
+        body=body.encode(), spec_name=spec_name, version=version, user=user
     )
 
     assert response.status_code == 402
@@ -289,6 +302,7 @@ def test_put_too_many_models_error(monkeypatch, _clean_specs_table):
     assert "spec: 1" in response.data.decode()
 
 
+@pytest.mark.specs_versions
 def test_put_database_count_error(monkeypatch, _clean_specs_table):
     """
     GIVEN body with invalid spec and spec id and database that raises DatabaseError
@@ -310,7 +324,7 @@ def test_put_database_count_error(monkeypatch, _clean_specs_table):
     body = json.dumps(
         {"info": {"version": version}, "components": {"schemas": schemas}}
     )
-    spec_id = "id 1"
+    spec_name = "id 1"
     user = "user 1"
     mock_database_check_would_exceed_free_tier = mock.MagicMock()
     mock_database_check_would_exceed_free_tier.side_effect = (
@@ -323,7 +337,7 @@ def test_put_database_count_error(monkeypatch, _clean_specs_table):
     )
 
     response = versions.put(
-        body=body.encode(), spec_id=spec_id, version=version, user=user
+        body=body.encode(), spec_name=spec_name, version=version, user=user
     )
 
     assert response.status_code == 500
@@ -331,6 +345,7 @@ def test_put_database_count_error(monkeypatch, _clean_specs_table):
     assert "database" in response.data.decode()
 
 
+@pytest.mark.specs_versions
 def test_put_storage_error(monkeypatch, _clean_specs_table):
     """
     GIVEN body with invalid spec and spec id
@@ -352,7 +367,7 @@ def test_put_storage_error(monkeypatch, _clean_specs_table):
     body = json.dumps(
         {"info": {"version": version}, "components": {"schemas": schemas}}
     )
-    spec_id = "id 1"
+    spec_name = "id 1"
     user = "user 1"
     mock_storage_create_update_spec = mock.MagicMock()
     mock_storage_create_update_spec.side_effect = storage.exceptions.StorageError
@@ -363,7 +378,7 @@ def test_put_storage_error(monkeypatch, _clean_specs_table):
     )
 
     response = versions.put(
-        body=body.encode(), spec_id=spec_id, version=version, user=user
+        body=body.encode(), spec_name=spec_name, version=version, user=user
     )
 
     assert response.status_code == 500
@@ -371,6 +386,7 @@ def test_put_storage_error(monkeypatch, _clean_specs_table):
     assert "storing" in response.data.decode()
 
 
+@pytest.mark.specs_versions
 def test_put_database_update_error(monkeypatch, _clean_specs_table):
     """
     GIVEN body and spec id
@@ -395,7 +411,7 @@ def test_put_database_update_error(monkeypatch, _clean_specs_table):
         },
     }
     body = json.dumps(spec)
-    spec_id = "id 1"
+    spec_name = "id 1"
     user = "user 1"
     mock_database_create_update_spec = mock.MagicMock()
     mock_database_create_update_spec.side_effect = package_database.exceptions.BaseError
@@ -406,11 +422,11 @@ def test_put_database_update_error(monkeypatch, _clean_specs_table):
     )
 
     response = versions.put(
-        body=body.encode(), spec_id=spec_id, version=version, user=user
+        body=body.encode(), spec_name=spec_name, version=version, user=user
     )
 
     spec_str = storage.get_storage_facade().get_spec(
-        user=user, name=spec_id, version=version
+        user=user, name=spec_name, version=version
     )
     assert f'"{version}"' in spec_str
     assert '"Schema"' in spec_str

@@ -34,12 +34,12 @@ def list_(user: types.TUser) -> server.Response:
         )
 
 
-def get(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
+def get(spec_name: types.TSpecId, user: types.TUser) -> server.Response:
     """
     Retrieve a spec for a user.
 
     Args:
-        spec_id: The id of the spec.
+        spec_name: The id of the spec.
         user: The user from the token.
 
     Returns:
@@ -47,9 +47,11 @@ def get(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
 
     """
     try:
-        version = package_database.get().get_latest_spec_version(sub=user, name=spec_id)
+        version = package_database.get().get_latest_spec_version(
+            sub=user, name=spec_name
+        )
         spec_str = storage.get_storage_facade().get_spec(
-            user=user, name=spec_id, version=version
+            user=user, name=spec_name, version=version
         )
         prepared_spec_str = spec.prepare(spec_str=spec_str, version=version)
 
@@ -60,7 +62,7 @@ def get(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
         )
     except package_database.exceptions.NotFoundError:
         return server.Response(
-            f"could not find the spec with id {spec_id}",
+            f"could not find the spec with id {spec_name}",
             status=404,
             mimetype="text/plain",
         )
@@ -72,7 +74,7 @@ def get(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
         )
     except storage.exceptions.ObjectNotFoundError:
         return server.Response(
-            f"could not find the spec with id {spec_id}",
+            f"could not find the spec with id {spec_name}",
             status=404,
             mimetype="text/plain",
         )
@@ -84,7 +86,9 @@ def get(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
         )
 
 
-def put(body: bytearray, spec_id: types.TSpecId, user: types.TUser) -> server.Response:
+def put(
+    body: bytearray, spec_name: types.TSpecId, user: types.TUser
+) -> server.Response:
     """
     Accept a spec and store it.
 
@@ -94,7 +98,7 @@ def put(body: bytearray, spec_id: types.TSpecId, user: types.TUser) -> server.Re
 
     Args:
         body: The spec to store.
-        spec_id: The id of the spec.
+        spec_name: The id of the spec.
         user: The user from the token.
 
     Returns:
@@ -121,7 +125,7 @@ def put(body: bytearray, spec_id: types.TSpecId, user: types.TUser) -> server.Re
         # Store the spec
         storage.get_storage_facade().create_update_spec(
             user=user,
-            name=spec_id,
+            name=spec_name,
             version=spec_info.version,
             spec_str=spec_info.spec_str,
         )
@@ -129,7 +133,7 @@ def put(body: bytearray, spec_id: types.TSpecId, user: types.TUser) -> server.Re
         # Write an update into the database
         package_database.get().create_update_spec(
             sub=user,
-            name=spec_id,
+            name=spec_name,
             version=spec_info.version,
             title=spec_info.title,
             description=spec_info.description,
@@ -159,12 +163,12 @@ def put(body: bytearray, spec_id: types.TSpecId, user: types.TUser) -> server.Re
         )
 
 
-def delete(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
+def delete(spec_name: types.TSpecId, user: types.TUser) -> server.Response:
     """
     Delete a spec for a user.
 
     Args:
-        spec_id: The id of the spec.
+        spec_name: The id of the spec.
         user: The user from the token.
 
     Returns:
@@ -172,11 +176,11 @@ def delete(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
 
     """
     try:
-        package_database.get().delete_spec(sub=user, name=spec_id)
+        package_database.get().delete_spec(sub=user, name=spec_name)
     except package_database.exceptions.BaseError:
         pass
     try:
-        storage.get_storage_facade().delete_spec(user=user, name=spec_id)
+        storage.get_storage_facade().delete_spec(user=user, name=spec_name)
     except storage.exceptions.StorageError:
         pass
 
