@@ -42,14 +42,14 @@ def access_token():
 
 
 @pytest.fixture()
-def spec_id(access_token):
+def spec_name(access_token):
     """Returns a spec id that is cleaned up at the end."""
-    spec_id = "specId1"
+    spec_name_value = "specId1"
 
-    yield spec_id
+    yield spec_name_value
 
     delete_request = request.Request(
-        f"https://package.api.openalchemy.io/v1/specs/{spec_id}",
+        f"https://package.api.openalchemy.io/v1/specs/{spec_name_value}",
         headers={"Authorization": f"Bearer {access_token}"},
         method="DELETE",
     )

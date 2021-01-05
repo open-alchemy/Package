@@ -31,11 +31,11 @@ import pytest
             method="GET",
         ),
         request.Request(
-            "https://package.api.openalchemy.io/v1/specs/spec1/versions/version1",
+            "https://package.api.openalchemy.io/v1/specs/spec1/versions/1",
             method="GET",
         ),
         request.Request(
-            "https://package.api.openalchemy.io/v1/specs/spec1/versions/version1",
+            "https://package.api.openalchemy.io/v1/specs/spec1/versions/1",
             data=b"data 1",
             method="PUT",
         ),
@@ -65,7 +65,7 @@ def test_unauthorized(test_request):
     assert exc.value.code == 401
 
 
-def test_specs_create_get_delete(access_token, spec_id):
+def test_specs_create_get_delete(access_token, spec_name):
     """
     GIVEN spec
     WHEN it is created, retrieved and deleted
@@ -94,7 +94,7 @@ def test_specs_create_get_delete(access_token, spec_id):
     assert exc.value.code == 400
 
     # Upload a spec that is valid
-    version = "version 1"
+    version = "1"
     title = "title 1"
     description = "description 1"
     spec = {
@@ -115,7 +115,7 @@ def test_specs_create_get_delete(access_token, spec_id):
     }
     spec_str = json.dumps(spec)
     test_request = request.Request(
-        f"https://package.api.openalchemy.io/v1/specs/{spec_id}",
+        f"https://package.api.openalchemy.io/v1/specs/{spec_name}",
         data=spec_str.encode(),
         headers={
             "Authorization": f"Bearer {access_token}",
@@ -139,7 +139,8 @@ def test_specs_create_get_delete(access_token, spec_id):
         returned_specs = json.loads(response.read().decode())
         assert len(returned_specs) == 1
         returned_spec = returned_specs[0]
-        assert returned_spec["id"] == spec_id
+        assert returned_spec["name"] == spec_name
+        assert returned_spec["id"] == spec_name
         assert returned_spec["version"] == version
         assert returned_spec["title"] == title
         assert returned_spec["description"] == description
@@ -147,7 +148,7 @@ def test_specs_create_get_delete(access_token, spec_id):
 
     # Check that the spec can be retrieved
     test_request = request.Request(
-        f"https://package.api.openalchemy.io/v1/specs/{spec_id}",
+        f"https://package.api.openalchemy.io/v1/specs/{spec_name}",
         headers={"Authorization": f"Bearer {access_token}"},
     )
 
@@ -160,7 +161,7 @@ def test_specs_create_get_delete(access_token, spec_id):
 
     # Delete the spec
     test_request = request.Request(
-        f"https://package.api.openalchemy.io/v1/specs/{spec_id}",
+        f"https://package.api.openalchemy.io/v1/specs/{spec_name}",
         headers={"Authorization": f"Bearer {access_token}"},
         method="DELETE",
     )
@@ -170,7 +171,7 @@ def test_specs_create_get_delete(access_token, spec_id):
 
     # Check that the spec can no longer be retrieved
     test_request = request.Request(
-        f"https://package.api.openalchemy.io/v1/specs/{spec_id}",
+        f"https://package.api.openalchemy.io/v1/specs/{spec_name}",
         headers={"Authorization": f"Bearer {access_token}"},
     )
 
@@ -189,7 +190,7 @@ def test_specs_create_get_delete(access_token, spec_id):
         assert json.loads(response.read().decode()) == []
 
 
-def test_specs_versions_create_get_delete(access_token, spec_id):
+def test_specs_versions_create_get_delete(access_token, spec_name):
     """
     GIVEN spec
     WHEN it is created, retrieved and deleted for a specific version
@@ -206,7 +207,7 @@ def test_specs_versions_create_get_delete(access_token, spec_id):
         assert json.loads(response.read().decode()) == []
 
     # Try to upload a spec that is invalid
-    version = "version1"
+    version = "1"
     test_request = request.Request(
         f"https://package.api.openalchemy.io/v1/specs/spec1/versions/{version}",
         data=b"invalid spec",
@@ -233,7 +234,7 @@ def test_specs_versions_create_get_delete(access_token, spec_id):
     }
     spec_str = json.dumps(spec)
     test_request = request.Request(
-        f"https://package.api.openalchemy.io/v1/specs/{spec_id}/versions/{version}",
+        f"https://package.api.openalchemy.io/v1/specs/{spec_name}/versions/{version}",
         data=spec_str.encode(),
         headers={
             "Authorization": f"Bearer {access_token}",
@@ -257,13 +258,14 @@ def test_specs_versions_create_get_delete(access_token, spec_id):
         returned_specs = json.loads(response.read().decode())
         assert len(returned_specs) == 1
         returned_spec = returned_specs[0]
-        assert returned_spec["id"] == spec_id
+        assert returned_spec["name"] == spec_name
+        assert returned_spec["id"] == spec_name
         assert returned_spec["version"] == version
         assert "updated_at" in returned_spec
 
     # Check that the version is listed
     test_request = request.Request(
-        f"https://package.api.openalchemy.io/v1/specs/{spec_id}/versions",
+        f"https://package.api.openalchemy.io/v1/specs/{spec_name}/versions",
         headers={"Authorization": f"Bearer {access_token}"},
     )
 
@@ -272,13 +274,14 @@ def test_specs_versions_create_get_delete(access_token, spec_id):
         returned_specs = json.loads(response.read().decode())
         assert len(returned_specs) == 1
         returned_spec = returned_specs[0]
-        assert returned_spec["id"] == spec_id
+        assert returned_spec["name"] == spec_name
+        assert returned_spec["id"] == spec_name
         assert returned_spec["version"] == version
         assert "updated_at" in returned_spec
 
     # Check that the spec can be retrieved
     test_request = request.Request(
-        f"https://package.api.openalchemy.io/v1/specs/{spec_id}/versions/{version}",
+        f"https://package.api.openalchemy.io/v1/specs/{spec_name}/versions/{version}",
         headers={"Authorization": f"Bearer {access_token}"},
     )
 
