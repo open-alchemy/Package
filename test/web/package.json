@@ -56,6 +56,6 @@
   },
   "dependencies": {
     "@open-alchemy/package-sdk": "^3.1.1",
-    "cypress": "^6.2.0"
+    "cypress": "^6.2.1"
   }
 }
