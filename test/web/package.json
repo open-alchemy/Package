@@ -55,7 +55,7 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
-    "@open-alchemy/package-sdk": "^3.1.1",
+    "@open-alchemy/package-sdk": "^4.0.1",
     "cypress": "^6.2.0"
   }
 }
