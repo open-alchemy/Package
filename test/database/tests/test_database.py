@@ -75,7 +75,7 @@ def test_spec_create_count_models_get_latest_version_list_versions_delete(sub):
         is True
     )
 
-    assert database_instance.get_latest_spec_version(sub=sub, id_=name) == version
+    assert database_instance.get_latest_spec_version(sub=sub, name=name) == version
 
     infos = database_instance.list_spec_versions(sub=sub, name=name)
     assert len(infos) == 1
