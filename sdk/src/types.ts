@@ -1,5 +1,6 @@
 export {
   SpecInfo,
+  SpecName,
   SpecId,
   SpecValue,
   SpecVersion,
