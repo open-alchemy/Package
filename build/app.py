@@ -9,6 +9,7 @@ from urllib import parse
 
 import boto3
 import library
+from botocore import client
 
 S3_CLIENT = boto3.client("s3")
 
@@ -298,7 +299,10 @@ def main(event, _context):
     """Handle request."""
     build_path = setup("/tmp")
     notification = parse_event(event)
-    spec_path = retrieve_spec(notification, build_path)
+    try:
+        spec_path = retrieve_spec(notification, build_path)
+    except client.ClientError:
+        return
     packages = library.generate(notification.object_key, spec_path)
     upload_packages(notification, packages)
     spec_exists_result = spec_exists(notification)
