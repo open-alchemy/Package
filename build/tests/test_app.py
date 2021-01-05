@@ -386,8 +386,8 @@ def test_upload_packages(monkeypatch):
 
 SPEC_EXISTS_ERROR_TESTS = [
     pytest.param(None, id="response not dict"),
-    pytest.param({}, id="response Contents missing"),
-    pytest.param({"Contents": None}, id="response Contents not list"),
+    pytest.param({}, id="response KeyCount missing"),
+    pytest.param({"KeyCount": None}, id="response KeyCount not int"),
 ]
 
 
@@ -411,16 +411,16 @@ def test_spec_exists_error(monkeypatch, response):
 
 
 @pytest.mark.parametrize(
-    "contents, expected_result",
+    "response, expected_result",
     [
-        pytest.param([], False, id="empty"),
-        pytest.param([{}, {}], False, id="multiple"),
-        pytest.param([{}], True, id="single item contents"),
+        pytest.param({"KeyCount": 0}, False, id="key count 0"),
+        pytest.param({"KeyCount": 1}, True, id="key count 1"),
+        pytest.param({"KeyCount": 2}, False, id="key count > 1"),
     ],
 )
-def test_spec_exists(contents, expected_result, stubbed_s3_client: stub.Stubber):
+def test_spec_exists(response, expected_result, stubbed_s3_client: stub.Stubber):
     """
-    GIVEN notification and mocked S3 client that returns contents
+    GIVEN notification and mocked S3 client that returns response
     WHEN spec_exists is called with the notification
     THEN the expected result is returned.
     """
@@ -429,9 +429,7 @@ def test_spec_exists(contents, expected_result, stubbed_s3_client: stub.Stubber)
     notification = app.Notification(bucket_name=bucket_name, object_key=object_key)
 
     expected_params = {"Bucket": bucket_name, "Prefix": object_key}
-    stubbed_s3_client.add_response(
-        "list_objects_v2", {"Contents": contents}, expected_params
-    )
+    stubbed_s3_client.add_response("list_objects_v2", response, expected_params)
     stubbed_s3_client.activate()
 
     returned_result = app.spec_exists(notification)

@@ -262,15 +262,15 @@ def spec_exists(notification: Notification) -> bool:
 
     assert isinstance(response, dict), f"response is not dict, {response=}"
 
-    contents_key = "Contents"
-    assert contents_key in response, f"{contents_key} not in response, {response=}"
-    contents = response[contents_key]
+    key_count_key = "KeyCount"
+    assert key_count_key in response, f"{key_count_key} not in response, {response=}"
+    key_count = response[key_count_key]
 
     assert isinstance(
-        contents, list
-    ), f"response.{contents_key} is not dict, {contents=}, {response=}"
+        key_count, int
+    ), f"response.{key_count_key} is not int, {key_count=}, {response=}"
 
-    return len(contents) == 1
+    return key_count == 1
 
 
 def delete_packages_if_spec_deleted(
