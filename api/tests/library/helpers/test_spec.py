@@ -41,6 +41,7 @@ LOAD_ERROR_TESTS = [
 @pytest.mark.parametrize(
     "language, spec_str, expected_exception, expected_reason", LOAD_ERROR_TESTS
 )
+@pytest.mark.helpers
 def test_load_error(language, spec_str, expected_exception, expected_reason):
     """
     GIVEN language and spec string
@@ -68,6 +69,7 @@ LOAD_TESTS = [
 
 
 @pytest.mark.parametrize("language, spec_str", LOAD_TESTS)
+@pytest.mark.helpers
 def test_load(language, spec_str):
     """
     GIVEN language and spec string
@@ -79,6 +81,31 @@ def test_load(language, spec_str):
     assert returned_spec == {"key": "value"}
 
 
+CALC_VERSION_TESTS = [
+    pytest.param("1", "1", id="number"),
+    pytest.param("french toast", "440005914211", id="non sense value"),
+    pytest.param(" 1", "1", id="whitespace padded number"),
+    pytest.param("a", "97", id="character"),
+    pytest.param("aaaaa", "418245599585", id="max length string"),
+    pytest.param("aaaaaa", "418245599585", id="loner than max length string"),
+]
+
+
+@pytest.mark.parametrize("value, expected_result", CALC_VERSION_TESTS)
+@pytest.mark.helpers
+@pytest.mark.helpers
+def test_calc_version(value, expected_result):
+    """
+    GIVEN version
+    WHEN calc_version is called with the version
+    THEN the expected result is returned.
+    """
+    returned_result = spec.calc_version(value)
+
+    assert returned_result == expected_result
+
+
+@pytest.mark.helpers
 def test_process_invalid_str():
     """
     GIVEN invalid spec string
@@ -91,6 +118,7 @@ def test_process_invalid_str():
     assert "INVAID" in str(exc)
 
 
+@pytest.mark.helpers
 def test_process_invalid_schemas():
     """
     GIVEN spec string
@@ -103,6 +131,7 @@ def test_process_invalid_schemas():
     assert "not valid" in str(exc)
 
 
+@pytest.mark.helpers
 def test_process():
     """
     GIVEN spec string
@@ -128,7 +157,7 @@ def test_process():
 
     returned_result = spec.process(spec_str=spec_str, language="JSON")
 
-    assert returned_result.version == version
+    assert returned_result.version == "508508140393"
     assert returned_result.title == title
     assert returned_result.description == description
     assert f'"{version}"' in returned_result.spec_str
@@ -222,6 +251,7 @@ def test_process():
         ),
     ],
 )
+@pytest.mark.helpers
 def test_process_model_count(schemas, expected_model_count):
     """
     GIVEN schemas
@@ -235,6 +265,7 @@ def test_process_model_count(schemas, expected_model_count):
     assert returned_result.model_count == expected_model_count
 
 
+@pytest.mark.helpers
 def test_prepare():
     """
     GIVEN spec string and version

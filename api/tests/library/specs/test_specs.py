@@ -18,7 +18,7 @@ def test_list_(_clean_specs_table):
     """
     user = "user 1"
     spec_name = "spec name 1"
-    version = "version 1"
+    version = "1"
     model_count = 1
     package_database.get().create_update_spec(
         sub=user, name=spec_name, version=version, model_count=model_count
@@ -48,7 +48,7 @@ def test_list_miss(_clean_specs_table):
     user = "user 1"
     spec_name = "spec name 1"
     package_database.get().create_update_spec(
-        sub="user 2", name=spec_name, version="version 1", model_count=1
+        sub="user 2", name=spec_name, version="1", model_count=1
     )
 
     response = specs.list_(user=user)
@@ -90,7 +90,7 @@ def test_get(_clean_specs_table):
     """
     user = "user 1"
     spec_name = "spec name 1"
-    version = "version 1"
+    version = "1"
     package_database.get().create_update_spec(
         sub=user, name=spec_name, version=version, model_count=1
     )
@@ -106,7 +106,7 @@ def test_get(_clean_specs_table):
 
     assert response.status_code == 200
     assert response.mimetype == "text/plain"
-    assert f"version: {version}" in response.data.decode()
+    assert f"version: '{version}'" in response.data.decode()
     assert "key: value" in response.data.decode()
 
 
@@ -163,7 +163,7 @@ def test_get_storage_facade_error(_clean_specs_table, monkeypatch):
     """
     user = "user 1"
     spec_name = "spec name 1"
-    version = "version 1"
+    version = "1"
     package_database.get().create_update_spec(
         sub=user, name=spec_name, version=version, model_count=1
     )
@@ -187,7 +187,7 @@ def test_get_storage_facade_miss(_clean_specs_table):
     """
     user = "user 1"
     spec_name = "spec name 1"
-    version = "version 1"
+    version = "1"
     package_database.get().create_update_spec(
         sub=user, name=spec_name, version=version, model_count=1
     )
@@ -211,7 +211,7 @@ def test_put(monkeypatch, _clean_specs_table):
     mock_headers = {"X-LANGUAGE": "JSON"}
     mock_request.headers = mock_headers
     monkeypatch.setattr(server.Request, "request", mock_request)
-    version = "version 1"
+    version = "1"
     title = "title 1"
     description = "description 1"
     spec = {
@@ -288,7 +288,7 @@ def test_put_too_many_models_error(monkeypatch, _clean_specs_table):
     mock_headers = {"X-LANGUAGE": "JSON"}
     mock_request.headers = mock_headers
     monkeypatch.setattr(server.Request, "request", mock_request)
-    version = "version 1"
+    version = "1"
     schemas = {
         "Schema": {
             "type": "object",
@@ -302,7 +302,7 @@ def test_put_too_many_models_error(monkeypatch, _clean_specs_table):
     spec_name = "id 1"
     user = "user 1"
     package_database.get().create_update_spec(
-        sub=user, name=spec_name, version="version 1", model_count=100
+        sub=user, name=spec_name, version="1", model_count=100
     )
 
     response = specs.put(body=body.encode(), spec_name=spec_name, user=user)
@@ -325,7 +325,7 @@ def test_put_database_count_error(monkeypatch, _clean_specs_table):
     mock_headers = {"X-LANGUAGE": "JSON"}
     mock_request.headers = mock_headers
     monkeypatch.setattr(server.Request, "request", mock_request)
-    version = "version 1"
+    version = "1"
     schemas = {
         "Schema": {
             "type": "object",
@@ -366,7 +366,7 @@ def test_put_storage_error(monkeypatch, _clean_specs_table):
     mock_headers = {"X-LANGUAGE": "JSON"}
     mock_request.headers = mock_headers
     monkeypatch.setattr(server.Request, "request", mock_request)
-    version = "version 1"
+    version = "1"
     schemas = {
         "Schema": {
             "type": "object",
@@ -405,7 +405,7 @@ def test_put_database_update_error(monkeypatch, _clean_specs_table):
     mock_headers = {"X-LANGUAGE": "JSON"}
     mock_request.headers = mock_headers
     monkeypatch.setattr(server.Request, "request", mock_request)
-    version = "version 1"
+    version = "1"
     spec = {
         "info": {"version": version},
         "components": {
@@ -453,7 +453,7 @@ def test_delete(_clean_specs_table):
     """
     spec_name = "id 1"
     user = "user 1"
-    version = "version 1"
+    version = "1"
     package_database.get().create_update_spec(
         sub=user, name=spec_name, version=version, model_count=1
     )
@@ -481,7 +481,7 @@ def test_delete_database_error(monkeypatch, _clean_specs_table):
     """
     spec_name = "id 1"
     user = "user 1"
-    version = "version 1"
+    version = "1"
     mock_database_delete_spec = mock.MagicMock()
     mock_database_delete_spec.side_effect = package_database.exceptions.BaseError
     monkeypatch.setattr(
@@ -512,7 +512,7 @@ def test_delete_storage_error(monkeypatch, _clean_specs_table):
     """
     spec_name = "id 1"
     user = "user 1"
-    version = "version 1"
+    version = "1"
     package_database.get().create_update_spec(
         sub=user, name=spec_name, version=version, model_count=1
     )

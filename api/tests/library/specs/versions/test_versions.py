@@ -18,7 +18,7 @@ def test_list_(_clean_specs_table):
     """
     user = "user 1"
     spec_name = "spec name 1"
-    version = "version 1"
+    version = "1"
     model_count = 1
     package_database.get().create_update_spec(
         sub=user, name=spec_name, version=version, model_count=model_count
@@ -88,7 +88,7 @@ def test_get():
     """
     user = "user 1"
     spec_name = "spec name 1"
-    version = "version 1"
+    version = "1"
     spec = {"key": "value"}
     storage.get_storage_facade().create_update_spec(
         user=user,
@@ -101,7 +101,7 @@ def test_get():
 
     assert response.status_code == 200
     assert response.mimetype == "text/plain"
-    assert f"version: {version}" in response.data.decode()
+    assert f"version: '{version}'" in response.data.decode()
     assert "key: value" in response.data.decode()
 
 
@@ -114,7 +114,7 @@ def test_get_storage_facade_error(monkeypatch):
     """
     user = "user 1"
     spec_name = "spec name 1"
-    version = "version 1"
+    version = "1"
     mock_storage_get_spec = mock.MagicMock()
     mock_storage_get_spec.side_effect = storage.exceptions.StorageError
     monkeypatch.setattr(storage.get_storage_facade(), "get_spec", mock_storage_get_spec)
@@ -135,7 +135,7 @@ def test_get_storage_facade_miss(_clean_specs_table):
     """
     user = "user 1"
     spec_name = "spec name 1"
-    version = "version 1"
+    version = "1"
 
     response = versions.get(user=user, spec_name=spec_name, version=version)
 
@@ -156,7 +156,7 @@ def test_put(monkeypatch, _clean_specs_table):
     mock_headers = {"X-LANGUAGE": "JSON"}
     mock_request.headers = mock_headers
     monkeypatch.setattr(server.Request, "request", mock_request)
-    version = "version 1"
+    version = "1"
     title = "title 1"
     description = "description 1"
     spec = {
@@ -216,7 +216,7 @@ def test_put_invalid_spec_error(monkeypatch):
     body = "body 1"
     spec_name = "id 1"
     user = "user 1"
-    version = "version 1"
+    version = "1"
 
     response = versions.put(
         body=body.encode(), spec_name=spec_name, version=version, user=user
@@ -238,7 +238,7 @@ def test_put_version_mismatch_error(monkeypatch):
     mock_headers = {"X-LANGUAGE": "JSON"}
     mock_request.headers = mock_headers
     monkeypatch.setattr(server.Request, "request", mock_request)
-    version_1 = "version 1"
+    version_1 = "1"
     schemas = {
         "Schema": {
             "type": "object",
@@ -274,7 +274,7 @@ def test_put_too_many_models_error(monkeypatch, _clean_specs_table):
     mock_headers = {"X-LANGUAGE": "JSON"}
     mock_request.headers = mock_headers
     monkeypatch.setattr(server.Request, "request", mock_request)
-    version = "version 1"
+    version = "1"
     schemas = {
         "Schema": {
             "type": "object",
@@ -288,7 +288,7 @@ def test_put_too_many_models_error(monkeypatch, _clean_specs_table):
     spec_name = "id 1"
     user = "user 1"
     package_database.get().create_update_spec(
-        sub=user, name=spec_name, version="version 1", model_count=100
+        sub=user, name=spec_name, version="1", model_count=100
     )
 
     response = versions.put(
@@ -313,7 +313,7 @@ def test_put_database_count_error(monkeypatch, _clean_specs_table):
     mock_headers = {"X-LANGUAGE": "JSON"}
     mock_request.headers = mock_headers
     monkeypatch.setattr(server.Request, "request", mock_request)
-    version = "version 1"
+    version = "1"
     schemas = {
         "Schema": {
             "type": "object",
@@ -356,7 +356,7 @@ def test_put_storage_error(monkeypatch, _clean_specs_table):
     mock_headers = {"X-LANGUAGE": "JSON"}
     mock_request.headers = mock_headers
     monkeypatch.setattr(server.Request, "request", mock_request)
-    version = "version 1"
+    version = "1"
     schemas = {
         "Schema": {
             "type": "object",
@@ -397,7 +397,7 @@ def test_put_database_update_error(monkeypatch, _clean_specs_table):
     mock_headers = {"X-LANGUAGE": "JSON"}
     mock_request.headers = mock_headers
     monkeypatch.setattr(server.Request, "request", mock_request)
-    version = "version 1"
+    version = "1"
     spec = {
         "info": {"version": version},
         "components": {

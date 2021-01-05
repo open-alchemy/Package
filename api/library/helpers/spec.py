@@ -7,6 +7,7 @@ import typing
 import open_alchemy
 import yaml
 from open_alchemy import build
+from packaging import version as packaging_version
 from yaml import parser, scanner
 
 from .. import exceptions, types
@@ -65,6 +66,23 @@ class TSpecInfo:
     model_count: types.TSpecModelCount
 
 
+def calc_version(value: types.TSpecVersion) -> str:
+    """
+    Validate the version.
+
+    Args:
+        value: The version to validate.
+
+    Returns:
+        Whether the version is valid.
+
+    """
+    try:
+        return packaging_version.Version(value).public
+    except packaging_version.InvalidVersion:
+        return str(int.from_bytes(value[0:5].encode(), "big"))
+
+
 def process(*, spec_str: str, language: str) -> TSpecInfo:
     """
     Check that the spec is valid and calculates the version.
@@ -81,13 +99,15 @@ def process(*, spec_str: str, language: str) -> TSpecInfo:
         raise exceptions.LoadSpecError(f"the schema is not valid, {exc}") from exc
     spec_info = build.calculate_spec_info(schemas=schemas, spec=spec)
 
+    version = calc_version(spec_info.version)
+
     model_count = spec_info.spec_str.count('"x-tablename":') + spec_info.spec_str.count(
         '"x-inherits":'
     )
 
     return TSpecInfo(
         spec_str=spec_info.spec_str,
-        version=spec_info.version,
+        version=version,
         title=spec_info.title,
         description=spec_info.description,
         model_count=model_count,
