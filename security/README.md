@@ -184,3 +184,11 @@ Configures the package to use a dummy service secret and yields it.
 #### `_service_secret`
 
 The same as `service_secret` except that it is prefix with a leading `_`.
+
+#### `access_token`
+
+Provides an access token with admin access to the package api. Requires the
+following environment variables:
+
+- `TEST_USERNAME`: a username from the user pool.
+- `TEST_PASSWORD`: the password for the user.
