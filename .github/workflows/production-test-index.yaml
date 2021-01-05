@@ -1,0 +1,36 @@
+name: Index Periodic Production Tests
+
+on:
+  schedule:
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: install pipenv
+        run: |
+          python -m pip install --upgrade pip
+          pip install pipenv
+      - name: install dependencies
+        working-directory: ./test/index/
+        env:
+          PIPENV_VENV_IN_PROJECT: 1
+        run: |
+          pipenv install --dev
+      - name: Run tests
+        working-directory: ./test/index/
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-1"
+          TEST_USERNAME: ${{ secrets.TEST_USERNAME_INDEX }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD_INDEX }}
+        run: |
+          pipenv run test
