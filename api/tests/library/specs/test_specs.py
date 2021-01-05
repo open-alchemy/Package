@@ -20,7 +20,7 @@ def test_list_(_clean_specs_table):
     version = "version 1"
     model_count = 1
     package_database.get().create_update_spec(
-        sub=user, id_=spec_id, version=version, model_count=model_count
+        sub=user, name=spec_id, version=version, model_count=model_count
     )
 
     response = specs.list_(user=user)
@@ -45,7 +45,7 @@ def test_list_miss(_clean_specs_table):
     user = "user 1"
     spec_id = "spec id 1"
     package_database.get().create_update_spec(
-        sub="user 2", id_=spec_id, version="version 1", model_count=1
+        sub="user 2", name=spec_id, version="version 1", model_count=1
     )
 
     response = specs.list_(user=user)
@@ -87,7 +87,7 @@ def test_get(_clean_specs_table):
     spec_id = "spec id 1"
     version = "version 1"
     package_database.get().create_update_spec(
-        sub=user, id_=spec_id, version=version, model_count=1
+        sub=user, name=spec_id, version=version, model_count=1
     )
     spec = {"key": "value"}
     storage.get_storage_facade().create_update_spec(
@@ -157,7 +157,7 @@ def test_get_storage_facade_error(_clean_specs_table, monkeypatch):
     spec_id = "spec id 1"
     version = "version 1"
     package_database.get().create_update_spec(
-        sub=user, id_=spec_id, version=version, model_count=1
+        sub=user, name=spec_id, version=version, model_count=1
     )
     mock_storage_get_spec = mock.MagicMock()
     mock_storage_get_spec.side_effect = storage.exceptions.StorageError
@@ -180,7 +180,7 @@ def test_get_storage_facade_miss(_clean_specs_table):
     spec_id = "spec id 1"
     version = "version 1"
     package_database.get().create_update_spec(
-        sub=user, id_=spec_id, version=version, model_count=1
+        sub=user, name=spec_id, version=version, model_count=1
     )
 
     response = specs.get(user=user, spec_id=spec_id)
@@ -289,7 +289,7 @@ def test_put_too_many_models_error(monkeypatch, _clean_specs_table):
     spec_id = "id 1"
     user = "user 1"
     package_database.get().create_update_spec(
-        sub=user, id_=spec_id, version="version 1", model_count=100
+        sub=user, name=spec_id, version="version 1", model_count=100
     )
 
     response = specs.put(body=body.encode(), spec_id=spec_id, user=user)
@@ -438,7 +438,7 @@ def test_delete(_clean_specs_table):
     user = "user 1"
     version = "version 1"
     package_database.get().create_update_spec(
-        sub=user, id_=spec_id, version=version, model_count=1
+        sub=user, name=spec_id, version=version, model_count=1
     )
     storage.get_storage_facade().create_update_spec(
         user=user, spec_id=spec_id, version=version, spec_str="spec str 1"
@@ -495,7 +495,7 @@ def test_delete_storage_error(monkeypatch, _clean_specs_table):
     user = "user 1"
     version = "version 1"
     package_database.get().create_update_spec(
-        sub=user, id_=spec_id, version=version, model_count=1
+        sub=user, name=spec_id, version=version, model_count=1
     )
     mock_storage_delete_spec = mock.MagicMock()
     mock_storage_delete_spec.side_effect = storage.exceptions.StorageError

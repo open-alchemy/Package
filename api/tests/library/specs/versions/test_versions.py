@@ -19,7 +19,7 @@ def test_list_(_clean_specs_table):
     version = "version 1"
     model_count = 1
     package_database.get().create_update_spec(
-        sub=user, id_=spec_id, version=version, model_count=model_count
+        sub=user, name=spec_id, version=version, model_count=model_count
     )
 
     response = versions.list_(user=user, spec_id=spec_id)
@@ -275,7 +275,7 @@ def test_put_too_many_models_error(monkeypatch, _clean_specs_table):
     spec_id = "id 1"
     user = "user 1"
     package_database.get().create_update_spec(
-        sub=user, id_=spec_id, version="version 1", model_count=100
+        sub=user, name=spec_id, version="version 1", model_count=100
     )
 
     response = versions.put(

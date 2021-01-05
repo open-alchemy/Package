@@ -29,6 +29,98 @@ Python places constraints on what the version of a package can be, see here:
 It can be checked using:
 <https://packaging.pypa.io/en/latest/version.html#packaging.version.Version>.
 
+## Storage Facade
+
+The storage facade abstracts the interface to store specs on S3. It has the
+following use cases:
+
+- create or update a spec,
+- get the value of a spec,
+- delete a spec and
+- get all available versions of a spec.
+
+### Create or Update a Spec
+
+Creates or updates the value of a spec.
+
+Input:
+
+- `user`: the user to create the spec for,
+- `name`: the display name of a spec,
+- `version`: the version of the spec,
+- `value`: the value of the spec.
+
+Output:
+
+Algorithm:
+
+1. calculate the `id` of the spec using
+   <https://packaging.pypa.io/en/latest/utils.html#packaging.utils.canonicalize_name>,
+1. map the `user`, `id` and `version` to the object `key` using
+   `{user}/{id}/{version}-spec.json` and
+1. write the `value` to the storage layer at the `key`.
+
+### Get the Value of a Spec
+
+Retrieves the value of a spec.
+
+Input:
+
+- `user` and,
+- `name`.
+
+Output:
+
+- `value`.
+
+Algorithm:
+
+1. calculate the `id` of the spec using
+   <https://packaging.pypa.io/en/latest/utils.html#packaging.utils.canonicalize_name>,
+1. map the `user`, `id` and `version` to the object `key` using
+   `{user}/{id}/{version}-spec.json` and
+1. retrieve the `value` from the storage layer at the `key`.
+
+### Delete Spec
+
+Deletes all versions of the spec and any other related items.
+
+Input:
+
+- `user` and,
+- `name`.
+
+Output:
+
+Algorithm:
+
+1. calculate the `id` of the spec using
+   <https://packaging.pypa.io/en/latest/utils.html#packaging.utils.canonicalize_name>,
+1. map the `user` and `id` to a prefix using `{user}/{id}/` and
+1. delete all objects that match.
+
+### Get Spec Versions
+
+Retrieves all versions available for the spec.
+
+Input:
+
+- `user` and,
+- `name`.
+
+Output:
+
+- a list of `version` available for the spec.
+
+Algorithm:
+
+1. calculate the `id` of the spec using
+   <https://packaging.pypa.io/en/latest/utils.html#packaging.utils.canonicalize_name>,
+1. map the `user` and `id` to a prefix using `{user}/{id}/`,
+1. define a suffix of `-spec.json`,
+1. retrieve all `key`s that match the prefix and suffix and
+1. retrieve the `version` from the `key` by removing the prefix and suffix.
+
 ## Endpoints
 
 ### `/credentials/default

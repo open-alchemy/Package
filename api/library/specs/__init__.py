@@ -47,7 +47,7 @@ def get(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
 
     """
     try:
-        version = package_database.get().get_latest_spec_version(sub=user, id_=spec_id)
+        version = package_database.get().get_latest_spec_version(sub=user, name=spec_id)
         spec_str = storage.get_storage_facade().get_spec(
             user=user, spec_id=spec_id, version=version
         )
@@ -129,7 +129,7 @@ def put(body: bytearray, spec_id: types.TSpecId, user: types.TUser) -> server.Re
         # Write an update into the database
         package_database.get().create_update_spec(
             sub=user,
-            id_=spec_id,
+            name=spec_id,
             version=spec_info.version,
             title=spec_info.title,
             description=spec_info.description,
@@ -172,7 +172,7 @@ def delete(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
 
     """
     try:
-        package_database.get().delete_spec(sub=user, id_=spec_id)
+        package_database.get().delete_spec(sub=user, name=spec_id)
     except package_database.exceptions.BaseError:
         pass
     try:

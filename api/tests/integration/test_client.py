@@ -100,7 +100,7 @@ def test_specs_get(client, _clean_specs_table):
     version = "version 1"
     model_count = 1
     package_database.get().create_update_spec(
-        sub=sub, id_=spec_id, version=version, model_count=model_count
+        sub=sub, name=spec_id, version=version, model_count=model_count
     )
     token = jwt.encode({"sub": sub}, "secret 1")
 
@@ -133,7 +133,7 @@ def test_specs_spec_id_get(client, _clean_specs_table):
     spec_id = "spec id 1"
     version = "version 1"
     package_database.get().create_update_spec(
-        sub=sub, id_=spec_id, version=version, model_count=1
+        sub=sub, name=spec_id, version=version, model_count=1
     )
     spec = {"key": "value"}
     storage.get_storage_facade().create_update_spec(
@@ -209,7 +209,7 @@ def test_specs_spec_id_delete(client, _clean_specs_table):
     spec_id = "spec id 1"
     version = "version 1"
     package_database.get().create_update_spec(
-        sub=sub, id_=spec_id, version=version, model_count=1
+        sub=sub, name=spec_id, version=version, model_count=1
     )
     spec = {"key": "value"}
     storage.get_storage_facade().create_update_spec(
@@ -250,7 +250,7 @@ def test_specs_spec_id_versions_get(client, _clean_specs_table):
     version = "version 1"
     model_count = 1
     package_database.get().create_update_spec(
-        sub=sub, id_=spec_id, version=version, model_count=model_count
+        sub=sub, name=spec_id, version=version, model_count=model_count
     )
     token = jwt.encode({"sub": sub}, "secret 1")
 

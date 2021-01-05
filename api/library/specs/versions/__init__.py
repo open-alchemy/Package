@@ -24,7 +24,7 @@ def list_(spec_id: types.TSpecId, user: types.TUser) -> server.Response:
     try:
         return server.Response(
             json.dumps(
-                package_database.get().list_spec_versions(sub=user, id_=spec_id)
+                package_database.get().list_spec_versions(sub=user, name=spec_id)
             ),
             status=200,
             mimetype="application/json",
@@ -144,7 +144,7 @@ def put(
         # Write an update into the database
         package_database.get().create_update_spec(
             sub=user,
-            id_=spec_id,
+            name=spec_id,
             version=spec_info.version,
             title=spec_info.title,
             description=spec_info.description,
