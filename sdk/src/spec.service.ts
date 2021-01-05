@@ -1,18 +1,18 @@
 import axios from 'axios';
 import { from, Observable } from 'rxjs';
 
-import { SpecId, SpecValue, SpecInfo, SpecVersion } from './openapi/models';
+import { SpecName, SpecValue, SpecInfo, SpecVersion } from './openapi/models';
 
 import { SpecError } from './errors';
 import { decodeResponse } from './helpers';
 
 interface ICalculateUrlParams {
-  id: SpecId;
+  name: SpecName;
   version?: SpecVersion;
 }
 
 function calculateUrl(params: ICalculateUrlParams): string {
-  let url = `https://package.api.openalchemy.io/v1/specs/${params.id}`;
+  let url = `https://package.api.openalchemy.io/v1/specs/${params.name}`;
   if (params.version) {
     url = `${url}/versions/${params.version}`;
   }
@@ -21,18 +21,18 @@ function calculateUrl(params: ICalculateUrlParams): string {
 
 interface IGetParams {
   accessToken: string;
-  id: SpecId;
+  name: SpecName;
   version?: SpecVersion;
 }
 
 interface IGetVersionsParams {
   accessToken: string;
-  id: SpecId;
+  name: SpecName;
 }
 
 interface IPutParams {
   accessToken: string;
-  id: SpecId;
+  name: SpecName;
   value: SpecValue;
   language: 'JSON' | 'YAML';
   version?: SpecVersion;
@@ -40,7 +40,7 @@ interface IPutParams {
 
 interface IDeleteParams {
   accessToken: string;
-  id: SpecId;
+  name: SpecName;
 }
 
 export class SpecService {
@@ -50,7 +50,7 @@ export class SpecService {
    * Throws SpecError is something goes wrong whilst loading the spec
    *
    * @param params.accessToken The access token for the package service
-   * @param params.id Unique identifier for the spec
+   * @param params.name Display name of the spec
    * @param params.version (optional) Version for the spec
    */
   async get(params: IGetParams): Promise<SpecValue> {
@@ -77,12 +77,12 @@ export class SpecService {
    * Throws SpecError is something goes wrong whilst loading the versions of the spec
    *
    * @param params.accessToken The access token for the package service
-   * @param params.id Unique identifier for the spec
+   * @param params.name Display name of the spec
    */
   async getVersions(params: IGetVersionsParams): Promise<SpecInfo[]> {
     const response = await axios
       .get<SpecInfo[]>(
-        `https://package.api.openalchemy.io/v1/specs/${params.id}/versions`,
+        `https://package.api.openalchemy.io/v1/specs/${params.name}/versions`,
         {
           headers: { Authorization: `Bearer ${params.accessToken}` },
         }
@@ -106,7 +106,7 @@ export class SpecService {
    * Throws SpecError is something goes wrong whilst creating or updating the spec
    *
    * @param params.accessToken The access token for the package service
-   * @param params.id Unique identifier for the spec
+   * @param params.name Display name of the spec
    * @param params.value The value of the spec
    * @param params.language The language the spec is in
    * @param params.version (optional) Version for the spec
@@ -141,16 +141,13 @@ export class SpecService {
    * Throws SpecError is something goes wrong whilst deleting the spec
    *
    * @param params.accessToken The access token for the package service
-   * @param params.id Unique identifier for the spec
+   * @param params.name Display name of the spec
    */
   async delete(params: IDeleteParams): Promise<void> {
     await axios
-      .delete<void>(
-        `https://package.api.openalchemy.io/v1/specs/${params.id}`,
-        {
-          headers: { Authorization: `Bearer ${params.accessToken}` },
-        }
-      )
+      .delete<void>(calculateUrl(params), {
+        headers: { Authorization: `Bearer ${params.accessToken}` },
+      })
       .catch((error) => {
         const message = decodeResponse(error.response.data);
         throw new SpecError(`error whilst deleting the spec: ${message}`);

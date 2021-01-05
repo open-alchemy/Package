@@ -7,15 +7,15 @@ export interface paths {
   '/specs': {
     get: operations['library.specs.list_'];
   };
-  '/specs/{spec_id}': {
+  '/specs/{spec_name}': {
     get: operations['library.specs.get'];
     put: operations['library.specs.put'];
     delete: operations['library.specs.delete'];
   };
-  '/specs/{spec_id}/versions': {
+  '/specs/{spec_name}/versions': {
     get: operations['library.specs.versions.list_'];
   };
-  '/specs/{spec_id}/versions/{version}': {
+  '/specs/{spec_name}/versions/{version}': {
     get: operations['library.specs.versions.get'];
     put: operations['library.specs.versions.put'];
   };
@@ -45,7 +45,7 @@ export interface operations {
   'library.specs.get': {
     parameters: {
       path: {
-        spec_id: components['parameters']['SpecId'];
+        spec_name: components['parameters']['SpecName'];
       };
     };
     responses: {
@@ -72,7 +72,7 @@ export interface operations {
   'library.specs.put': {
     parameters: {
       path: {
-        spec_id: components['parameters']['SpecId'];
+        spec_name: components['parameters']['SpecName'];
       };
       header: {
         /**
@@ -118,7 +118,7 @@ export interface operations {
   'library.specs.delete': {
     parameters: {
       path: {
-        spec_id: components['parameters']['SpecId'];
+        spec_name: components['parameters']['SpecName'];
       };
     };
     responses: {
@@ -137,7 +137,7 @@ export interface operations {
   'library.specs.versions.list_': {
     parameters: {
       path: {
-        spec_id: components['parameters']['SpecId'];
+        spec_name: components['parameters']['SpecName'];
       };
     };
     responses: {
@@ -164,7 +164,7 @@ export interface operations {
   'library.specs.versions.get': {
     parameters: {
       path: {
-        spec_id: components['parameters']['SpecId'];
+        spec_name: components['parameters']['SpecName'];
         version: components['parameters']['SpecVersion'];
       };
     };
@@ -192,7 +192,7 @@ export interface operations {
   'library.specs.versions.put': {
     parameters: {
       path: {
-        spec_id: components['parameters']['SpecId'];
+        spec_name: components['parameters']['SpecName'];
         version: components['parameters']['SpecVersion'];
       };
       header: {
@@ -271,9 +271,9 @@ export interface operations {
 export interface components {
   parameters: {
     /**
-     * The id of the spec
+     * The display name of the spec
      */
-    SpecId: components['schemas']['SpecId'];
+    SpecName: components['schemas']['SpecName'];
     /**
      * The version of the spec
      */
@@ -281,7 +281,11 @@ export interface components {
   };
   schemas: {
     /**
-     * The id of an OpenAPI specification
+     * The display name of an OpenAPI specification
+     */
+    SpecName: string;
+    /**
+     * The id of an OpenAPI specification (it is the canonical version of the spec name)
      */
     SpecId: string;
     /**
@@ -312,6 +316,7 @@ export interface components {
      * Information about a an OpenAPI specification
      */
     SpecInfo: {
+      name: components['schemas']['SpecName'];
       id: components['schemas']['SpecId'];
       version: components['schemas']['SpecVersion'];
       updated_at?: components['schemas']['SpecUpdatedAt'];

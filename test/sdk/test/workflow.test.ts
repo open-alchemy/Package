@@ -7,7 +7,7 @@ import {
 
 import { getAccessToken } from './helper';
 
-const VERSION = 'version 1';
+const VERSION = '1';
 const TITLE = 'title 1';
 const DESCRIPTION = 'description 1';
 const SPEC_VALUE = {
@@ -30,7 +30,7 @@ const SPEC_VALUE_STRING = JSON.stringify(SPEC_VALUE);
 
 describe('create spec', () => {
   let accessToken: string;
-  const specId = 'sdk spec id 1';
+  const specName = 'sdkSpec1';
   let specsService: SpecsService;
   let specService: SpecService;
 
@@ -44,19 +44,19 @@ describe('create spec', () => {
   });
 
   afterEach(async () => {
-    await specService.delete({ accessToken, id: specId });
+    await specService.delete({ accessToken, name: specName });
   });
 
   [
     {
       description: 'without version',
       expectation: 'should create, retrieve and delete the spec as requested',
-      paramsBase: { id: specId },
+      paramsBase: { name: specName },
     },
     {
       description: 'with version',
       expectation: 'should create, retrieve and delete the spec as requested',
-      paramsBase: { id: specId, version: VERSION },
+      paramsBase: { name: specName, version: VERSION },
     },
   ].forEach(({ description, expectation, paramsBase }) => {
     describe(description, () => {
@@ -88,7 +88,8 @@ describe('create spec', () => {
         const returnedSpecInfos = await specsService.list({ accessToken });
         expect(returnedSpecInfos.length).toEqual(1);
         const returnedSpecInfo = returnedSpecInfos[0];
-        expect(returnedSpecInfo.id).toEqual(specId);
+        expect(returnedSpecInfo.name).toEqual(specName);
+        expect(returnedSpecInfo.id).toEqual(specName.toLowerCase());
         expect(returnedSpecInfo.version).toEqual(VERSION);
         expect(returnedSpecInfo.title).toEqual(TITLE);
         expect(returnedSpecInfo.description).toEqual(DESCRIPTION);
@@ -108,11 +109,11 @@ describe('create spec', () => {
         expect(returnedSpecValue).toContain(': schema');
 
         // Delete the spec
-        await specService.delete({ id: specId, accessToken });
+        await specService.delete({ name: specName, accessToken });
 
         // Check that the spec can no longer be retrieved
         await expect(
-          specService.get({ id: specId, accessToken })
+          specService.get({ name: specName, accessToken })
         ).rejects.toBeInstanceOf(SpecError);
 
         // Check that the specs are empty
