@@ -12,7 +12,7 @@ import pytest
 @pytest.fixture()
 def spec_id(access_token):
     """Returns a spec id that is cleaned up at the end."""
-    spec_id_value = f"index-spec-id1-{uuid.uuid4()}"
+    spec_id_value = f"IndexSpecId-{uuid.uuid4()}"
 
     yield spec_id_value
 
