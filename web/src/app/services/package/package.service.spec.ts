@@ -137,17 +137,17 @@ describe('PackageService', () => {
     it('should dispatch specs component delete spec', () => {
       testScheduler.run((helpers) => {
         // GIVEN a trigger for specsComponentDeleteSpec
-        const specId = 'spec id 1';
+        const specName = 'spec 1';
         helpers
           .cold('-b')
-          .subscribe(() => service.specsComponentDeleteSpec(specId));
+          .subscribe(() => service.specsComponentDeleteSpec(specName));
 
         // WHEN
 
         // THEN store emits the expected actions
         helpers.expectObservable(store.scannedActions$).toBe('ab', {
           a: { type: '@ngrx/store/init' },
-          b: PackageActions.specsComponentDeleteSpec({ specId }),
+          b: PackageActions.specsComponentDeleteSpec({ specName }),
         });
       });
     });

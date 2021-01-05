@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 
 import * as PackageActions from './package.actions';
 import { PackageState, SpecsState, CredentialsState } from './package.reducer';
-import { SpecId } from './types';
+import { SpecName } from './types';
 import { AppState, selectPackage } from '../app.state';
 
 const selectSpecs = createSelector(
@@ -37,7 +37,7 @@ export class PackageService {
     this.store.dispatch(PackageActions.specsComponentRefresh());
   }
 
-  specsComponentDeleteSpec(specId: SpecId): void {
-    this.store.dispatch(PackageActions.specsComponentDeleteSpec({ specId }));
+  specsComponentDeleteSpec(specName: SpecName): void {
+    this.store.dispatch(PackageActions.specsComponentDeleteSpec({ specName }));
   }
 }

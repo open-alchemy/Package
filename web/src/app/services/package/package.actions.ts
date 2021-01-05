@@ -1,12 +1,12 @@
 import { createAction, props } from '@ngrx/store';
 
-import { SpecInfo, SpecId, Credentials } from './types';
+import { SpecInfo, SpecName, Credentials } from './types';
 
 export const specsComponentOnInit = createAction('[specs component] on init');
 export const specsComponentRefresh = createAction('[specs component] refresh');
 export const specsComponentDeleteSpec = createAction(
   '[specs component] delete spec',
-  props<{ specId: SpecId }>()
+  props<{ specName: SpecName }>()
 );
 
 export const packageApiListSpecsSuccess = createAction(
@@ -16,10 +16,10 @@ export const packageApiListSpecsSuccess = createAction(
 export const packageApiListSpecsError = createAction(
   '[package api] list specs error'
 );
-export const packageApiDeleteSpecsSpecIdSuccess = createAction(
+export const packageApiDeleteSpecsSpecNameSuccess = createAction(
   '[package api] delete specs spec id success'
 );
-export const packageApiDeleteSpecsSpecIdError = createAction(
+export const packageApiDeleteSpecsSpecNameError = createAction(
   '[package api] delete specs spec id error'
 );
 export const packageApiGetCredentialsSuccess = createAction(

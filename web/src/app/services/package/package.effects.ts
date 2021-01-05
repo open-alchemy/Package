@@ -19,7 +19,7 @@ export class PackageEffects {
       ofType(
         PackageActions.specsComponentOnInit.type,
         PackageActions.specsComponentRefresh.type,
-        PackageActions.packageApiDeleteSpecsSpecIdSuccess.type
+        PackageActions.packageApiDeleteSpecsSpecNameSuccess.type
       ),
       switchMap(() =>
         this.specsService
@@ -43,12 +43,12 @@ export class PackageEffects {
         this.specService
           .delete$({
             accessToken: this.oAuthService.getAccessToken(),
-            name: action.specId,
+            name: action.specName,
           })
           .pipe(
-            map(() => PackageActions.packageApiDeleteSpecsSpecIdSuccess()),
+            map(() => PackageActions.packageApiDeleteSpecsSpecNameSuccess()),
             catchError(() =>
-              of(PackageActions.packageApiDeleteSpecsSpecIdError())
+              of(PackageActions.packageApiDeleteSpecsSpecNameError())
             )
           )
       )

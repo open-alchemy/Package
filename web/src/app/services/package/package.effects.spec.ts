@@ -129,7 +129,7 @@ describe('PackageEffects', () => {
         expectation: 'should return single success action actions',
         actionsMarbles: 'a',
         actionsValues: {
-          a: PackageActions.packageApiDeleteSpecsSpecIdSuccess(),
+          a: PackageActions.packageApiDeleteSpecsSpecNameSuccess(),
         },
         specsServiceListReturnValues: [
           { marbles: '-b|', values: { b: SPEC_INFOS_1 } },
@@ -288,14 +288,14 @@ describe('PackageEffects', () => {
         expectation: 'should return single success action actions',
         actionsMarbles: 'a',
         actionsValues: {
-          a: PackageActions.specsComponentDeleteSpec({ specId: 'spec 1' }),
+          a: PackageActions.specsComponentDeleteSpec({ specName: 'spec 1' }),
         },
         specsServiceListReturnValues: [
           { marbles: '-b|', values: { b: undefined } },
         ],
         expectedMarbles: '-b',
         expectedValues: {
-          b: PackageActions.packageApiDeleteSpecsSpecIdSuccess(),
+          b: PackageActions.packageApiDeleteSpecsSpecNameSuccess(),
         },
         expectedCalls: [{ accessToken, name: 'spec 1' }],
       },
@@ -305,12 +305,12 @@ describe('PackageEffects', () => {
         expectation: 'should return single error action actions',
         actionsMarbles: 'a',
         actionsValues: {
-          a: PackageActions.specsComponentDeleteSpec({ specId: 'spec 1' }),
+          a: PackageActions.specsComponentDeleteSpec({ specName: 'spec 1' }),
         },
         specsServiceListReturnValues: [{ marbles: '-#|' }],
         expectedMarbles: '-b',
         expectedValues: {
-          b: PackageActions.packageApiDeleteSpecsSpecIdError(),
+          b: PackageActions.packageApiDeleteSpecsSpecNameError(),
         },
         expectedCalls: [{ accessToken, name: 'spec 1' }],
       },
@@ -320,8 +320,8 @@ describe('PackageEffects', () => {
         expectation: 'should return multiple success action actions',
         actionsMarbles: 'a--d',
         actionsValues: {
-          a: PackageActions.specsComponentDeleteSpec({ specId: 'spec 1' }),
-          d: PackageActions.specsComponentDeleteSpec({ specId: 'spec 2' }),
+          a: PackageActions.specsComponentDeleteSpec({ specName: 'spec 1' }),
+          d: PackageActions.specsComponentDeleteSpec({ specName: 'spec 2' }),
         },
         specsServiceListReturnValues: [
           { marbles: '-b|', values: { b: undefined } },
@@ -329,8 +329,8 @@ describe('PackageEffects', () => {
         ],
         expectedMarbles: '-b--e',
         expectedValues: {
-          b: PackageActions.packageApiDeleteSpecsSpecIdSuccess(),
-          e: PackageActions.packageApiDeleteSpecsSpecIdSuccess(),
+          b: PackageActions.packageApiDeleteSpecsSpecNameSuccess(),
+          e: PackageActions.packageApiDeleteSpecsSpecNameSuccess(),
         },
         expectedCalls: [
           { accessToken, name: 'spec 1' },
@@ -343,8 +343,8 @@ describe('PackageEffects', () => {
         expectation: 'should return single success actions',
         actionsMarbles: 'a--d',
         actionsValues: {
-          a: PackageActions.specsComponentDeleteSpec({ specId: 'spec 1' }),
-          d: PackageActions.specsComponentDeleteSpec({ specId: 'spec 2' }),
+          a: PackageActions.specsComponentDeleteSpec({ specName: 'spec 1' }),
+          d: PackageActions.specsComponentDeleteSpec({ specName: 'spec 2' }),
         },
         specsServiceListReturnValues: [
           { marbles: '-----f|', values: { f: undefined } },
@@ -352,8 +352,8 @@ describe('PackageEffects', () => {
         ],
         expectedMarbles: '----ef',
         expectedValues: {
-          e: PackageActions.packageApiDeleteSpecsSpecIdSuccess(),
-          f: PackageActions.packageApiDeleteSpecsSpecIdSuccess(),
+          e: PackageActions.packageApiDeleteSpecsSpecNameSuccess(),
+          f: PackageActions.packageApiDeleteSpecsSpecNameSuccess(),
         },
         expectedCalls: [
           { accessToken, name: 'spec 1' },
