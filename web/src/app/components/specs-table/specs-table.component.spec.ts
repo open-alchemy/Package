@@ -14,6 +14,11 @@ class AppCredentialsStubComponent {
   @Input() specVersion: SpecVersion | null = null;
 }
 
+@Component({ selector: 'app-spec-name', template: '' })
+class AppSpecNameStubComponent {
+  @Input() specInfo: SpecInfo | null = null;
+}
+
 @Component({ selector: 'app-specs-manage-spec', template: '' })
 class AppSpecsManageSpecStubComponent {
   @Input() specId: SpecId | null = null;
@@ -47,6 +52,7 @@ describe('SpecsTableComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         SpecsTableComponent,
+        AppSpecNameStubComponent,
         AppSpecsManageSpecStubComponent,
         AppCredentialsStubComponent,
       ],
@@ -95,9 +101,17 @@ describe('SpecsTableComponent', () => {
     const tds = trs[1].querySelectorAll('td');
     expect(tds.length).toEqual(component.displayedColumns.length);
     const tdInnerTexts = new Set(Array.from(tds).map((td) => td.innerText));
-    expect(tdInnerTexts).toContain(SPEC_INFO_1.id);
     expect(tdInnerTexts).toContain(SPEC_INFO_1.version);
     expect(tdInnerTexts).toContain(SPEC_INFO_1.model_count.toString());
+    // AND the specInfo is passed to app-spec-name
+    const specNameDebugElement = fixture.debugElement.query(
+      By.directive(AppSpecNameStubComponent)
+    );
+    expect(specNameDebugElement).toBeTruthy();
+    const specNameComponent = specNameDebugElement.injector.get(
+      AppSpecNameStubComponent
+    );
+    expect(specNameComponent.specInfo).toEqual(SPEC_INFO_1);
     // AND the specId is passed to app-specs-manage-spec
     const specsManageSpecDebugElement = fixture.debugElement.query(
       By.directive(AppSpecsManageSpecStubComponent)
@@ -136,8 +150,6 @@ describe('SpecsTableComponent', () => {
     const tds = trs[1].querySelectorAll('td');
     expect(tds.length).toEqual(component.displayedColumns.length);
     const tdInnerTexts = new Set(Array.from(tds).map((td) => td.innerText));
-    expect(tdInnerTexts).toContain(SPEC_INFO_2.id);
-    expect(tdInnerTexts).toContain(SPEC_INFO_2.version);
     expect(tdInnerTexts).toContain(SPEC_INFO_2.title);
     expect(tdInnerTexts).toContain(SPEC_INFO_2.description);
     expect(tdInnerTexts).toContain(
@@ -146,16 +158,6 @@ describe('SpecsTableComponent', () => {
         'medium'
       )
     );
-    expect(tdInnerTexts).toContain(SPEC_INFO_2.model_count.toString());
-    // AND the specId is passed to app-specs-manage-spec
-    const specsManageSpecDebugElement = fixture.debugElement.query(
-      By.directive(AppSpecsManageSpecStubComponent)
-    );
-    expect(specsManageSpecDebugElement).toBeTruthy();
-    const specsManageSpecComponent = specsManageSpecDebugElement.injector.get(
-      AppSpecsManageSpecStubComponent
-    );
-    expect(specsManageSpecComponent.specId).toEqual(SPEC_INFO_2.id);
   });
 
   it('should only show a multiple rows if multiple specs are provided', () => {

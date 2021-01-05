@@ -32,6 +32,7 @@ import { SpecsRefreshButtonComponent } from './components/specs-refresh-button/s
 import { SpecsCreateButtonComponent } from './components/specs-create-button/specs-create-button.component';
 import { SpecsManageSpecComponent } from './components/specs-manage-spec/specs-manage-spec.component';
 import { CredentialsComponent } from './components/credentials/credentials.component';
+import { SpecNameComponent } from './components/spec-name/spec-name.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { CredentialsComponent } from './components/credentials/credentials.compo
     SpecsCreateButtonComponent,
     SpecsManageSpecComponent,
     CredentialsComponent,
+    SpecNameComponent,
   ],
   imports: [
     BrowserModule,
