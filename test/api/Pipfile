@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-boto3 = "1.16.47"
+boto3 = "1.16.48"
 pytest = "6.2.1"
 pyyaml = "5.3.1"
 
