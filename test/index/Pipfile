@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+"open-alchemy.package-security" = "==1.2.1"
+
+[dev-packages]
+pytest = "6.2.1"
+black = "20.8b1"
+
+[requires]
+python_version = "3.9"
+
+[scripts]
+test = "pytest"
+
+[pipenv]
+allow_prereleases = true
