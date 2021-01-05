@@ -72,6 +72,7 @@ from library.facades import storage
         ),
     ],
 )
+@pytest.mark.storage
 def test_list(response, suffix, prefix, expected_prefix, expected_keys):
     """
     GIVEN stubbed s3 client
@@ -91,6 +92,7 @@ def test_list(response, suffix, prefix, expected_prefix, expected_keys):
     assert returned_keys == expected_keys
 
 
+@pytest.mark.storage
 def test_list_multi_page():
     """
     GIVEN stubbed s3 client that has multiple pages
@@ -135,6 +137,7 @@ def test_list_multi_page():
     assert returned_keys == [key1, key2]
 
 
+@pytest.mark.storage
 def test_list_error_core():
     """
     GIVEN request that raises a core error
@@ -152,6 +155,7 @@ def test_list_error_core():
     stubber.assert_no_pending_responses()
 
 
+@pytest.mark.storage
 def test_list_error_client():
     """
     GIVEN stubbed s3 client that raises an error
@@ -170,6 +174,7 @@ def test_list_error_client():
     stubber.assert_no_pending_responses()
 
 
+@pytest.mark.storage
 def test_get_error_core():
     """
     GIVEN request that raises a core error
@@ -189,6 +194,7 @@ def test_get_error_core():
     assert key in str(exc)
 
 
+@pytest.mark.storage
 def test_get_error_client():
     """
     GIVEN stubbed s3 client that raises an error
@@ -209,6 +215,7 @@ def test_get_error_client():
     assert key in str(exc)
 
 
+@pytest.mark.storage
 def test_get():
     """
     GIVEN stubbed s3 client that returns an object
@@ -233,6 +240,7 @@ def test_get():
     assert returned_value == value
 
 
+@pytest.mark.storage
 def test_set_error_core():
     """
     GIVEN request that raises a core error
@@ -250,6 +258,7 @@ def test_set_error_core():
     stubber.assert_no_pending_responses()
 
 
+@pytest.mark.storage
 def test_set_error_client():
     """
     GIVEN stubbed s3 client that raises an error
@@ -268,6 +277,7 @@ def test_set_error_client():
     stubber.assert_no_pending_responses()
 
 
+@pytest.mark.storage
 def test_set():
     """
     GIVEN stubbed s3 client
@@ -289,6 +299,7 @@ def test_set():
     stubber.assert_no_pending_responses()
 
 
+@pytest.mark.storage
 def test_delete_error_core():
     """
     GIVEN request that raises a core error
@@ -308,6 +319,7 @@ def test_delete_error_core():
     assert key in str(exc)
 
 
+@pytest.mark.storage
 def test_delete_error_client():
     """
     GIVEN stubbed s3 client that raises an error
@@ -328,6 +340,7 @@ def test_delete_error_client():
     assert key in str(exc)
 
 
+@pytest.mark.storage
 def test_delete():
     """
     GIVEN stubbed s3 client
@@ -348,6 +361,7 @@ def test_delete():
     stubber.assert_no_pending_responses()
 
 
+@pytest.mark.storage
 def test_delete_all_error_core():
     """
     GIVEN request that raises a core error
@@ -368,6 +382,7 @@ def test_delete_all_error_core():
     assert "keys" in str(exc)
 
 
+@pytest.mark.storage
 def test_delete_all_error_client():
     """
     GIVEN stubbed s3 client that raises an error
@@ -399,6 +414,7 @@ def test_delete_all_error_client():
         ),
     ],
 )
+@pytest.mark.storage
 def test_delete_all(keys, expected_objects):
     """
     GIVEN stubbed s3 client and keys to delete

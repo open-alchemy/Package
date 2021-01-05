@@ -7,6 +7,7 @@ CLASSES = [pytest.param(storage.memory.Storage, id="memory")]
 
 
 @pytest.mark.parametrize("class_", CLASSES)
+@pytest.mark.storage
 def test_get_no_set(class_):
     """
     GIVEN storage class
@@ -23,6 +24,7 @@ def test_get_no_set(class_):
 
 
 @pytest.mark.parametrize("class_", CLASSES)
+@pytest.mark.storage
 def test_set_get(class_):
     """
     GIVEN storage class
@@ -40,6 +42,7 @@ def test_set_get(class_):
 
 
 @pytest.mark.parametrize("class_", CLASSES)
+@pytest.mark.storage
 def test_delete_no_set(class_):
     """
     GIVEN storage class
@@ -56,6 +59,7 @@ def test_delete_no_set(class_):
 
 
 @pytest.mark.parametrize("class_", CLASSES)
+@pytest.mark.storage
 def test_set_delete_get(class_):
     """
     GIVEN storage class
@@ -198,6 +202,7 @@ LIST_TESTS = [
 
 @pytest.mark.parametrize("class_", CLASSES)
 @pytest.mark.parametrize("set_args, prefix, suffix, expected_keys", LIST_TESTS)
+@pytest.mark.storage
 def test_list(class_, set_args, prefix, suffix, expected_keys):
     """
     GIVEN storage class, set args and prefix and suffix
@@ -214,6 +219,7 @@ def test_list(class_, set_args, prefix, suffix, expected_keys):
 
 
 @pytest.mark.parametrize("class_", CLASSES)
+@pytest.mark.storage
 def test_delete_all_no_set(class_):
     """
     GIVEN storage class
@@ -270,6 +276,7 @@ DELETE_ALL_TESTS = [
 
 @pytest.mark.parametrize("class_", CLASSES)
 @pytest.mark.parametrize("set_args, delete_keys, expected_keys", DELETE_ALL_TESTS)
+@pytest.mark.storage
 def test_delete_all(class_, set_args, delete_keys, expected_keys):
     """
     GIVEN storage class, set args and keys to delete

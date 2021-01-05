@@ -2,6 +2,8 @@
 
 import typing
 
+from packaging import utils
+
 from ... import config
 from ... import types as library_types
 from . import exceptions, memory, s3, types
@@ -41,9 +43,16 @@ class _StorageFacade:
     """Facade for the storage that exposes important functionality."""
 
     @staticmethod
+    def cal_id(name: library_types.TSpecName) -> library_types.TSpecId:
+        """Calculate the id of a spec."""
+        return utils.canonicalize_name(name)
+
+    @classmethod
     def create_update_spec(
+        cls,
+        *,
         user: library_types.TUser,
-        spec_id: library_types.TSpecId,
+        name: library_types.TSpecName,
         version: library_types.TSpecVersion,
         spec_str: library_types.TSpecValue,
     ) -> None:
@@ -52,20 +61,23 @@ class _StorageFacade:
 
         Args:
             user: The user that owns the spec.
-            spec_id: Unique identifier for the spec.
+            name: The display name of the spec.
             version: The version of the spec.
             spec_str: The value of the spec.
 
         """
+        id_ = cls.cal_id(name)
         get_storage().set(
-            key=f"{user}/{spec_id}/{version}-spec.json",
+            key=f"{user}/{id_}/{version}-spec.json",
             value=spec_str,
         )
 
-    @staticmethod
+    @classmethod
     def get_spec(
+        cls,
+        *,
         user: library_types.TUser,
-        spec_id: library_types.TSpecId,
+        name: library_types.TSpecName,
         version: library_types.TSpecVersion,
     ) -> library_types.TSpecValue:
         """
@@ -73,33 +85,37 @@ class _StorageFacade:
 
         Args:
             user: The user that owns the spec.
-            spec_id: Unique identifier for the spec.
+            name: The display name of the spec.
             version: The version of the spec.
 
         """
-        return get_storage().get(key=f"{user}/{spec_id}/{version}-spec.json")
+        id_ = cls.cal_id(name)
+        return get_storage().get(key=f"{user}/{id_}/{version}-spec.json")
 
-    @staticmethod
+    @classmethod
     def delete_spec(
+        cls,
+        *,
         user: library_types.TUser,
-        spec_id: library_types.TSpecId,
+        name: library_types.TSpecName,
     ) -> None:
         """
         Delete a spec.
 
         Args:
             user: The user that owns the spec.
-            spec_id: Unique identifier for the spec.
+            name: The display name of the spec.
 
         """
-        delete_keys = get_storage().list(prefix=f"{user}/{spec_id}")
+        id_ = cls.cal_id(name)
+        delete_keys = get_storage().list(prefix=f"{user}/{id_}")
         if not delete_keys:
             raise exceptions.StorageError("no keys to delete")
         get_storage().delete_all(keys=delete_keys)
 
-    @staticmethod
+    @classmethod
     def get_spec_versions(
-        user: library_types.TUser, spec_id: library_types.TSpecId
+        cls, *, user: library_types.TUser, name: library_types.TSpecName
     ) -> library_types.TSpecVersions:
         """
         Get the available versions for a spec.
@@ -108,19 +124,20 @@ class _StorageFacade:
 
         Args:
             user: The user that owns the spec.
-            spec_id: Unique identifier for the spec.
+            name: The display name of the spec.
 
         Returns:
             All available versions of the spec.
 
         """
-        prefix = f"{user}/{spec_id}/"
+        id_ = cls.cal_id(name)
+        prefix = f"{user}/{id_}/"
         suffix = "-spec.json"
         keys = get_storage().list(prefix=prefix, suffix=suffix)
 
         if not keys:
             raise exceptions.ObjectNotFoundError(
-                f"the spec with id {spec_id} was not found"
+                f"the spec with {id_=}, {name=} was not found"
             )
 
         return list(map(lambda key: key[len(prefix) : -len(suffix)], keys))

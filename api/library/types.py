@@ -3,6 +3,7 @@
 import typing
 
 TUser = str
+TSpecName = str
 TSpecId = str
 TSpecValue = str
 TSpecVersion = str

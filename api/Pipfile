@@ -16,6 +16,7 @@ pyyaml = "5.3.1"
 openalchemy = "2.1.0"
 "open-alchemy.package-database" = "==2.0.2"
 "open-alchemy.package-security" = "==1.1.2"
+packaging = "20.8"
 
 [dev-packages]
 black = "20.8b1"
