@@ -59,7 +59,7 @@ Algorithm:
 Input:
 
 - `sub`,
-- `id`: unique identifier for the spec,
+- `name`: the name of the spec,
 - `version`: the version of the spec,
 - `model_count`: the number of models in the spec,
 - `title` (_optional_): the title of the spec and
@@ -69,6 +69,9 @@ Output:
 
 Algorithm:
 
+1. calculate the `id` of the spec using
+   <https://packaging.pypa.io/en/latest/utils.html#packaging.utils.canonicalize_name>
+   based on the `name`,
 1. calculate `updated_at` based on he current EPOCH time using
    <https://docs.python.org/3/library/time.html#time.time>
    and convert to an integer represented as a string,
@@ -86,7 +89,7 @@ Retrieve the latest version of a spec.
 Input:
 
 - `sub` and
-- `id`.
+- `name`.
 
 Output:
 
@@ -94,6 +97,9 @@ Output:
 
 Algorithm:
 
+1. calculate the `id` of the spec using
+   <https://packaging.pypa.io/en/latest/utils.html#packaging.utils.canonicalize_name>
+   based on the `name`,
 1. Retrieve the item using the `sub` partition key and `updated_at_id` sort key
    equal to `latest#<id>` and
 1. return the version of the item.
@@ -108,8 +114,8 @@ Input:
 
 Output:
 
-- A list of dictionaries with the `id`, `updated_at`, `version`, `model_count`
-  and `title` and `description` if they are defined.
+- A list of dictionaries with the `id`, `name`, `updated_at`, `version`,
+  `model_count` and `title` and `description` if they are defined.
 
 Algorithm:
 
@@ -124,12 +130,15 @@ Delete a particular spec for a user.
 Input:
 
 - `sub` and
-- `id`.
+- `name`.
 
 Output:
 
 Algorithm:
 
+1. calculate the `id` of the spec using
+   <https://packaging.pypa.io/en/latest/utils.html#packaging.utils.canonicalize_name>
+   based on the `name`,
 1. query the `id_updated_at_index` local secondary index by filtering for `sub`
    and `id_updated_at` starting with `<id>#` and
 1. delete all returned items.
@@ -141,15 +150,18 @@ Returns information about all the available versions of a spec for a user.
 Input:
 
 - `sub` and
-- `id`.
+- `name`.
 
 Output:
 
-- A list of dictionaries with the `id`, `updated_at`, `version`, `model_count`
-  and `title` and `description` if they are defined.
+- A list of dictionaries with the `id`, `name`, `updated_at`, `version`,
+  `model_count` and `title` and `description` if they are defined.
 
 Algorithm:
 
+1. calculate the `id` of the spec using
+   <https://packaging.pypa.io/en/latest/utils.html#packaging.utils.canonicalize_name>
+   based on the `name`,
 1. query the `id_updated_at_index` local secondary index by filtering for `sub`
    and `id_updated_at` starting with `<id>#`,
 1. filter out any items where `updated_at_id` starts with `latest#` and
@@ -171,6 +183,7 @@ Algorithm:
 
 - `sub`: A string that is the partition key of the table.
 - `id`: A string.
+- `name`: A string.
 - `updated_at`: A string.
 - `version`: A string.
 - `title`: An optional string.
