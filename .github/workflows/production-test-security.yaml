@@ -27,7 +27,7 @@ jobs:
         working-directory: test/security
         env:
           PYPI_MIRROR: ${{ matrix.PYPI_MIRROR }}
-          VERSION: "1.2.0"
+          VERSION: "1.2.1"
         run: |
           # Check that project version equal requested version
           cd ../../security
