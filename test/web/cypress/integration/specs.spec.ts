@@ -1,6 +1,6 @@
 /// <reference path="../support/index.d.ts" />
 
-const VERSION = 'version 1';
+const VERSION = '1';
 const TITLE = 'title 1';
 const DESCRIPTION = 'description 1';
 const ID = 'spec1';
