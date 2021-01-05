@@ -275,18 +275,18 @@ components:
     SpecName:
       description: The display name of an OpenAPI specification
       type: string
-      format: ^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9])$
+      pattern: ^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9])$
     SpecId:
       description: The id of an OpenAPI specification (it is the canonical version of the spec name)
       type: string
-      format: ^([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$
+      pattern: ^([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$
     SpecValue:
       description: The value of an OpenAPI specification
       type: string
     SpecVersion:
       description: The version of an OpenAPI specification
       type: string
-      format: ^([1-9][0-9]*!)?(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))*((a|b|rc)(0|[1-9][0-9]*))?(\.post(0|[1-9][0-9]*))?(\.dev(0|[1-9][0-9]*))?$
+      pattern: ^([1-9][0-9]*!)?(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))*((a|b|rc)(0|[1-9][0-9]*))?(\.post(0|[1-9][0-9]*))?(\.dev(0|[1-9][0-9]*))?$
     SpecUpdatedAt:
       description: The last time the OpenAPI specification was updated
       type: integer

@@ -9,7 +9,7 @@ from library.facades import storage
 from open_alchemy import package_database
 
 OPTIONS_TESTS = [
-    pytest.param("/v1/specs/spec1", "PUT", id="/v1/specs/{spec-id}"),
+    pytest.param("/v1/specs/spec1", "PUT", id="/v1/specs/{spec_name}"),
 ]
 
 
@@ -40,9 +40,9 @@ def test_endpoint_options(client, path, method):
     "url",
     [
         "/v1/specs",
-        "/v1/specs/spec 1",
-        "/v1/specs/spec 1/versions",
-        "/v1/specs/spec 1/versions/version 1",
+        "/v1/specs/spec1",
+        "/v1/specs/spec1/versions",
+        "/v1/specs/spec1/versions/1",
         "/v1/credentials/default",
     ],
 )
@@ -58,7 +58,7 @@ def test_get_unauthorized(client, url):
     assert response.status_code == 401
 
 
-@pytest.mark.parametrize("url", ["/v1/specs/spec 1"])
+@pytest.mark.parametrize("url", ["/v1/specs/spec1"])
 @pytest.mark.integration
 def test_delete_unauthorized(client, url):
     """
@@ -71,9 +71,7 @@ def test_delete_unauthorized(client, url):
     assert response.status_code == 401
 
 
-@pytest.mark.parametrize(
-    "url", ["/v1/specs/spec 1", "/v1/specs/spec 1/versions/version 1"]
-)
+@pytest.mark.parametrize("url", ["/v1/specs/spec1", "/v1/specs/spec1/versions/1"])
 @pytest.mark.integration
 def test_put_unauthorized(client, url):
     """
@@ -93,14 +91,14 @@ def test_specs_get(client, _clean_specs_table):
     """
     GIVEN database with a single spec
     WHEN GET /v1/specs is called with the Authorization header
-    THEN the spec id is returned.
+    THEN the spec name is returned.
     """
     sub = "sub 1"
-    spec_id = "spec id 1"
-    version = "version 1"
+    spec_name = "spec1"
+    version = "1"
     model_count = 1
     package_database.get().create_update_spec(
-        sub=sub, name=spec_id, version=version, model_count=model_count
+        sub=sub, name=spec_name, version=version, model_count=model_count
     )
     token = jwt.encode({"sub": sub}, "secret 1")
 
@@ -116,36 +114,37 @@ def test_specs_get(client, _clean_specs_table):
     spec_infos = json.loads(response.data.decode())
     assert len(spec_infos) == 1
     spec_info = spec_infos[0]
-    assert spec_info["id"] == spec_id
+    assert spec_info["name"] == spec_name
+    assert spec_info["id"] == spec_name
     assert spec_info["version"] == version
     assert spec_info["model_count"] == model_count
     assert "updated_at" in spec_info
 
 
 @pytest.mark.integration
-def test_specs_spec_id_get(client, _clean_specs_table):
+def test_specs_spec_name_get(client, _clean_specs_table):
     """
     GIVEN database and storage with a single spec
-    WHEN GET /v1/specs/{spec_id} is called with the Authorization header
+    WHEN GET /v1/specs/{spec_name} is called with the Authorization header
     THEN the spec is returned.
     """
     sub = "sub 1"
-    spec_id = "spec id 1"
-    version = "version 1"
+    spec_name = "spec1"
+    version = "1"
     package_database.get().create_update_spec(
-        sub=sub, name=spec_id, version=version, model_count=1
+        sub=sub, name=spec_name, version=version, model_count=1
     )
     spec = {"key": "value"}
     storage.get_storage_facade().create_update_spec(
         user=sub,
-        name=spec_id,
+        name=spec_name,
         version=version,
         spec_str=json.dumps(spec, separators=(",", ":")),
     )
     token = jwt.encode({"sub": sub}, "secret 1")
 
     response = client.get(
-        f"/v1/specs/{spec_id}", headers={"Authorization": f"Bearer {token}"}
+        f"/v1/specs/{spec_name}", headers={"Authorization": f"Bearer {token}"}
     )
 
     assert response.status_code == 200
@@ -159,13 +158,34 @@ def test_specs_spec_id_get(client, _clean_specs_table):
 
 
 @pytest.mark.integration
-def test_specs_spec_id_put(client, _clean_specs_table):
+def test_specs_spec_name_put_invalid_name(client):
+    """
+    GIVEN invalid spec name, data and token
+    WHEN PUT /v1/specs/{spec_name} is called with the Authorization header
+    THEN 400 is returned.
+    """
+    data = "data 1"
+    spec_name = "spec 1"
+    sub = "sub 1"
+    token = jwt.encode({"sub": sub}, "secret 1")
+
+    response = client.put(
+        f"/v1/specs/{spec_name}",
+        data=data,
+        headers={"Authorization": f"Bearer {token}", "X-LANGUAGE": "JSON"},
+    )
+
+    assert response.status_code == 400
+
+
+@pytest.mark.integration
+def test_specs_spec_name_put(client, _clean_specs_table):
     """
     GIVEN spec id, data and token
-    WHEN PUT /v1/specs/{spec-id} is called with the Authorization header
+    WHEN PUT /v1/specs/{spec_name} is called with the Authorization header
     THEN the value is stored and written to the database against the spec id.
     """
-    version = "version 1"
+    version = "1"
     schemas = {
         "Schema": {
             "type": "object",
@@ -176,12 +196,12 @@ def test_specs_spec_id_put(client, _clean_specs_table):
     data = json.dumps(
         {"info": {"version": version}, "components": {"schemas": schemas}}
     )
-    spec_id = "id 1"
+    spec_name = "spec1"
     sub = "sub 1"
     token = jwt.encode({"sub": sub}, "secret 1")
 
     response = client.put(
-        f"/v1/specs/{spec_id}",
+        f"/v1/specs/{spec_name}",
         data=data,
         headers={"Authorization": f"Bearer {token}", "X-LANGUAGE": "JSON"},
     )
@@ -194,34 +214,34 @@ def test_specs_spec_id_put(client, _clean_specs_table):
     )
 
     assert '"x-tablename":"schema"' in storage.get_storage_facade().get_spec(
-        user=sub, name=spec_id, version=version
+        user=sub, name=spec_name, version=version
     )
 
 
 @pytest.mark.integration
-def test_specs_spec_id_delete(client, _clean_specs_table):
+def test_specs_spec_name_delete(client, _clean_specs_table):
     """
     GIVEN database and storage with a single spec
-    WHEN DELETE /v1/specs/{spec_id} is called with the Authorization header
+    WHEN DELETE /v1/specs/{spec_name} is called with the Authorization header
     THEN the spec is deleted from the database and storage.
     """
     sub = "sub 1"
-    spec_id = "spec id 1"
-    version = "version 1"
+    spec_name = "spe1"
+    version = "1"
     package_database.get().create_update_spec(
-        sub=sub, name=spec_id, version=version, model_count=1
+        sub=sub, name=spec_name, version=version, model_count=1
     )
     spec = {"key": "value"}
     storage.get_storage_facade().create_update_spec(
         user=sub,
-        name=spec_id,
+        name=spec_name,
         version=version,
         spec_str=json.dumps(spec, separators=(",", ":")),
     )
     token = jwt.encode({"sub": sub}, "secret 1")
 
     response = client.delete(
-        f"/v1/specs/{spec_id}", headers={"Authorization": f"Bearer {token}"}
+        f"/v1/specs/{spec_name}", headers={"Authorization": f"Bearer {token}"}
     )
 
     assert response.status_code == 204
@@ -232,28 +252,28 @@ def test_specs_spec_id_delete(client, _clean_specs_table):
     )
 
     with pytest.raises(storage.exceptions.StorageError):
-        storage.get_storage_facade().get_spec(user=sub, name=spec_id, version=version)
+        storage.get_storage_facade().get_spec(user=sub, name=spec_name, version=version)
     assert package_database.get().count_customer_models(sub=sub) == 0
 
 
 @pytest.mark.integration
-def test_specs_spec_id_versions_get(client, _clean_specs_table):
+def test_specs_spec_name_versions_get(client, _clean_specs_table):
     """
     GIVEN database and storage with a single spec
-    WHEN GET /v1/specs/{spec_id}/versions is called with the Authorization header
+    WHEN GET /v1/specs/{spec_name}/versions is called with the Authorization header
     THEN the version is returned.
     """
     sub = "sub 1"
-    spec_id = "spec id 1"
-    version = "version 1"
+    spec_name = "spec1"
+    version = "1"
     model_count = 1
     package_database.get().create_update_spec(
-        sub=sub, name=spec_id, version=version, model_count=model_count
+        sub=sub, name=spec_name, version=version, model_count=model_count
     )
     token = jwt.encode({"sub": sub}, "secret 1")
 
     response = client.get(
-        f"/v1/specs/{spec_id}/versions", headers={"Authorization": f"Bearer {token}"}
+        f"/v1/specs/{spec_name}/versions", headers={"Authorization": f"Bearer {token}"}
     )
 
     assert response.status_code == 200
@@ -266,34 +286,35 @@ def test_specs_spec_id_versions_get(client, _clean_specs_table):
     spec_infos = json.loads(response.data.decode())
     assert len(spec_infos) == 1
     spec_info = spec_infos[0]
-    assert spec_info["id"] == spec_id
+    assert spec_info["name"] == spec_name
+    assert spec_info["id"] == spec_name
     assert spec_info["version"] == version
     assert spec_info["model_count"] == model_count
     assert "updated_at" in spec_info
 
 
 @pytest.mark.integration
-def test_specs_spec_id_version_version_get(client):
+def test_specs_spec_name_version_version_get(client):
     """
     GIVEN storage with a single spec
-    WHEN GET /v1/specs/{spec_id}/versions/{version} is called with the Authorization
+    WHEN GET /v1/specs/{spec_name}/versions/{version} is called with the Authorization
         header
     THEN the spec is returned.
     """
     sub = "sub 1"
-    spec_id = "spec id 1"
-    version = "version 1"
+    spec_name = "spec1"
+    version = "1"
     spec = {"key": "value"}
     storage.get_storage_facade().create_update_spec(
         user=sub,
-        name=spec_id,
+        name=spec_name,
         version=version,
         spec_str=json.dumps(spec, separators=(",", ":")),
     )
     token = jwt.encode({"sub": sub}, "secret 1")
 
     response = client.get(
-        f"/v1/specs/{spec_id}/versions/{version}",
+        f"/v1/specs/{spec_name}/versions/{version}",
         headers={"Authorization": f"Bearer {token}"},
     )
 
@@ -308,14 +329,37 @@ def test_specs_spec_id_version_version_get(client):
 
 
 @pytest.mark.integration
-def test_specs_spec_id_versions_version_put(client, _clean_specs_table):
+def test_specs_spec_name_versions_version_put_invalid_version(client):
+    """
+    GIVEN spec id, data, invalid version and token
+    WHEN PUT /v1/specs/{spec_name}/versions/{version} is called with the Authorization
+        header
+    THEN 400 is returned.
+    """
+    version = "a"
+    data = "data 1"
+    spec_name = "spec1"
+    sub = "sub 1"
+    token = jwt.encode({"sub": sub}, "secret 1")
+
+    response = client.put(
+        f"/v1/specs/{spec_name}/versions/{version}",
+        data=data,
+        headers={"Authorization": f"Bearer {token}", "X-LANGUAGE": "JSON"},
+    )
+
+    assert response.status_code == 400
+
+
+@pytest.mark.integration
+def test_specs_spec_name_versions_version_put(client, _clean_specs_table):
     """
     GIVEN spec id, data, version and token
-    WHEN PUT /v1/specs/{spec-id}/versions/{version} is called with the Authorization
+    WHEN PUT /v1/specs/{spec_name}/versions/{version} is called with the Authorization
         header
     THEN the value is stored and written to the database against the spec id.
     """
-    version = "version 1"
+    version = "1"
     schemas = {
         "Schema": {
             "type": "object",
@@ -326,12 +370,12 @@ def test_specs_spec_id_versions_version_put(client, _clean_specs_table):
     data = json.dumps(
         {"info": {"version": version}, "components": {"schemas": schemas}}
     )
-    spec_id = "id 1"
+    spec_name = "spec1"
     sub = "sub 1"
     token = jwt.encode({"sub": sub}, "secret 1")
 
     response = client.put(
-        f"/v1/specs/{spec_id}/versions/{version}",
+        f"/v1/specs/{spec_name}/versions/{version}",
         data=data,
         headers={"Authorization": f"Bearer {token}", "X-LANGUAGE": "JSON"},
     )
@@ -344,7 +388,7 @@ def test_specs_spec_id_versions_version_put(client, _clean_specs_table):
     )
 
     assert '"x-tablename":"schema"' in storage.get_storage_facade().get_spec(
-        user=sub, name=spec_id, version=version
+        user=sub, name=spec_name, version=version
     )
 
 
