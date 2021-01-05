@@ -10,14 +10,14 @@ import pytest
 
 
 @pytest.fixture()
-def spec_id(access_token):
+def spec_name(access_token):
     """Returns a spec id that is cleaned up at the end."""
-    spec_id_value = f"IndexSpecId-{uuid.uuid4()}"
+    spec_name_value = f"IndexSpecId-{uuid.uuid4()}"
 
-    yield spec_id_value
+    yield spec_name_value
 
     delete_request = request.Request(
-        f"https://package.api.openalchemy.io/v1/specs/{spec_id_value}",
+        f"https://package.api.openalchemy.io/v1/specs/{spec_name_value}",
         headers={"Authorization": f"Bearer {access_token}"},
         method="DELETE",
     )
@@ -25,7 +25,7 @@ def spec_id(access_token):
         assert response.status == 204
 
     subprocess.run(
-        [sys.executable, "-m", "pip", "uninstall", "-y", spec_id_value],
+        [sys.executable, "-m", "pip", "uninstall", "-y", spec_name_value],
         cwd=os.getcwd(),
         check=False,
         shell=False,

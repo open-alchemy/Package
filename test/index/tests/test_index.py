@@ -7,18 +7,17 @@ import subprocess
 import sys
 import time
 import typing
-import uuid
 from urllib import request
 
 
-def test_index(access_token, spec_id):
+def test_index(access_token, spec_name):
     """
     GIVEN spec
     WHEN spec is created and then installed
     THEN the spec can be imported.
     """
     # Create the spec
-    version = str(uuid.uuid4())
+    version = "1"
     title = "title 1"
     description = "description 1"
     spec = {
@@ -44,8 +43,8 @@ def test_index(access_token, spec_id):
         },
     }
     spec_str = json.dumps(spec)
-    spec_request = request.Request(
-        f"https://package.api.openalchemy.io/v1/specs/{spec_id}",
+    request_instance = request.Request(
+        f"https://package.api.openalchemy.io/v1/specs/{spec_name}",
         data=spec_str.encode(),
         headers={
             "Authorization": f"Bearer {access_token}",
@@ -54,18 +53,18 @@ def test_index(access_token, spec_id):
         },
         method="PUT",
     )
-    with request.urlopen(spec_request) as response:
+    with request.urlopen(request_instance) as response:
         assert response.status == 204
 
     # Retrieve credentials
-    credentials_request = request.Request(
+    request_instance = request.Request(
         "https://package.api.openalchemy.io/v1/credentials/default",
         headers={
             "Authorization": f"Bearer {access_token}",
         },
         method="GET",
     )
-    with request.urlopen(credentials_request) as response:
+    with request.urlopen(request_instance) as response:
         assert response.status == 200
         response_data = json.loads(response.read().decode())
         assert "public_key" in response_data
@@ -85,7 +84,7 @@ def test_index(access_token, spec_id):
                 f"https://{public_key}:{secret_key}@index.package.openalchemy.io",
                 "--extra-index-url",
                 "https://pypi.org/simple",
-                f"{spec_id}=={version}",
+                f"{spec_name}=={version}",
             ],
             cwd=os.getcwd(),
             check=False,
@@ -101,5 +100,16 @@ def test_index(access_token, spec_id):
     assert (
         output.returncode == 0
     ), f"{output.stdout.decode()=}, {output.stderr.decode()=}"
+
+    request_instance = request.Request(
+        f"https://package.api.openalchemy.io/v1/specs/{spec_name}/versions",
+        headers={"Authorization": f"Bearer {access_token}"},
+        method="GET",
+    )
+    with request.urlopen(request_instance) as response:
+        assert response.status == 200
+        response_data = json.loads(response.read().decode())
+        assert len(response_data) == 1
+        spec_id = response_data[0]["id"]
 
     importlib.import_module(spec_id)
