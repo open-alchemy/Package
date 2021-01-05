@@ -9,7 +9,7 @@ from open_alchemy import package_database
 
 def test_count_customer_models(_clean_specs_table):
     """
-    GIVEN sub, spec id, version and model count
+    GIVEN sub, name, version and model count
     WHEN create_update_spec is called with the spec info and count_customer_models is
         called
     THEN the model count is returned.
@@ -19,18 +19,18 @@ def test_count_customer_models(_clean_specs_table):
 
     assert database_instance.count_customer_models(sub=sub) == 0
 
-    id_ = "spec id 1"
+    name = "name 1"
     version = "version 1"
     model_count_1 = 1
     database_instance.create_update_spec(
-        sub=sub, id_=id_, version=version, model_count=model_count_1
+        sub=sub, name=name, version=version, model_count=model_count_1
     )
 
     assert database_instance.count_customer_models(sub=sub) == model_count_1
 
     model_count_2 = 2
     database_instance.create_update_spec(
-        sub=sub, id_=id_, version=version, model_count=model_count_2
+        sub=sub, name=name, version=version, model_count=model_count_2
     )
 
     assert database_instance.count_customer_models(sub=sub) == model_count_2
@@ -77,12 +77,12 @@ def test_check_would_exceed_free_tier(
     THEN the expected result is returned
     """
     sub = "sub 1"
-    id_ = "spec id 1"
+    name = "name 1"
     version = "version 1"
     database_instance = package_database.get()
 
     database_instance.create_update_spec(
-        sub=sub, id_=id_, version=version, model_count=initial_count
+        sub=sub, name=name, version=version, model_count=initial_count
     )
 
     returned_result = database_instance.check_would_exceed_free_tier(
@@ -94,43 +94,43 @@ def test_check_would_exceed_free_tier(
 
 def test_get_latest_spec_version(_clean_specs_table):
     """
-    GIVEN sub, spec id, version and model count
+    GIVEN sub, name, version and model count
     WHEN create_update_spec is called with the spec info and get_latest_spec_version is
         called
     THEN the latest version is returned.
     """
     sub = "sub 1"
-    id_ = "spec id 1"
+    name = "name 1"
     database_instance = package_database.get()
 
     with pytest.raises(package_database.exceptions.BaseError):
-        database_instance.get_latest_spec_version(sub=sub, id_=id_)
+        database_instance.get_latest_spec_version(sub=sub, name=name)
 
     version_1 = "version 1"
     model_count = 1
     database_instance.create_update_spec(
-        sub=sub, id_=id_, version=version_1, model_count=model_count
+        sub=sub, name=name, version=version_1, model_count=model_count
     )
 
-    assert database_instance.get_latest_spec_version(sub=sub, id_=id_) == version_1
+    assert database_instance.get_latest_spec_version(sub=sub, name=name) == version_1
 
     version_2 = "version 2"
     database_instance.create_update_spec(
-        sub=sub, id_=id_, version=version_2, model_count=model_count
+        sub=sub, name=name, version=version_2, model_count=model_count
     )
 
-    assert database_instance.get_latest_spec_version(sub=sub, id_=id_) == version_2
+    assert database_instance.get_latest_spec_version(sub=sub, name=name) == version_2
 
     with pytest.raises(package_database.exceptions.BaseError):
-        database_instance.get_latest_spec_version(sub=sub, id_="spec id 2")
+        database_instance.get_latest_spec_version(sub=sub, name="name 2")
 
     with pytest.raises(package_database.exceptions.BaseError):
-        database_instance.get_latest_spec_version(sub="sub 2", id_=id_)
+        database_instance.get_latest_spec_version(sub="sub 2", name=name)
 
 
 def test_list_delete_all_spec(_clean_specs_table):
     """
-    GIVEN sub, spec id, version and model count
+    GIVEN sub, name, version and model count
     WHEN create_update_spec is called with the spec info and list_specs is called
     THEN all specs for the customer are returned.
     """
@@ -139,14 +139,14 @@ def test_list_delete_all_spec(_clean_specs_table):
 
     assert database_instance.list_specs(sub=sub) == []
 
-    id_1 = "spec id 1"
+    name_1 = "name 1"
     version_1 = "version 1"
     title = "title 1"
     description = "description 1"
     model_count_1 = 1
     database_instance.create_update_spec(
         sub=sub,
-        id_=id_1,
+        name=name_1,
         version=version_1,
         model_count=model_count_1,
         title=title,
@@ -156,25 +156,28 @@ def test_list_delete_all_spec(_clean_specs_table):
     spec_infos = database_instance.list_specs(sub=sub)
     assert len(spec_infos) == 1
     spec_info = spec_infos[0]
-    assert spec_info["id"] == id_1
+    assert spec_info["name"] == name_1
+    assert spec_info["id"] == name_1
     assert spec_info["version"] == version_1
     assert spec_info["title"] == title
     assert spec_info["description"] == description
     assert spec_info["model_count"] == model_count_1
     assert "updated_at" in spec_info
 
-    id_2 = "spec id 2"
+    name_2 = "name 2"
     version_2 = "version 2"
     model_count_2 = 2
     database_instance.create_update_spec(
-        sub=sub, id_=id_2, version=version_2, model_count=model_count_2
+        sub=sub, name=name_2, version=version_2, model_count=model_count_2
     )
 
     spec_infos = database_instance.list_specs(sub=sub)
     assert len(spec_infos) == 2
-    assert spec_infos[0]["id"] == id_1
+    assert spec_infos[0]["name"] == name_1
+    assert spec_infos[0]["id"] == name_1
     spec_info = spec_infos[1]
-    assert spec_info["id"] == id_2
+    assert spec_info["name"] == name_2
+    assert spec_info["id"] == name_2
     assert spec_info["version"] == version_2
     assert spec_info["model_count"] == model_count_2
     assert "updated_at" in spec_info
@@ -186,34 +189,34 @@ def test_list_delete_all_spec(_clean_specs_table):
 
 def test_delete_spec(_clean_specs_table):
     """
-    GIVEN sub, spec id, version and model count
+    GIVEN sub, name, version and model count
     WHEN create_update_spec is called with the spec info and delete_spec is called
     THEN the spec is deleted.
     """
     sub = "sub 1"
-    id_ = "spec id 1"
+    name = "name 1"
     version = "version 1"
     model_count = 1
     database_instance = package_database.get()
     database_instance.create_update_spec(
-        sub=sub, id_=id_, version=version, model_count=model_count
+        sub=sub, name=name, version=version, model_count=model_count
     )
 
     assert len(database_instance.list_specs(sub=sub)) == 1
     assert database_instance.count_customer_models(sub=sub) == model_count
-    assert database_instance.get_latest_spec_version(sub=sub, id_=id_) == version
+    assert database_instance.get_latest_spec_version(sub=sub, name=name) == version
 
-    database_instance.delete_spec(sub=sub, id_=id_)
+    database_instance.delete_spec(sub=sub, name=name)
 
     assert len(database_instance.list_specs(sub=sub)) == 0
     assert database_instance.count_customer_models(sub=sub) == 0
     with pytest.raises(package_database.exceptions.NotFoundError):
-        database_instance.get_latest_spec_version(sub=sub, id_=id_)
+        database_instance.get_latest_spec_version(sub=sub, name=name)
 
 
 def test_list_spec_versions(monkeypatch, _clean_specs_table):
     """
-    GIVEN sub, spec id, version and model count
+    GIVEN sub, name, version and model count
     WHEN create_update_spec is called with the spec info and list_spec_versions is
         called
     THEN all specs for the customer are returned or NotFoundError is raised.
@@ -221,11 +224,11 @@ def test_list_spec_versions(monkeypatch, _clean_specs_table):
     mock_time = mock.MagicMock()
     monkeypatch.setattr(time, "time", mock_time)
     sub = "sub 1"
-    id_ = "spec id 1"
+    name = "name 1"
     database_instance = package_database.get()
 
     with pytest.raises(package_database.exceptions.NotFoundError):
-        database_instance.list_spec_versions(sub=sub, id_=id_)
+        database_instance.list_spec_versions(sub=sub, name=name)
 
     mock_time.return_value = 1000000
     version_1 = "version 1"
@@ -234,17 +237,18 @@ def test_list_spec_versions(monkeypatch, _clean_specs_table):
     model_count_1 = 1
     database_instance.create_update_spec(
         sub=sub,
-        id_=id_,
+        name=name,
         version=version_1,
         model_count=model_count_1,
         title=title,
         description=description,
     )
 
-    spec_infos = database_instance.list_spec_versions(sub=sub, id_=id_)
+    spec_infos = database_instance.list_spec_versions(sub=sub, name=name)
     assert len(spec_infos) == 1
     spec_info = spec_infos[0]
-    assert spec_info["id"] == id_
+    assert spec_info["name"] == name
+    assert spec_info["id"] == name
     assert spec_info["version"] == version_1
     assert spec_info["title"] == title
     assert spec_info["description"] == description
@@ -255,14 +259,16 @@ def test_list_spec_versions(monkeypatch, _clean_specs_table):
     version_2 = "version 2"
     model_count_2 = 2
     database_instance.create_update_spec(
-        sub=sub, id_=id_, version=version_2, model_count=model_count_2
+        sub=sub, name=name, version=version_2, model_count=model_count_2
     )
 
-    spec_infos = database_instance.list_spec_versions(sub=sub, id_=id_)
+    spec_infos = database_instance.list_spec_versions(sub=sub, name=name)
     assert len(spec_infos) == 2
-    assert spec_infos[0]["id"] == id_
+    assert spec_infos[0]["name"] == name
+    assert spec_infos[0]["id"] == name
     spec_info = spec_infos[1]
-    assert spec_info["id"] == id_
+    assert spec_info["name"] == name
+    assert spec_info["id"] == name
     assert spec_info["version"] == version_2
     assert spec_info["model_count"] == model_count_2
     assert "updated_at" in spec_info
@@ -400,7 +406,7 @@ def test_delete_all(_clean_specs_table, _clean_credentials_table):
         salt=b"salt 1",
     )
     database_instance.create_update_spec(
-        sub=sub, id_="id 1", version="version 1", model_count=1
+        sub=sub, name="name 1", version="version 1", model_count=1
     )
 
     assert len(database_instance.list_specs(sub=sub)) == 1

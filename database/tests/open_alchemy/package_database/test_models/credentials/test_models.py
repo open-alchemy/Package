@@ -57,6 +57,7 @@ LIST_TESTS = [
 
 
 @pytest.mark.parametrize("items, sub, expected_idx_list", LIST_TESTS)
+@pytest.mark.models
 def test_list_(items, sub, expected_idx_list):
     """
     GIVEN items in the database and sub
@@ -77,6 +78,7 @@ def test_list_(items, sub, expected_idx_list):
     assert returned_infos == expected_infos
 
 
+@pytest.mark.models
 def test_create_update_item():
     """
     GIVEN credentials properties and empty database
@@ -162,6 +164,7 @@ PARTITION_SORT_KEY_TESTS = [
 
 
 @pytest.mark.parametrize("items, expected_item_count", PARTITION_SORT_KEY_TESTS)
+@pytest.mark.models
 def test_partition_sort_key(items, expected_item_count):
     """
     GIVEN items
@@ -174,6 +177,7 @@ def test_partition_sort_key(items, expected_item_count):
     assert len(list(models.Credentials.scan())) == expected_item_count
 
 
+@pytest.mark.models
 def test_item_to_info():
     """
     GIVEN properties for credentials
@@ -224,6 +228,7 @@ GET_ITEM_TESTS = [
 
 
 @pytest.mark.parametrize("item, sub, id_, expected_info", GET_ITEM_TESTS)
+@pytest.mark.models
 def test_get_item(item, sub, id_, expected_info):
     """
     GIVEN database with item, sub and id
@@ -261,6 +266,7 @@ GET_USER_TESTS = [
 
 
 @pytest.mark.parametrize("item, public_key, expected_info", GET_USER_TESTS)
+@pytest.mark.models
 def test_get_user(item, public_key, expected_info):
     """
     GIVEN database with item and public key
@@ -309,6 +315,7 @@ DELETE_ITEM_TESTS = [
 
 
 @pytest.mark.parametrize("item, sub, id_, expected_count", DELETE_ITEM_TESTS)
+@pytest.mark.models
 def test_delete_item(item, sub, id_, expected_count):
     """
     GIVEN database with item and sub and id
@@ -371,6 +378,7 @@ DELETE_ALL_TESTS = [
 
 
 @pytest.mark.parametrize("items, sub, expected_count", DELETE_ALL_TESTS)
+@pytest.mark.models
 def test_delete_all(items, sub, expected_count):
     """
     GIVEN database with items and sub

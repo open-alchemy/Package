@@ -6,6 +6,7 @@ import typing
 TSub = str
 
 TSpecId = str
+TSpecName = str
 TSpecVersion = str
 TSpecTitle = str
 TOptSpecTitle = typing.Optional[TSpecTitle]
@@ -40,6 +41,7 @@ class TSpecInfo(_TSpecInfoBase, total=True):
     """
 
     id: TSpecId
+    name: TSpecName
     version: TSpecVersion
     updated_at: int
     model_count: TSpecModelCount
@@ -136,7 +138,7 @@ class TDatabase(typing.Protocol):
     def create_update_spec(
         *,
         sub: TSub,
-        id_: TSpecId,
+        name: TSpecName,
         version: TSpecVersion,
         model_count: TSpecModelCount,
         title: TOptSpecTitle = None,
@@ -147,7 +149,7 @@ class TDatabase(typing.Protocol):
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id_: Unique identifier for the spec for a package.
+            name: The display name of the spec.
             version: The version of the spec.
             model_count: The number of models in the spec.
             title: The title of a spec.
@@ -157,7 +159,7 @@ class TDatabase(typing.Protocol):
         ...
 
     @staticmethod
-    def get_latest_spec_version(*, sub: TSub, id_: TSpecId) -> TSpecVersion:
+    def get_latest_spec_version(*, sub: TSub, name: TSpecName) -> TSpecVersion:
         """
         Get the latest version for a spec.
 
@@ -165,7 +167,7 @@ class TDatabase(typing.Protocol):
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id_: Unique identifier for the spec for a package.
+            name: The display name of the spec.
 
         Returns:
             The latest version of the spec.
@@ -188,19 +190,19 @@ class TDatabase(typing.Protocol):
         ...
 
     @staticmethod
-    def delete_spec(*, sub: TSub, id_: TSpecId) -> None:
+    def delete_spec(*, sub: TSub, name: TSpecName) -> None:
         """
         Delete a spec from the database.
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id_: Unique identifier for the spec for a package.
+            name: The display name of the spec.
 
         """
         ...
 
     @staticmethod
-    def list_spec_versions(*, sub: TSub, id_: TSpecId) -> TSpecInfoList:
+    def list_spec_versions(*, sub: TSub, name: TSpecName) -> TSpecInfoList:
         """
         List all available versions for a spec for a customer.
 
@@ -208,7 +210,7 @@ class TDatabase(typing.Protocol):
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id_: Unique identifier for the spec for a package.
+            name: The display name of the spec.
 
         Returns:
             List of information for all versions of a spec for the customer.

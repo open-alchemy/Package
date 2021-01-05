@@ -1,5 +1,4 @@
 """Model factories."""
-# pylint: disable=redefined-builtin
 
 import factory
 
@@ -26,6 +25,7 @@ class SpecFactory(factory.Factory):
 
     sub = factory.Sequence(lambda n: f"sub {n}")
     id = factory.Sequence(spec_calc_id)
+    name = factory.Sequence(lambda n: f"name {n}")
     updated_at = factory.Sequence(spec_calc_updated_at)
 
     version = factory.Sequence(lambda n: f"version {n}")

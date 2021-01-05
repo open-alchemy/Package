@@ -47,7 +47,8 @@
     "scrypt",
     "delenv",
     "setenv",
-    "markdownlint"
+    "markdownlint",
+    "canonicalize"
   ],
   "dictionaries": [
     "python",

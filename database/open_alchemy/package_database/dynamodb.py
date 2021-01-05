@@ -53,7 +53,7 @@ class Database:
     def create_update_spec(
         *,
         sub: types.TSub,
-        id_: types.TSpecId,
+        name: types.TSpecName,
         version: types.TSpecVersion,
         model_count: types.TSpecModelCount,
         title: types.TOptSpecTitle = None,
@@ -64,7 +64,7 @@ class Database:
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id_: Unique identifier for the spec for a package.
+            name: The display name of the spec.
             version: The version of the spec.
             model_count: The number of models in the spec.
             title: The title of a spec.
@@ -73,7 +73,7 @@ class Database:
         """
         models.Spec.create_update_item(
             sub=sub,
-            id_=id_,
+            name=name,
             version=version,
             model_count=model_count,
             title=title,
@@ -82,7 +82,7 @@ class Database:
 
     @staticmethod
     def get_latest_spec_version(
-        *, sub: types.TSub, id_: types.TSpecId
+        *, sub: types.TSub, name: types.TSpecId
     ) -> types.TSpecVersion:
         """
         Get the latest version for a spec.
@@ -91,13 +91,13 @@ class Database:
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id_: Unique identifier for the spec for a package.
+            name: The display name of the spec.
 
         Returns:
             The latest version of the spec.
 
         """
-        return models.Spec.get_latest_version(sub=sub, id_=id_)
+        return models.Spec.get_latest_version(sub=sub, name=name)
 
     @staticmethod
     def list_specs(*, sub: types.TSub) -> types.TSpecInfoList:
@@ -114,20 +114,20 @@ class Database:
         return models.Spec.list_(sub=sub)
 
     @staticmethod
-    def delete_spec(*, sub: types.TSub, id_: types.TSpecId) -> None:
+    def delete_spec(*, sub: types.TSub, name: types.TSpecId) -> None:
         """
         Delete a spec from the database.
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id_: Unique identifier for the spec for a package.
+            name: The display name of the spec.
 
         """
-        models.Spec.delete_item(sub=sub, id_=id_)
+        models.Spec.delete_item(sub=sub, name=name)
 
     @staticmethod
     def list_spec_versions(
-        *, sub: types.TSub, id_: types.TSpecId
+        *, sub: types.TSub, name: types.TSpecId
     ) -> types.TSpecInfoList:
         """
         List all available versions for a spec for a customer.
@@ -136,15 +136,15 @@ class Database:
 
         Args:
             sub: Unique identifier for a cutsomer.
-            id: Unique identifier for the spec for a package.
+            name: The display name of the spec.
 
         Returns:
             List of information for all versions of a spec for the customer.
 
         """
-        spec_infos = models.Spec.list_versions(sub=sub, id_=id_)
+        spec_infos = models.Spec.list_versions(sub=sub, name=name)
         if not spec_infos:
-            raise exceptions.NotFoundError(f"could not find spec id {id_}")
+            raise exceptions.NotFoundError(f"could not find spec id {name}")
         return spec_infos
 
     @staticmethod
