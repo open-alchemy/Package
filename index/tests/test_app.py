@@ -225,7 +225,7 @@ def test_main_list(_clean_credentials_table, _clean_specs_table):
     version = "version 1"
     uri = f"/{spec_id}/"
     package_database.get().create_update_spec(
-        sub=credentials.sub, id_=spec_id, version=version, model_count=1
+        sub=credentials.sub, name=spec_id, version=version, model_count=1
     )
     request = {
         "headers": {

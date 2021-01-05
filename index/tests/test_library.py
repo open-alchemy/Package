@@ -207,7 +207,7 @@ def test_create_list_response_value(_clean_specs_table, monkeypatch):
     secret_key = "secret key 1"
     authorization = types.TAuthorization(public_key=public_key, secret_key=secret_key)
     package_database.get().create_update_spec(
-        sub=sub, id_=spec_id, version=version_1, model_count=1
+        sub=sub, name=spec_id, version=version_1, model_count=1
     )
 
     returned_value = library.create_list_response_value(
@@ -227,7 +227,7 @@ def test_create_list_response_value(_clean_specs_table, monkeypatch):
     mock_time.return_value = 2000000
     version_2 = "version 2"
     package_database.get().create_update_spec(
-        sub=sub, id_=spec_id, version=version_2, model_count=1
+        sub=sub, name=spec_id, version=version_2, model_count=1
     )
 
     returned_value = library.create_list_response_value(
@@ -282,7 +282,7 @@ def test_create_response_list(_clean_specs_table):
     )
     request_type = types.TRequestType.LIST
     package_database.get().create_update_spec(
-        sub=sub, id_=spec_id, version=version, model_count=1
+        sub=sub, name=spec_id, version=version, model_count=1
     )
     public_key = "public key 1"
     secret_key = "secret key 1"

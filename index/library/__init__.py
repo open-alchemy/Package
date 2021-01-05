@@ -145,7 +145,7 @@ def create_list_response_value(
 
     try:
         version_infos = package_database.get().list_spec_versions(
-            sub=auth_info.sub, id_=spec_id
+            sub=auth_info.sub, name=spec_id
         )
     except package_database.exceptions.NotFoundError as exc:
         raise exceptions.NotFoundError(
