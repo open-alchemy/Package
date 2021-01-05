@@ -170,7 +170,6 @@ def main(event, _context):
     try:
         event_info = parse_event(event)
     except AssertionError as exc:
-        print(exc)  # allow-print
         return {
             "status": "401",
             "statusDescription": "UNAUTHORIZED",
@@ -197,7 +196,6 @@ def main(event, _context):
             "body": "Invalid credentials",
         }
     except exceptions.NotFoundError as exc:
-        print(exc)  # allow-print
         return {
             "status": "404",
             "statusDescription": "NOT FOUND",
@@ -221,5 +219,4 @@ def main(event, _context):
     assert response.type == types.TRequestType.INSTALL
     request = event_info.request_dict
     request["uri"] = response.value
-    print(request)  # allow-print
     return request
