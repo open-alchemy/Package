@@ -43,7 +43,7 @@ export class PackageEffects {
         this.specService
           .delete$({
             accessToken: this.oAuthService.getAccessToken(),
-            id: action.specId,
+            name: action.specId,
           })
           .pipe(
             map(() => PackageActions.packageApiDeleteSpecsSpecIdSuccess()),

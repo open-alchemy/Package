@@ -21,13 +21,15 @@ class AppSpecsManageSpecStubComponent {
 
 // Front end does not control names of properties
 const SPEC_INFO_1: SpecInfo = {
-  id: 'spec id 1',
+  name: 'spec 1',
+  id: 'spec 1',
   version: 'version 1',
   // eslint-disable-next-line @typescript-eslint/naming-convention
   model_count: 1,
 };
 const SPEC_INFO_2: SpecInfo = {
-  id: 'spec id 2',
+  name: 'spec 2',
+  id: 'spec 2',
   version: 'version 2',
   title: 'title 2',
   description: 'description 2',

@@ -17,7 +17,8 @@ import * as PackageActions from './package.actions';
 // Front end does not control names of properties
 const SPEC_INFOS_1: SpecInfo[] = [
   {
-    id: 'spec id 1',
+    name: 'spec 1',
+    id: 'spec 1',
     version: 'version 1',
     // eslint-disable-next-line @typescript-eslint/naming-convention
     model_count: 1,
@@ -25,7 +26,8 @@ const SPEC_INFOS_1: SpecInfo[] = [
 ];
 const SPEC_INFOS_2: SpecInfo[] = [
   {
-    id: 'spec id 2',
+    name: 'spec 2',
+    id: 'spec 2',
     version: 'version 2',
     // eslint-disable-next-line @typescript-eslint/naming-convention
     model_count: 2,
@@ -286,7 +288,7 @@ describe('PackageEffects', () => {
         expectation: 'should return single success action actions',
         actionsMarbles: 'a',
         actionsValues: {
-          a: PackageActions.specsComponentDeleteSpec({ specId: 'spec id 1' }),
+          a: PackageActions.specsComponentDeleteSpec({ specId: 'spec 1' }),
         },
         specsServiceListReturnValues: [
           { marbles: '-b|', values: { b: undefined } },
@@ -295,7 +297,7 @@ describe('PackageEffects', () => {
         expectedValues: {
           b: PackageActions.packageApiDeleteSpecsSpecIdSuccess(),
         },
-        expectedCalls: [{ accessToken, id: 'spec id 1' }],
+        expectedCalls: [{ accessToken, name: 'spec 1' }],
       },
       {
         description:
@@ -303,14 +305,14 @@ describe('PackageEffects', () => {
         expectation: 'should return single error action actions',
         actionsMarbles: 'a',
         actionsValues: {
-          a: PackageActions.specsComponentDeleteSpec({ specId: 'spec id 1' }),
+          a: PackageActions.specsComponentDeleteSpec({ specId: 'spec 1' }),
         },
         specsServiceListReturnValues: [{ marbles: '-#|' }],
         expectedMarbles: '-b',
         expectedValues: {
           b: PackageActions.packageApiDeleteSpecsSpecIdError(),
         },
-        expectedCalls: [{ accessToken, id: 'spec id 1' }],
+        expectedCalls: [{ accessToken, name: 'spec 1' }],
       },
       {
         description:
@@ -318,8 +320,8 @@ describe('PackageEffects', () => {
         expectation: 'should return multiple success action actions',
         actionsMarbles: 'a--d',
         actionsValues: {
-          a: PackageActions.specsComponentDeleteSpec({ specId: 'spec id 1' }),
-          d: PackageActions.specsComponentDeleteSpec({ specId: 'spec id 2' }),
+          a: PackageActions.specsComponentDeleteSpec({ specId: 'spec 1' }),
+          d: PackageActions.specsComponentDeleteSpec({ specId: 'spec 2' }),
         },
         specsServiceListReturnValues: [
           { marbles: '-b|', values: { b: undefined } },
@@ -331,8 +333,8 @@ describe('PackageEffects', () => {
           e: PackageActions.packageApiDeleteSpecsSpecIdSuccess(),
         },
         expectedCalls: [
-          { accessToken, id: 'spec id 1' },
-          { accessToken, id: 'spec id 2' },
+          { accessToken, name: 'spec 1' },
+          { accessToken, name: 'spec 2' },
         ],
       },
       {
@@ -341,8 +343,8 @@ describe('PackageEffects', () => {
         expectation: 'should return single success actions',
         actionsMarbles: 'a--d',
         actionsValues: {
-          a: PackageActions.specsComponentDeleteSpec({ specId: 'spec id 1' }),
-          d: PackageActions.specsComponentDeleteSpec({ specId: 'spec id 2' }),
+          a: PackageActions.specsComponentDeleteSpec({ specId: 'spec 1' }),
+          d: PackageActions.specsComponentDeleteSpec({ specId: 'spec 2' }),
         },
         specsServiceListReturnValues: [
           { marbles: '-----f|', values: { f: undefined } },
@@ -354,8 +356,8 @@ describe('PackageEffects', () => {
           f: PackageActions.packageApiDeleteSpecsSpecIdSuccess(),
         },
         expectedCalls: [
-          { accessToken, id: 'spec id 1' },
-          { accessToken, id: 'spec id 2' },
+          { accessToken, name: 'spec 1' },
+          { accessToken, name: 'spec 2' },
         ],
       },
     ] as {
@@ -369,7 +371,7 @@ describe('PackageEffects', () => {
       }[];
       expectedMarbles: string;
       expectedValues: { [key: string]: Action };
-      expectedCalls: { accessToken: string; id: string }[];
+      expectedCalls: { accessToken: string; name: string }[];
     }[]).forEach(
       ({
         description,

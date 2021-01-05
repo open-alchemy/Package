@@ -12,7 +12,8 @@ import { PackageService } from '../../services/package/package.service';
 
 // Front end does not control names of properties
 const SPEC_INFO: SpecInfo = {
-  id: 'spec id 1',
+  name: 'spec 1',
+  id: 'spec 1',
   version: 'version 1',
   // eslint-disable-next-line @typescript-eslint/naming-convention
   model_count: 1,

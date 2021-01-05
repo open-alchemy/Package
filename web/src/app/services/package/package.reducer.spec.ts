@@ -9,7 +9,8 @@ import * as PackageActions from './package.actions';
 // Front end does not control names of properties
 const SPEC_INFOS: SpecInfo[] = [
   {
-    id: 'spec id 1',
+    id: 'spec 1',
+    name: 'spec 1',
     // eslint-disable-next-line @typescript-eslint/naming-convention
     version: 'version 1',
     // eslint-disable-next-line @typescript-eslint/naming-convention
