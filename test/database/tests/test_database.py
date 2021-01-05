@@ -10,7 +10,7 @@ def test_spec_create_list_delete_all(sub):
     WHEN spec is created, listed and all are deleted
     THEN the spec is returned in the list after creation but not after deletion.
     """
-    id_ = "id 1"
+    name = "NAME 1"
     model_count = 1
     version = "version 1"
     title = "title 1"
@@ -22,7 +22,7 @@ def test_spec_create_list_delete_all(sub):
 
     database_instance.create_update_spec(
         sub=sub,
-        id_=id_,
+        name=name,
         model_count=model_count,
         version=version,
         title=title,
@@ -32,7 +32,8 @@ def test_spec_create_list_delete_all(sub):
     infos = database_instance.list_specs(sub=sub)
     assert len(infos) == 1
     info = infos[0]
-    assert info["id"] == id_
+    assert info["name"] == name
+    assert info["id"] == name.lower()
     assert info["model_count"] == model_count
     assert info["version"] == version
     assert info["title"] == title
@@ -51,7 +52,7 @@ def test_spec_create_count_models_get_latest_version_list_versions_delete(sub):
     THEN the model count for the spec is returned, the version of the spec is returned,
         the version of the spec is listed after creation but not after deletion.
     """
-    id_ = "id 1"
+    name = "name 1"
     model_count = 1
     version = "version 1"
 
@@ -60,7 +61,7 @@ def test_spec_create_count_models_get_latest_version_list_versions_delete(sub):
     assert len(database_instance.list_specs(sub=sub)) == 0
 
     database_instance.create_update_spec(
-        sub=sub, id_=id_, model_count=model_count, version=version
+        sub=sub, name=name, model_count=model_count, version=version
     )
 
     assert database_instance.count_customer_models(sub=sub) == model_count
@@ -74,24 +75,25 @@ def test_spec_create_count_models_get_latest_version_list_versions_delete(sub):
         is True
     )
 
-    assert database_instance.get_latest_spec_version(sub=sub, id_=id_) == version
+    assert database_instance.get_latest_spec_version(sub=sub, id_=name) == version
 
-    infos = database_instance.list_spec_versions(sub=sub, id_=id_)
+    infos = database_instance.list_spec_versions(sub=sub, name=name)
     assert len(infos) == 1
     info = infos[0]
-    assert info["id"] == id_
+    assert info["name"] == name
+    assert info["id"] == name
     assert info["model_count"] == model_count
     assert info["version"] == version
 
-    database_instance.delete_spec(sub=sub, id_=id_)
+    database_instance.delete_spec(sub=sub, name=name)
 
     assert database_instance.count_customer_models(sub=sub) == 0
 
     with pytest.raises(package_database.exceptions.NotFoundError):
-        database_instance.get_latest_spec_version(sub=sub, id_=id_)
+        database_instance.get_latest_spec_version(sub=sub, name=name)
 
     with pytest.raises(package_database.exceptions.NotFoundError):
-        database_instance.list_spec_versions(sub=sub, id_=id_)
+        database_instance.list_spec_versions(sub=sub, name=name)
 
 
 def test_credentials_create_list_delete_all(sub):
