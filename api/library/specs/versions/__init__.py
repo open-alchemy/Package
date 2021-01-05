@@ -60,7 +60,7 @@ def get(
     """
     try:
         spec_str = storage.get_storage_facade().get_spec(
-            user=user, spec_id=spec_id, version=version
+            user=user, name=spec_id, version=version
         )
         prepared_spec_str = spec.prepare(spec_str=spec_str, version=version)
 
@@ -136,7 +136,7 @@ def put(
         # Store the spec
         storage.get_storage_facade().create_update_spec(
             user=user,
-            spec_id=spec_id,
+            name=spec_id,
             version=spec_info.version,
             spec_str=spec_info.spec_str,
         )

@@ -86,7 +86,7 @@ def test_get():
     spec = {"key": "value"}
     storage.get_storage_facade().create_update_spec(
         user=user,
-        spec_id=spec_id,
+        name=spec_id,
         version=version,
         spec_str=json.dumps(spec, separators=(",", ":")),
     )
@@ -171,7 +171,7 @@ def test_put(monkeypatch, _clean_specs_table):
     )
 
     spec_str = storage.get_storage_facade().get_spec(
-        user=user, spec_id=spec_id, version=version
+        user=user, name=spec_id, version=version
     )
     assert f'"{version}"' in spec_str
     assert '"Schema"' in spec_str
@@ -410,7 +410,7 @@ def test_put_database_update_error(monkeypatch, _clean_specs_table):
     )
 
     spec_str = storage.get_storage_facade().get_spec(
-        user=user, spec_id=spec_id, version=version
+        user=user, name=spec_id, version=version
     )
     assert f'"{version}"' in spec_str
     assert '"Schema"' in spec_str

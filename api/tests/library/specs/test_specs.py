@@ -92,7 +92,7 @@ def test_get(_clean_specs_table):
     spec = {"key": "value"}
     storage.get_storage_facade().create_update_spec(
         user=user,
-        spec_id=spec_id,
+        name=spec_id,
         version=version,
         spec_str=json.dumps(spec, separators=(",", ":")),
     )
@@ -223,7 +223,7 @@ def test_put(monkeypatch, _clean_specs_table):
     response = specs.put(body=body.encode(), spec_id=spec_id, user=user)
 
     spec_str = storage.get_storage_facade().get_spec(
-        user=user, spec_id=spec_id, version=version
+        user=user, name=spec_id, version=version
     )
     assert f'"{version}"' in spec_str
     assert '"Schema"' in spec_str
@@ -416,7 +416,7 @@ def test_put_database_update_error(monkeypatch, _clean_specs_table):
     response = specs.put(body=body.encode(), spec_id=spec_id, user=user)
 
     spec_str = storage.get_storage_facade().get_spec(
-        user=user, spec_id=spec_id, version=version
+        user=user, name=spec_id, version=version
     )
     assert f'"{version}"' in spec_str
     assert '"Schema"' in spec_str
@@ -441,15 +441,13 @@ def test_delete(_clean_specs_table):
         sub=user, name=spec_id, version=version, model_count=1
     )
     storage.get_storage_facade().create_update_spec(
-        user=user, spec_id=spec_id, version=version, spec_str="spec str 1"
+        user=user, name=spec_id, version=version, spec_str="spec str 1"
     )
 
     response = specs.delete(spec_id=spec_id, user=user)
 
     with pytest.raises(storage.exceptions.StorageError):
-        storage.get_storage_facade().get_spec(
-            user=user, spec_id=spec_id, version=version
-        )
+        storage.get_storage_facade().get_spec(user=user, name=spec_id, version=version)
     assert package_database.get().count_customer_models(sub=user) == 0
     assert response.status_code == 204
 
@@ -472,15 +470,13 @@ def test_delete_database_error(monkeypatch, _clean_specs_table):
         mock_database_delete_spec,
     )
     storage.get_storage_facade().create_update_spec(
-        user=user, spec_id=spec_id, version=version, spec_str="spec str 1"
+        user=user, name=spec_id, version=version, spec_str="spec str 1"
     )
 
     response = specs.delete(spec_id=spec_id, user=user)
 
     with pytest.raises(storage.exceptions.StorageError):
-        storage.get_storage_facade().get_spec(
-            user=user, spec_id=spec_id, version=version
-        )
+        storage.get_storage_facade().get_spec(user=user, name=spec_id, version=version)
     assert response.status_code == 204
 
 

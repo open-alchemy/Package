@@ -138,7 +138,7 @@ def test_specs_spec_id_get(client, _clean_specs_table):
     spec = {"key": "value"}
     storage.get_storage_facade().create_update_spec(
         user=sub,
-        spec_id=spec_id,
+        name=spec_id,
         version=version,
         spec_str=json.dumps(spec, separators=(",", ":")),
     )
@@ -194,7 +194,7 @@ def test_specs_spec_id_put(client, _clean_specs_table):
     )
 
     assert '"x-tablename":"schema"' in storage.get_storage_facade().get_spec(
-        user=sub, spec_id=spec_id, version=version
+        user=sub, name=spec_id, version=version
     )
 
 
@@ -214,7 +214,7 @@ def test_specs_spec_id_delete(client, _clean_specs_table):
     spec = {"key": "value"}
     storage.get_storage_facade().create_update_spec(
         user=sub,
-        spec_id=spec_id,
+        name=spec_id,
         version=version,
         spec_str=json.dumps(spec, separators=(",", ":")),
     )
@@ -232,9 +232,7 @@ def test_specs_spec_id_delete(client, _clean_specs_table):
     )
 
     with pytest.raises(storage.exceptions.StorageError):
-        storage.get_storage_facade().get_spec(
-            user=sub, spec_id=spec_id, version=version
-        )
+        storage.get_storage_facade().get_spec(user=sub, name=spec_id, version=version)
     assert package_database.get().count_customer_models(sub=sub) == 0
 
 
@@ -288,7 +286,7 @@ def test_specs_spec_id_version_version_get(client):
     spec = {"key": "value"}
     storage.get_storage_facade().create_update_spec(
         user=sub,
-        spec_id=spec_id,
+        name=spec_id,
         version=version,
         spec_str=json.dumps(spec, separators=(",", ":")),
     )
@@ -346,7 +344,7 @@ def test_specs_spec_id_versions_version_put(client, _clean_specs_table):
     )
 
     assert '"x-tablename":"schema"' in storage.get_storage_facade().get_spec(
-        user=sub, spec_id=spec_id, version=version
+        user=sub, name=spec_id, version=version
     )
 
 
