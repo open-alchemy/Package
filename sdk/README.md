@@ -63,3 +63,21 @@ const employeeSpec = await service.get({ accessToken });
 // Delete credentials
 await service.delete({ accessToken });
 ```
+
+## Infrastructure
+
+The CloudFormation stack is defined here:
+[../infrastructure/lib/sdk-stack.ts](../infrastructure/lib/sdk-stack.ts).
+
+## CI-CD
+
+The workflow for the CI-CD is defined here:
+[../.github/workflows/ci-cd-sdk.yaml](../.github/workflows/ci-cd-sdk.yaml).
+
+## Production Tests
+
+The tests against the sdk package are defined here:
+[../test/sdk/](../test/sdk/).
+
+The workflow that periodically executes the tests is defined here:
+[../.github/workflows/production-test-sdk.yaml](../.github/workflows/production-test-sdk.yaml).
