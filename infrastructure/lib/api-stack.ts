@@ -13,7 +13,11 @@ import * as route53Targets from '@aws-cdk/aws-route53-targets';
 import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
 import * as iam from '@aws-cdk/aws-iam';
 import * as s3 from '@aws-cdk/aws-s3';
+import * as sns from '@aws-cdk/aws-sns';
+import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
 import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
+import * as snsSubscriptions from '@aws-cdk/aws-sns-subscriptions';
+import * as cloudwatchActions from '@aws-cdk/aws-cloudwatch-actions';
 
 import { ENVIRONMENT } from './environment';
 import { CONFIG } from './config';
@@ -57,8 +61,9 @@ export class ApiStack extends cdk.Stack {
       .createHash('sha256')
       .update(deploymentPackageContents)
       .digest('hex');
+    const functionName = 'package-service';
     const func = new lambda.Function(this, 'ApiFunc', {
-      functionName: 'package-service',
+      functionName,
       runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromAsset(deploymentPackage),
       handler: 'api.main',
@@ -89,6 +94,24 @@ export class ApiStack extends cdk.Stack {
       deploymentConfig: codedeploy.LambdaDeploymentConfig.ALL_AT_ONCE,
     });
     const integration = new apigateway.LambdaIntegration(alias);
+
+    // Add alarm subscription
+    const alarmName = `${functionName}-error`;
+    const alarm = func.metricErrors().createAlarm(this, 'Alarm', {
+      threshold: 1,
+      evaluationPeriods: 1,
+      alarmName,
+      alarmDescription: `The ${functionName} lambda function had an error`,
+      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+    });
+    const topic = new sns.Topic(this, 'Topic', {
+      displayName: `${alarmName}-alarm`,
+      topicName: `${alarmName}-alarm`,
+    });
+    topic.addSubscription(
+      new snsSubscriptions.EmailSubscription(ENVIRONMENT.alarmEmailAddress)
+    );
+    alarm.addAlarmAction(new cloudwatchActions.SnsAction(topic));
 
     // Permissions for lambda function
     bucket.grantReadWrite(func);

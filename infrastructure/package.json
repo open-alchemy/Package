@@ -35,6 +35,7 @@
     "@aws-cdk/aws-certificatemanager": "1.82.0",
     "@aws-cdk/aws-cloudfront": "1.82.0",
     "@aws-cdk/aws-cloudfront-origins": "1.82.0",
+    "@aws-cdk/aws-cloudwatch": "1.82.0",
     "@aws-cdk/aws-cloudwatch-actions": "1.82.0",
     "@aws-cdk/aws-codedeploy": "1.82.0",
     "@aws-cdk/aws-cognito": "1.82.0",
