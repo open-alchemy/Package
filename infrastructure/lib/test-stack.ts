@@ -9,12 +9,11 @@ export class TestStack extends cdk.Stack {
     // Lambda function
     new lambda.Function(this, 'Func', {
       functionName: 'test-service',
-      runtime: lambda.Runtime.PYTHON_3_8,
-      code: lambda.Code.fromInline(`
-def main(event, context):
-    raise AssertionError('error')
-      `),
-      handler: 'index.main',
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromInline(
+        'exports.handler = function(event, ctx, cb) { throw ("error"); }'
+      ),
+      handler: 'index.handler',
       logRetention: logs.RetentionDays.ONE_WEEK,
       timeout: cdk.Duration.seconds(5),
     });
