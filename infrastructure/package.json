@@ -35,6 +35,7 @@
     "@aws-cdk/aws-certificatemanager": "1.82.0",
     "@aws-cdk/aws-cloudfront": "1.82.0",
     "@aws-cdk/aws-cloudfront-origins": "1.82.0",
+    "@aws-cdk/aws-cloudwatch-actions": "1.82.0",
     "@aws-cdk/aws-codedeploy": "1.82.0",
     "@aws-cdk/aws-cognito": "1.82.0",
     "@aws-cdk/aws-dynamodb": "1.82.0",
@@ -50,6 +51,7 @@
     "@aws-cdk/aws-sns": "1.82.0",
     "@aws-cdk/aws-sqs": "1.82.0",
     "@aws-cdk/aws-ssm": "1.82.0",
+    "@aws-cdk/aws-sns-subscription": "1.82.0",
     "@aws-cdk/core": "1.82.0",
     "source-map-support": "^0.5.16"
   },

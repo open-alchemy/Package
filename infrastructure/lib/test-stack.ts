@@ -1,6 +1,9 @@
 import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
+import * as sns from '@aws-cdk/aws-sns';
 import * as logs from '@aws-cdk/aws-logs';
+import * as cloudwatchActions from '@aws-cdk/aws-cloudwatch-actions';
+// import * as snsSubscriptions from '@aws-cdk/aws-sns-subscriptions';
 
 export class TestStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -17,13 +20,16 @@ export class TestStack extends cdk.Stack {
       logRetention: logs.RetentionDays.ONE_WEEK,
       timeout: cdk.Duration.seconds(5),
     });
-    func
-      .metricErrors()
-      .createAlarm(this, 'Alarm', {
-        threshold: 1,
-        evaluationPeriods: 1,
-        alarmName: 'test-service-error',
-        alarmDescription: 'The test-service lambda function had an error',
-      });
+    const alarm = func.metricErrors().createAlarm(this, 'Alarm', {
+      threshold: 1,
+      evaluationPeriods: 1,
+      alarmName: 'test-service-error',
+      alarmDescription: 'The test-service lambda function had an error',
+    });
+    const topic = new sns.Topic(this, 'Topic', {
+      displayName: 'test-service-error-alarm',
+      topicName: 'test-service-error-alarm',
+    });
+    alarm.addAlarmAction(new cloudwatchActions.SnsAction(topic));
   }
 }
