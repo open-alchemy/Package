@@ -8,7 +8,7 @@ import * as route53 from '@aws-cdk/aws-route53';
 import * as route53Targets from '@aws-cdk/aws-route53-targets';
 
 import { CONFIG } from './config';
-import { OLD_ENVIRONMENT } from './environment';
+import { ENVIRONMENT } from './environment';
 
 export class WebStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -21,7 +21,7 @@ export class WebStack extends cdk.Stack {
     });
 
     // Certificate
-    const certificateArn = OLD_ENVIRONMENT.AWS_OPEN_ALCHEMY_CERTIFICATE_ARN;
+    const certificateArn = ENVIRONMENT.awsOpenAlchemyCertificateArn;
     const certificate = certificatemanager.Certificate.fromCertificateArn(
       this,
       'Certificate',

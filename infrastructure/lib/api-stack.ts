@@ -15,7 +15,7 @@ import * as iam from '@aws-cdk/aws-iam';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 
-import { OLD_ENVIRONMENT } from './environment';
+import { ENVIRONMENT } from './environment';
 import { CONFIG } from './config';
 
 export class ApiStack extends cdk.Stack {
@@ -99,7 +99,7 @@ export class ApiStack extends cdk.Stack {
     secret.grantRead(func);
 
     // Certificate
-    const certificateArn = OLD_ENVIRONMENT.AWS_OPEN_ALCHEMY_CERTIFICATE_ARN;
+    const certificateArn = ENVIRONMENT.awsOpenAlchemyCertificateArn;
     const certificate = certificatemanager.Certificate.fromCertificateArn(
       this,
       'Certificate',
@@ -137,7 +137,7 @@ export class ApiStack extends cdk.Stack {
       restApiId: api.restApiId,
       type: apigateway.AuthorizationType.COGNITO,
       identitySource: apigateway.IdentitySource.header('Authorization'),
-      providerArns: [OLD_ENVIRONMENT.AWS_IDENTITY_PROVIDER_ARN],
+      providerArns: [ENVIRONMENT.awsIdentityProviderArn],
       name: 'PackageAuth',
     });
 
