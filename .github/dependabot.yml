@@ -77,10 +77,6 @@ updates:
     directory: "security/"
     schedule:
       interval: "weekly"
-  - package-ecosystem: "npm"
-    directory: "security/"
-    schedule:
-      interval: "weekly"
 
   # Maintain Python dependencies for security test.
   - package-ecosystem: "pip"
