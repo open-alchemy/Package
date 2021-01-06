@@ -51,7 +51,6 @@
     "@aws-cdk/aws-sns": "1.82.0",
     "@aws-cdk/aws-sqs": "1.82.0",
     "@aws-cdk/aws-ssm": "1.82.0",
-    "@aws-cdk/aws-sns-subscription": "1.82.0",
     "@aws-cdk/core": "1.82.0",
     "source-map-support": "^0.5.16"
   },
