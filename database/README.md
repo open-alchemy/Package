@@ -318,20 +318,6 @@ Algorithm:
 - `secret_key_hash`: Bytes.
 - `salt`: Bytes.
 
-## CI-CD
-
-The workflow is defined here:
-[../.github/workflows/ci-cd-database.yaml](../.github/workflows/ci-cd-database.yaml).
-
-There are a few groups of jobs in the CI-CD:
-
-- `test`: runs the tests for the package in supported python versions,
-- `build`: builds the database package,
-- `deploy`: deploys database infrastructure to AWS,
-- `release-required`: determines whether a release to PyPI is required and
-- `release`: a combination of deploying to test and production PyPI and
-  executing tests on the published packages
-
 ### `test`
 
 Executes the tests defined at [tests](tests).
@@ -412,3 +398,30 @@ all tests complete.
 
 Deletes all items from the `package.credentials` table before and after each
 test.
+
+## Infrastructure
+
+The CloudFormation stack is defined here:
+[../infrastructure/lib/database-stack.ts](../infrastructure/lib/database-stack.ts).
+
+## CI-CD
+
+The workflow is defined here:
+[../.github/workflows/ci-cd-database.yaml](../.github/workflows/ci-cd-database.yaml).
+
+There are a few groups of jobs in the CI-CD:
+
+- `test`: runs the tests for the package in supported python versions,
+- `build`: builds the database package,
+- `deploy`: deploys database infrastructure to AWS,
+- `release-required`: determines whether a release to PyPI is required and
+- `release`: a combination of deploying to test and production PyPI and
+  executing tests on the published packages
+
+## Production Tests
+
+The tests against the deployed database facade are defined here:
+[../test/database/](../test/database/).
+
+The workflow that periodically executes the tests is defined here:
+[../.github/workflows/production-test-database.yaml](../.github/workflows/production-test-database.yaml).
