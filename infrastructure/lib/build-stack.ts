@@ -88,7 +88,7 @@ export class BuildStack extends cdk.Stack {
       displayName: `${alarmName}-alarm`,
       topicName: `${alarmName}-alarm`,
     });
-    topic.addSubscription(
+    alarmTopic.addSubscription(
       new snsSubscriptions.EmailSubscription(ENVIRONMENT.alarmEmailAddress)
     );
     alarm.addAlarmAction(new cloudwatchActions.SnsAction(alarmTopic));
