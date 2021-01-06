@@ -99,7 +99,7 @@ Algorithm:
 1. map the `user` and `id` to a prefix using `{user}/{id}/` and
 1. delete all objects that match.
 
-### Get Spec Versions
+### Get Spec Versions from Storage
 
 Retrieves all versions available for the spec.
 
@@ -121,11 +121,111 @@ Algorithm:
 1. retrieve all `key`s that match the prefix and suffix and
 1. retrieve the `version` from the `key` by removing the prefix and suffix.
 
+## Security
+
+Secured using AWS Cognito which checks that JWT tokens are valid. When they
+reach the lambda function, the JWT is assumed to be valid and read without
+checking it.
+
 ## Endpoints
 
-### `/credentials/default
+The OpenAPI spec can be found here: [openapi/package.yaml](openapi/package.yaml)
 
-#### Get
+Input:
+
+- the `user` from the JWT.
+
+### `/specs`
+
+#### Get Specs
+
+Retrieves all specs that are available for a customer.
+
+Algorithm:
+
+1. use the database facade to list all available specs and return the response.
+
+### `/specs/{spec_name}`
+
+Input:
+
+- the `spec_name` that identifies a spec to interact with.
+
+#### Get Spec
+
+Retrieves the value of the requested spec.
+
+Algorithm:
+
+1. retrieve the latest spec version from the database,
+1. retrieve the spec from storage and
+1. nicely format the spec and return it.
+
+#### Put Spec
+
+Create or update a spec.
+
+Algorithm:
+
+1. validate the requested language for the spec,
+1. validate the spec and the requested version in the spec,
+1. check whether accepting the spec would mean the customer would exceed the
+   free tier and
+1. write the spec to the database and storage.
+
+#### Delete Spec from Storage
+
+Delete all information about the spec.
+
+Algorithm:
+
+1. delete the spec from the database and storage.
+
+### `/specs/{spec_name}/versions`
+
+Input:
+
+- the `spec_name` that identifies a spec to interact with.
+
+#### Get Spec Versions
+
+List available versions for the spec.
+
+Algorithm:
+
+1. read the available versions from the database for the spec.
+
+### `/specs/{spec_name}/versions/{version}`
+
+Input:
+
+- the `spec_name` that identifies a spec to interact with and
+- the `version` of the spec.
+
+#### Get Version of a Spec
+
+Retrieves the value of the requested spec.
+
+Algorithm:
+
+1. retrieve the spec from storage and
+1. nicely format the spec and return it.
+
+#### Put Version of a Spec
+
+Create or update a spec.
+
+Algorithm:
+
+1. validate the requested language for the spec,
+1. validate the spec and the requested version in the spec and path,
+1. check whether accepting the spec would mean the customer would exceed the
+   free tier and
+1. write the spec to the database and storage.
+
+### `/credentials/default`
+
+#### Get Credentials
 
 Retrieve the default credential from the database for the user.
 
@@ -138,10 +238,15 @@ Algorithm:
 1. store the credentials in the database and
 1. return the credentials.
 
-#### Delete
+#### Delete Credentials
 
 Delete the default credential from the database for the user.
 
 Algorithm:
 
 1. delete the credentials from the database.
+
+## Infrastructure
+
+The CloudFormation stack is defined here:
+[../infrastructure/lib/api-stack.ts](../infrastructure/lib/api-stack.ts).
