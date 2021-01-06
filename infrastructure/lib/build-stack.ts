@@ -9,8 +9,12 @@ import * as s3 from '@aws-cdk/aws-s3';
 import * as sns from '@aws-cdk/aws-sns';
 import * as sqs from '@aws-cdk/aws-sqs';
 import * as lambdaEventSources from '@aws-cdk/aws-lambda-event-sources';
+import * as snsSubscriptions from '@aws-cdk/aws-sns-subscriptions';
+import * as cloudwatchActions from '@aws-cdk/aws-cloudwatch-actions';
+import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
 
 import { CONFIG } from './config';
+import { ENVIRONMENT } from './environment';
 
 export class BuildStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -40,8 +44,9 @@ export class BuildStack extends cdk.Stack {
       .createHash('sha256')
       .update(deploymentPackageContents)
       .digest('hex');
+    const functionName = 'package-build-service';
     const func = new lambda.Function(this, 'BuildFunc', {
-      functionName: 'package-build-service',
+      functionName,
       runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromAsset(deploymentPackage),
       handler: 'app.main',
@@ -69,6 +74,24 @@ export class BuildStack extends cdk.Stack {
       alias,
       deploymentConfig: codedeploy.LambdaDeploymentConfig.ALL_AT_ONCE,
     });
+
+    // Add alarm subscription
+    const alarmName = `${functionName}-error`;
+    const alarm = func.metricErrors().createAlarm(this, 'Alarm', {
+      threshold: 1,
+      evaluationPeriods: 1,
+      alarmName,
+      alarmDescription: `The ${functionName} lambda function had an error`,
+      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+    });
+    const alarmTopic = new sns.Topic(this, 'Topic', {
+      displayName: `${alarmName}-alarm`,
+      topicName: `${alarmName}-alarm`,
+    });
+    topic.addSubscription(
+      new snsSubscriptions.EmailSubscription(ENVIRONMENT.alarmEmailAddress)
+    );
+    alarm.addAlarmAction(new cloudwatchActions.SnsAction(alarmTopic));
 
     // Add lambda trigger from bucket
     func.addEventSource(

@@ -114,6 +114,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "us-east-1"
           AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
+          ALARM_EMAIL_ADDRESS: ${{ secrets.ALARM_EMAIL_ADDRESS }}
         run: |
           npm run deploy:build
 

@@ -136,6 +136,7 @@ jobs:
           AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
           AWS_OPEN_ALCHEMY_CERTIFICATE_ARN: ${{ secrets.AWS_OPEN_ALCHEMY_CERTIFICATE_ARN }}
           AWS_IDENTITY_PROVIDER_ARN: ${{ secrets.AWS_IDENTITY_PROVIDER_ARN }}
+          ALARM_EMAIL_ADDRESS: ${{ secrets.ALARM_EMAIL_ADDRESS }}
         run: |
           npm run deploy:api
 
