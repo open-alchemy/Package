@@ -1,6 +1,48 @@
-# OpenAlchemyPackage
+# OpenAlchemy Package
 
-OpenAlchemy package management as a service
+Offers OpenAlchemy models packages to be installed via pip. For example:
+
+<!-- markdownlint-disable line-length -->
+
+```bash
+pip install --index-url https://{public_key}:{secret_key}@index.package.openalchemy.io --extra-index-url https://pypi.org/simple "{specId}=={version}"
+```
+
+<!-- markdownlint-enable line-length -->
+
+The web application at <https://package.openalchemy.io> provides a web
+interface to manage your packages, including providing the `pip install`
+command for your own package.
+
+This service is based on the OpenAlchemy package you can find out more about
+here: <https://github.com/jdkandersson/OpenAlchemy>
+
+---
+
+## NOTE
+
+This service has been engineered with a lot of care (which you can verify
+yourself as all the code, infrastructure and tests are open source in this
+repository). However, a lot of bugs are discovered by operating software over
+time. This service was first made available in January 2020.
+
+---
+
+## Pricing
+
+A free tier is available which covers up to 10 models across any number of
+packages. No credit card is required to use the free tier.
+
+Whilst a paid version of the service is not yet available, for transparency,
+the following is the proposed pricing for the service: $0.1 per model above the
+free tier per month (pro rata) charged monthly.
+
+## Terms of Service
+
+The Australian company Open Alchemy Pty Ltd owns and operates this service.
+
+By using this service, you agree to the terms available here:
+[TERMS.md](TERMS.md).
 
 ## Web
 

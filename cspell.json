@@ -50,7 +50,9 @@
     "markdownlint",
     "canonicalize",
     "jmespath",
-    "dateutil"
+    "dateutil",
+    "aoic",
+    "NPPs"
   ],
   "dictionaries": [
     "python",
