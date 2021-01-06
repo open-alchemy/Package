@@ -17,10 +17,13 @@ export class TestStack extends cdk.Stack {
       logRetention: logs.RetentionDays.ONE_WEEK,
       timeout: cdk.Duration.seconds(5),
     });
-    func.logGroup.addMetricFilter('test-error', {
-      filterPattern: { logPatternString: 'ERROR' },
-      metricName: 'error',
-      metricNamespace: 'test-service',
-    });
+    func
+      .metricErrors()
+      .createAlarm(this, 'Alarm', {
+        threshold: 1,
+        evaluationPeriods: 1,
+        alarmName: 'test-service-error',
+        alarmDescription: 'The test-service lambda function had an error',
+      });
   }
 }
