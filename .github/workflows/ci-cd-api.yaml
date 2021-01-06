@@ -89,7 +89,8 @@ jobs:
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: |
           pipenv lock -r > requirements.txt
-          pip install -r requirements.txt --target dist
+          ../remove-lambda-default-dependencies.sh
+          pip install -r lambda-requirements.txt --target dist
           cp -r api.py app.py openapi library dist/
           cd dist
           zip -r deployment-package.zip .
