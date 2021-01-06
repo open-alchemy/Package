@@ -14,21 +14,24 @@ Cypress.Commands.add('login', async () => {
 
 Cypress.Commands.add(
   'createSpec',
-  async (accessToken: string, value: string, id: string) => {
+  async (accessToken: string, value: string, name: string) => {
     const specService = new SpecService();
     await specService.put({
       accessToken,
       value,
       language: 'JSON',
-      id,
+      name,
     });
   }
 );
 
-Cypress.Commands.add('deleteSpec', async (accessToken: string, id: string) => {
-  const specService = new SpecService();
-  await specService.delete({
-    accessToken,
-    id,
-  });
-});
+Cypress.Commands.add(
+  'deleteSpec',
+  async (accessToken: string, name: string) => {
+    const specService = new SpecService();
+    await specService.delete({
+      accessToken,
+      name,
+    });
+  }
+);
