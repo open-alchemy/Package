@@ -64,11 +64,6 @@ const employeeSpec = await service.get({ accessToken });
 await service.delete({ accessToken });
 ```
 
-## Infrastructure
-
-The CloudFormation stack is defined here:
-[../infrastructure/lib/sdk-stack.ts](../infrastructure/lib/sdk-stack.ts).
-
 ## CI-CD
 
 The workflow for the CI-CD is defined here:
