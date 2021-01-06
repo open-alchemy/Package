@@ -148,6 +148,7 @@ jobs:
           AWS_DEFAULT_REGION: "us-east-1"
           AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
           AWS_OPEN_ALCHEMY_CERTIFICATE_ARN: ${{ secrets.AWS_OPEN_ALCHEMY_CERTIFICATE_ARN }}
+          ALARM_EMAIL_ADDRESS: ${{ secrets.ALARM_EMAIL_ADDRESS }}
         run: |
           npm run deploy:index
 

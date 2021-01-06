@@ -84,7 +84,7 @@ export class BuildStack extends cdk.Stack {
       alarmDescription: `The ${functionName} lambda function had an error`,
       treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
     });
-    const alarmTopic = new sns.Topic(this, 'Topic', {
+    const alarmTopic = new sns.Topic(this, 'AlarmTopic', {
       displayName: `${alarmName}-alarm`,
       topicName: `${alarmName}-alarm`,
     });

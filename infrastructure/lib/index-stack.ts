@@ -13,6 +13,10 @@ import * as route53Targets from '@aws-cdk/aws-route53-targets';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
 import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 import * as ssm from '@aws-cdk/aws-ssm';
+import * as cloudwatchActions from '@aws-cdk/aws-cloudwatch-actions';
+import * as snsSubscriptions from '@aws-cdk/aws-sns-subscriptions';
+import * as sns from '@aws-cdk/aws-sns';
+import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
 
 import { CONFIG } from './config';
 import { ENVIRONMENT } from './environment';
@@ -62,6 +66,7 @@ export class IndexStack extends cdk.Stack {
     );
 
     // Lambda function
+    const functionName = 'package-index-service';
     const deploymentPackage = 'resources/index/deployment-package.zip';
     const deploymentPackageContents = fs.readFileSync(deploymentPackage);
     const deploymentPackageHash = crypto
@@ -69,7 +74,7 @@ export class IndexStack extends cdk.Stack {
       .update(deploymentPackageContents)
       .digest('hex');
     const func = new lambda.Function(this, 'IndexFunc', {
-      functionName: 'package-index-service',
+      functionName,
       runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.fromAsset(deploymentPackage),
       handler: 'app.main',
@@ -84,6 +89,24 @@ export class IndexStack extends cdk.Stack {
         removalPolicy: cdk.RemovalPolicy.RETAIN,
       }
     );
+
+    // Add alarm subscription
+    const alarmName = `${functionName}-error`;
+    const alarm = func.metricErrors().createAlarm(this, 'Alarm', {
+      threshold: 1,
+      evaluationPeriods: 1,
+      alarmName,
+      alarmDescription: `The ${functionName} lambda function had an error`,
+      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+    });
+    const topic = new sns.Topic(this, 'Topic', {
+      displayName: `${alarmName}-alarm`,
+      topicName: `${alarmName}-alarm`,
+    });
+    topic.addSubscription(
+      new snsSubscriptions.EmailSubscription(ENVIRONMENT.alarmEmailAddress)
+    );
+    alarm.addAlarmAction(new cloudwatchActions.SnsAction(topic));
 
     // Permissions for lambda function
     specTable.grantReadData(func);
