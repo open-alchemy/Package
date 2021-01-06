@@ -250,3 +250,16 @@ Algorithm:
 
 The CloudFormation stack is defined here:
 [../infrastructure/lib/api-stack.ts](../infrastructure/lib/api-stack.ts).
+
+## CI-CD
+
+The workflow for the CI-CD is defined here:
+[../.github/workflows/ci-cd-api.yaml](../.github/workflows/ci-cd-api.yaml).
+
+## Production Tests
+
+The tests against the deployed API are defined here:
+[../test/api/](../test/api/).
+
+The workflow that periodically executes the tests is defined here:
+[../.github/workflows/production-test-api.yaml](../.github/workflows/production-test-api.yaml).
