@@ -15,7 +15,7 @@ import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 import * as ssm from '@aws-cdk/aws-ssm';
 
 import { CONFIG } from './config';
-import { ENVIRONMENT } from './environment';
+import { OLD_ENVIRONMENT } from './environment';
 
 export class IndexStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -93,7 +93,7 @@ export class IndexStack extends cdk.Stack {
     secret.grantRead(func);
 
     // Certificate
-    const certificateArn = ENVIRONMENT.AWS_OPEN_ALCHEMY_CERTIFICATE_ARN;
+    const certificateArn = OLD_ENVIRONMENT.AWS_OPEN_ALCHEMY_CERTIFICATE_ARN;
     const certificate = certificatemanager.Certificate.fromCertificateArn(
       this,
       'Certificate',

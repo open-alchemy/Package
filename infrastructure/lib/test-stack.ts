@@ -3,7 +3,9 @@ import * as lambda from '@aws-cdk/aws-lambda';
 import * as sns from '@aws-cdk/aws-sns';
 import * as logs from '@aws-cdk/aws-logs';
 import * as cloudwatchActions from '@aws-cdk/aws-cloudwatch-actions';
-// import * as snsSubscriptions from '@aws-cdk/aws-sns-subscriptions';
+import * as snsSubscriptions from '@aws-cdk/aws-sns-subscriptions';
+
+import { ENVIRONMENT } from './environment';
 
 export class TestStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -30,6 +32,9 @@ export class TestStack extends cdk.Stack {
       displayName: 'test-service-error-alarm',
       topicName: 'test-service-error-alarm',
     });
+    topic.addSubscription(
+      new snsSubscriptions.EmailSubscription(ENVIRONMENT.alarmEmailAddress)
+    );
     alarm.addAlarmAction(new cloudwatchActions.SnsAction(topic));
   }
 }

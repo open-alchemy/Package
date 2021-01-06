@@ -10,36 +10,36 @@ import { SecurityStack } from '../lib/security-stack';
 import { IndexStack } from '../lib/index-stack';
 import { StorageStack } from '../lib/storage-stack';
 import { TestStack } from '../lib/test-stack';
-import { ENVIRONMENT } from '../lib/environment';
+import { OLD_ENVIRONMENT } from '../lib/environment';
 
 const env = {
-  account: ENVIRONMENT.AWS_ACCOUNT,
-  region: ENVIRONMENT.AWS_DEFAULT_REGION,
+  account: OLD_ENVIRONMENT.AWS_ACCOUNT,
+  region: OLD_ENVIRONMENT.AWS_DEFAULT_REGION,
 };
 
 const app = new cdk.App();
 
-if (ENVIRONMENT.STACK === 'PackageApiStack') {
+if (OLD_ENVIRONMENT.STACK === 'PackageApiStack') {
   new ApiStack(app, 'PackageApiStack', { env });
 }
-if (ENVIRONMENT.STACK === 'PackageWebStack') {
+if (OLD_ENVIRONMENT.STACK === 'PackageWebStack') {
   new WebStack(app, 'PackageWebStack', { env });
 }
-if (ENVIRONMENT.STACK === 'PackageBuildStack') {
+if (OLD_ENVIRONMENT.STACK === 'PackageBuildStack') {
   new BuildStack(app, 'PackageBuildStack', { env });
 }
-if (ENVIRONMENT.STACK === 'PackageDatabaseStack') {
+if (OLD_ENVIRONMENT.STACK === 'PackageDatabaseStack') {
   new DatabaseStack(app, 'PackageDatabaseStack', { env });
 }
-if (ENVIRONMENT.STACK === 'PackageSecurityStack') {
+if (OLD_ENVIRONMENT.STACK === 'PackageSecurityStack') {
   new SecurityStack(app, 'PackageSecurityStack', { env });
 }
-if (ENVIRONMENT.STACK === 'PackageIndexStack') {
+if (OLD_ENVIRONMENT.STACK === 'PackageIndexStack') {
   new IndexStack(app, 'PackageIndexStack', { env });
 }
-if (ENVIRONMENT.STACK === 'PackageStorageStack') {
+if (OLD_ENVIRONMENT.STACK === 'PackageStorageStack') {
   new StorageStack(app, 'PackageStorageStack', { env });
 }
-if (ENVIRONMENT.STACK === 'PackageTestStack') {
+if (OLD_ENVIRONMENT.STACK === 'PackageTestStack') {
   new TestStack(app, 'PackageTestStack', { env });
 }

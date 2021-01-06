@@ -1,9 +1,7 @@
 import * as cdk from '@aws-cdk/core';
-import * as regionInfo from '@aws-cdk/region-info';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
 
 import { CONFIG } from './config';
-import { ENVIRONMENT } from './environment';
 
 export class DatabaseStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
