@@ -6,6 +6,11 @@ on:
       - main
     paths:
       - ".github/workflows/ci-cd-test.yaml"
+      - "infrastructure/**"
+      - "!infrastructure/lib/*-stack.ts"
+      - "infrastructure/lib/test-stack.ts"
+      - "!infrastructure/test/**"
+      - "!**.md"
 
 jobs:
   deploy:
