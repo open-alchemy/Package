@@ -69,3 +69,21 @@ Either unauthorized or the path to retrieve from S3 by returning, for example:
 1. if it is a list request, retrieve the versions of the requested spec from
    the database, construct the response and return it and
 1. rewrite the request path to include `sub`.
+
+## Infrastructure
+
+The CloudFormation stack is defined here:
+[../infrastructure/lib/index-stack.ts](../infrastructure/lib/index-stack.ts).
+
+## CI-CD
+
+The workflow for the CI-CD is defined here:
+[../.github/workflows/ci-cd-index.yaml](../.github/workflows/ci-cd-index.yaml).
+
+## Production Tests
+
+The tests against the deployed index service are defined here:
+[../test/index/](../test/index/).
+
+The workflow that periodically executes the tests is defined here:
+[../.github/workflows/production-test-index.yaml](../.github/workflows/production-test-index.yaml).
