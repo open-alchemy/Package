@@ -53,7 +53,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: build/dist/deployment-package.zip
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('build/**') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-slim-${{ hashFiles('build/**') }}
       - name: set up python
         if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/setup-python@v2
@@ -69,7 +69,8 @@ jobs:
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: |
           pipenv lock -r > requirements.txt
-          pip install -r requirements.txt --target dist
+          ../remove-lambda-built-in-dependencies.sh
+          pip install --no-deps -r lambda-requirements.txt --target dist
           cp -r app.py library dist/
           cd dist
           zip -r deployment-package.zip .

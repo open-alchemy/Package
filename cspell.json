@@ -48,7 +48,9 @@
     "delenv",
     "setenv",
     "markdownlint",
-    "canonicalize"
+    "canonicalize",
+    "jmespath",
+    "dateutil"
   ],
   "dictionaries": [
     "python",
