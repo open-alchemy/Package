@@ -134,7 +134,7 @@ The workflow for the CI-CD is defined here:
 ## Production Tests
 
 The production tests are shared with the index service defined here:
-[../build/](../build/).
+[../index/](../index/).
 
 The tests against the deployed build service are defined here:
 [../test/index/](../test/index/).
