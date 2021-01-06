@@ -113,20 +113,6 @@ where:
 - `salt` is the credential salt,
 - `iterations` is 10k.
 
-## CI-CD
-
-The workflow is defined here:
-[../.github/workflows/ci-cd-security.yaml](../.github/workflows/ci-cd-security.yaml).
-
-There are a few groups of jobs in the CI-CD:
-
-- `test`: runs the tests for the package in supported python versions,
-- `build`: builds the security package,
-- `deploy`: deploys security infrastructure to AWS,
-- `release-required`: determines whether a release to PyPI is required and
-- `release`: a combination of deploying to test and production PyPI and
-  executing tests on the published packages
-
 ### `test`
 
 Executes the tests defined at [tests](tests).
@@ -192,3 +178,30 @@ following environment variables:
 
 - `TEST_USERNAME`: a username from the user pool.
 - `TEST_PASSWORD`: the password for the user.
+
+## Infrastructure
+
+The CloudFormation stack is defined here:
+[../infrastructure/lib/security-stack.ts](../infrastructure/lib/security-stack.ts).
+
+## CI-CD
+
+The workflow is defined here:
+[../.github/workflows/ci-cd-security.yaml](../.github/workflows/ci-cd-security.yaml).
+
+There are a few groups of jobs in the CI-CD:
+
+- `test`: runs the tests for the package in supported python versions,
+- `build`: builds the security package,
+- `deploy`: deploys security infrastructure to AWS,
+- `release-required`: determines whether a release to PyPI is required and
+- `release`: a combination of deploying to test and production PyPI and
+  executing tests on the published packages
+
+## Production Tests
+
+The tests against the deployed security package are defined here:
+[../test/security/](../test/security/).
+
+The workflow that periodically executes the tests is defined here:
+[../.github/workflows/production-test-security.yaml](../.github/workflows/production-test-security.yaml).
