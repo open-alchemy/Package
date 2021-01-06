@@ -73,7 +73,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: api/dist/deployment-package.zip
-          key: ${{ runner.os }}-api-${{ env.cache-name }}-${{ hashFiles('api/**') }}
+          key: ${{ runner.os }}-api-${{ env.cache-name }}-slim-${{ hashFiles('api/**') }}
       - name: set up python
         if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/setup-python@v2
