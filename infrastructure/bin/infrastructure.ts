@@ -9,7 +9,6 @@ import { DatabaseStack } from '../lib/database-stack';
 import { SecurityStack } from '../lib/security-stack';
 import { IndexStack } from '../lib/index-stack';
 import { StorageStack } from '../lib/storage-stack';
-import { TestStack } from '../lib/test-stack';
 import { ENVIRONMENT } from '../lib/environment';
 
 const env = {
@@ -39,7 +38,4 @@ if (ENVIRONMENT.stack === 'PackageIndexStack') {
 }
 if (ENVIRONMENT.stack === 'PackageStorageStack') {
   new StorageStack(app, 'PackageStorageStack', { env });
-}
-if (ENVIRONMENT.stack === 'PackageTestStack') {
-  new TestStack(app, 'PackageTestStack', { env });
 }
