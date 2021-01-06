@@ -120,3 +120,24 @@ the application output.
 
 To avoid leaking data between invocations, the `build` folder in `tmp` is
 deleted.
+
+## Infrastructure
+
+The CloudFormation stack is defined here:
+[../infrastructure/lib/build-stack.ts](../infrastructure/lib/build-stack.ts).
+
+## CI-CD
+
+The workflow for the CI-CD is defined here:
+[../.github/workflows/ci-cd-build.yaml](../.github/workflows/ci-cd-build.yaml).
+
+## Production Tests
+
+The production tests are shared with the index service defined here:
+[../build/](../build/).
+
+The tests against the deployed build service are defined here:
+[../test/index/](../test/index/).
+
+The workflow that periodically executes the tests is defined here:
+[../.github/workflows/production-test-index.yaml](../.github/workflows/production-test-index.yaml).
