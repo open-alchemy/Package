@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/ci-cd-api.yaml"
       - "api/**"
+      - "test/api/**"
       - "infrastructure/**"
       - "!infrastructure/lib/*-stack.ts"
       - "infrastructure/lib/api-stack.ts"

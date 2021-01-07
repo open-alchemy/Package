@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/ci-cd-security.yaml"
       - "security/**"
+      - "test/security/**"
       - "infrastructure/**"
       - "!infrastructure/lib/*-stack.ts"
       - "infrastructure/lib/security-stack.ts"

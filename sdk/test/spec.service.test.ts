@@ -21,7 +21,7 @@ describe('SpecService', () => {
       const responseData = 'spec 1';
       mockAdaptor
         .onGet(`https://package.api.openalchemy.io/v1/specs/${specName}`)
-        .replyOnce((config) => {
+        .replyOnce(config => {
           expect(config.headers).toHaveProperty('Authorization');
           expect(config.headers['Authorization']).toEqual(
             `Bearer ${accessToken}`
@@ -65,7 +65,7 @@ describe('SpecService', () => {
         .onGet(
           `https://package.api.openalchemy.io/v1/specs/${specName}/versions/${version}`
         )
-        .replyOnce((config) => {
+        .replyOnce(config => {
           expect(config.headers).toHaveProperty('Authorization');
           expect(config.headers['Authorization']).toEqual(
             `Bearer ${accessToken}`
@@ -115,7 +115,7 @@ describe('SpecService', () => {
         .onGet(
           `https://package.api.openalchemy.io/v1/specs/${specName}/versions`
         )
-        .replyOnce((config) => {
+        .replyOnce(config => {
           expect(config.headers).toHaveProperty('Authorization');
           expect(config.headers['Authorization']).toEqual(
             `Bearer ${accessToken}`
@@ -191,7 +191,7 @@ describe('SpecService', () => {
       const language = 'JSON';
       mockAdaptor
         .onPut(`https://package.api.openalchemy.io/v1/specs/${specName}`)
-        .replyOnce((config) => {
+        .replyOnce(config => {
           expect(config.headers).toHaveProperty('Authorization');
           expect(config.headers['Authorization']).toEqual(
             `Bearer ${accessToken}`
@@ -251,7 +251,7 @@ describe('SpecService', () => {
         .onPut(
           `https://package.api.openalchemy.io/v1/specs/${specName}/versions/${specVersion}`
         )
-        .replyOnce((config) => {
+        .replyOnce(config => {
           expect(config.headers).toHaveProperty('Authorization');
           expect(config.headers['Authorization']).toEqual(
             `Bearer ${accessToken}`
@@ -278,7 +278,7 @@ describe('SpecService', () => {
     });
 
     test('should throw error if a 400 error is returned', async () => {
-      // GIVE mocked axios that returns 200
+      // GIVE mocked axios that returns 400
       const accessToken = 'token 1';
       const specName = 'spec 1';
       const specValue = 'spec value 1';
@@ -311,7 +311,7 @@ describe('SpecService', () => {
       const specName = 'spec 1';
       mockAdaptor
         .onDelete(`https://package.api.openalchemy.io/v1/specs/${specName}`)
-        .replyOnce((config) => {
+        .replyOnce(config => {
           expect(config.headers).toHaveProperty('Authorization');
           expect(config.headers['Authorization']).toEqual(
             `Bearer ${accessToken}`
