@@ -17,11 +17,11 @@ individual. Examples of Personal Information we collect include: names,
 email addresses and phone numbers.
 
 This Personal Information is obtained in many ways including interviews,
-correspondence, by telephone, by email, via our website
-<https://github.com/jdkandersson/OpenAlchemy>, from your website, from media
-and publications, from other publicly available sources, from cookies, from
-your interaction with our services and from third parties. We don’t guarantee
-website links or policy of authorized third parties.
+correspondence, by telephone, by email, via our websites
+<https://package.openalchemy.io> and <https://editor.openalchemy.io>, from your
+website, from media and publications, from other publicly available sources,
+from cookies, from your interaction with our services and from third parties.
+We don’t guarantee website links or policy of authorized third parties.
 
 We collect your Personal Information for the primary purpose of providing our
 services to you, providing information to our clients and marketing. We may
@@ -104,6 +104,6 @@ This Policy may change from time to time and is available on our website.
 If you have any queries or complaints about our Privacy Policy please contact
 us at:
 
-<https://github.com/open-alchemy/OpenAlchemyPackage>
+<https://github.com/open-alchemy/Package>
 
 open.alchemy.ptyltd@gmail.com
