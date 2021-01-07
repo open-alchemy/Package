@@ -34,6 +34,8 @@ repos:
       - id: mypy
         name: mypy (api)
         files: ^api/
+        additional_dependencies:
+          - "sqlalchemy-stubs"
       - id: mypy
         name: mypy (build)
         files: ^build/
