@@ -11,7 +11,6 @@ const SPEC_INFOS: SpecInfo[] = [
   {
     id: 'spec 1',
     name: 'spec 1',
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     version: 'version 1',
     // eslint-disable-next-line @typescript-eslint/naming-convention
     model_count: 1,

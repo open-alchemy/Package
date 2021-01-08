@@ -41,11 +41,15 @@ const packageReducerValue = createReducer(
   })),
   on(PackageActions.specsComponentRefresh, (state) => ({
     ...state,
-    specs: { specInfos: state.specs.specInfos, success: null, loading: true },
+    specs: {
+      specInfos: [...state.specs.specInfos],
+      success: null,
+      loading: true,
+    },
   })),
   on(PackageActions.packageApiListSpecsSuccess, (state, action) => ({
     ...state,
-    specs: { specInfos: action.specInfos, success: true, loading: false },
+    specs: { specInfos: [...action.specInfos], success: true, loading: false },
   })),
   on(PackageActions.packageApiListSpecsError, (state) => ({
     ...state,
@@ -54,7 +58,7 @@ const packageReducerValue = createReducer(
   on(PackageActions.packageApiGetCredentialsSuccess, (state, action) => ({
     ...state,
     credentials: {
-      value: action.credentials,
+      value: { ...action.credentials },
       success: true,
       loading: false,
     },
