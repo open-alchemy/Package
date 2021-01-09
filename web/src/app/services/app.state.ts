@@ -1,4 +1,4 @@
-import { createSelector, createFeatureSelector } from '@ngrx/store';
+import { createFeatureSelector } from '@ngrx/store';
 
 import { PackageState } from './package/package.reducer';
 

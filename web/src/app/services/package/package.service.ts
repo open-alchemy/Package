@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 
 import { createSelector, select } from '@ngrx/store';
 import { Store } from '@ngrx/store';
 
 import * as PackageActions from './package.actions';
-import { PackageState, SpecsState, CredentialsState } from './package.reducer';
+import { PackageState } from './package.reducer';
 import { SpecName } from './types';
 import { AppState, selectPackage } from '../app.state';
 
@@ -21,13 +20,10 @@ const selectCredentials = createSelector(
 
 @Injectable({ providedIn: 'root' })
 export class PackageService {
-  specs$: Observable<SpecsState>;
-  credentials$: Observable<CredentialsState>;
+  specs$ = this.store.pipe(select(selectSpecs));
+  credentials$ = this.store.pipe(select(selectCredentials));
 
-  constructor(private store: Store<AppState>) {
-    this.specs$ = store.pipe(select(selectSpecs));
-    this.credentials$ = store.pipe(select(selectCredentials));
-  }
+  constructor(private store: Store<AppState>) {}
 
   specsComponentOnInit(): void {
     this.store.dispatch(PackageActions.specsComponentOnInit());
