@@ -40,5 +40,7 @@ jobs:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           TEST_USERNAME: ${{ secrets.TEST_USERNAME_API }}
           TEST_PASSWORD: ${{ secrets.TEST_PASSWORD_API }}
+          PIPENV_VENV_IN_PROJECT: 1
         run: |
+          pipenv --venv
           pipenv run test
