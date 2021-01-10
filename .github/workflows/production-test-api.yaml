@@ -46,4 +46,4 @@ jobs:
           echo after pipenv --help
           pipenv run --help
           echo after pipenv run --help
-          pipenv run test
+          pipenv run pytest
