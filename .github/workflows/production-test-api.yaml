@@ -42,5 +42,4 @@ jobs:
           TEST_PASSWORD: ${{ secrets.TEST_PASSWORD_API }}
           PIPENV_VENV_IN_PROJECT: 1
         run: |
-          pipenv install
-          pipenv run test
+          pipenv run test || pipenv --rm && pipenv install --dev && pipenv run test
