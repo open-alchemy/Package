@@ -31,7 +31,9 @@ jobs:
         id: cache-pipenv
         uses: actions/cache@v2
         with:
-          path: build/.venv
+          path: |
+            ~/.cache/pipenv
+            build/.venv
           key: ${{ runner.os }}-pipenv-${{ hashFiles('build/Pipfile.lock') }}
       - name: install dependencies
         working-directory: ./build
@@ -42,8 +44,10 @@ jobs:
           pipenv install --dev
       - name: run tests
         working-directory: ./build
+        env:
+          PIPENV_VENV_IN_PROJECT: 1
         run: |
-          pipenv run test
+          pipenv run test || pipenv --rm && pipenv install --dev && pipenv run test
 
   build:
     runs-on: ubuntu-latest

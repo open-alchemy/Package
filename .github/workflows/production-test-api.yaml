@@ -21,7 +21,9 @@ jobs:
       - id: cache-pipenv
         uses: actions/cache@v2
         with:
-          path: test/api/.venv
+          path: |
+            ~/.cache/pipenv
+            test/api/.venv
           key: ${{ runner.os }}-test-api-${{ hashFiles('test/api/Pipfile.lock') }}
       - name: install dependencies
         working-directory: ./test/api/

@@ -67,8 +67,9 @@ jobs:
           AWS_ACCESS_KEY_ID: invalid id
           AWS_SECRET_ACCESS_KEY: invalid key
           AWS_DEFAULT_REGION: "us-east-1"
+          PIPENV_VENV_IN_PROJECT: 1
         run: |
-          pipenv run test
+          pipenv run test || pipenv --rm && pipenv install --dev && pipenv run test
 
   build:
     runs-on: ubuntu-latest
@@ -185,5 +186,6 @@ jobs:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           TEST_USERNAME: ${{ secrets.TEST_USERNAME_API }}
           TEST_PASSWORD: ${{ secrets.TEST_PASSWORD_API }}
+          PIPENV_VENV_IN_PROJECT: 1
         run: |
-          pipenv run test
+          pipenv run test || pipenv --rm && pipenv install --dev && pipenv run test

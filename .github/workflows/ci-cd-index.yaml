@@ -34,7 +34,9 @@ jobs:
         id: cache-pipenv
         uses: actions/cache@v2
         with:
-          path: index/.venv
+          path: |
+            ~/.cache/pipenv
+            index/.venv
           key: ${{ runner.os }}-${{ matrix.python-version }}-pipenv-${{ hashFiles('index/Pipfile.lock') }}
       - name: install dependencies
         working-directory: ./index
@@ -65,8 +67,9 @@ jobs:
           AWS_ACCESS_KEY_ID: invalid id
           AWS_SECRET_ACCESS_KEY: invalid key
           AWS_DEFAULT_REGION: "us-east-1"
+          PIPENV_VENV_IN_PROJECT: 1
         run: |
-          pipenv run test
+          pipenv run test || pipenv --rm && pipenv install --dev && pipenv run test
 
   build:
     runs-on: ubuntu-latest
