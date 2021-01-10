@@ -17,12 +17,15 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9]
     steps:
       - uses: actions/checkout@v2
-      - name: set up python
+      - name: set up python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-          python-version: 3.9
+          python-version: ${{ matrix.python-version }}
       - name: install pipenv
         run: |
           python -m pip install --upgrade pip
@@ -31,8 +34,10 @@ jobs:
         id: cache-pipenv
         uses: actions/cache@v2
         with:
-          path: api/.venv
-          key: ${{ runner.os }}-pipenv-${{ hashFiles('api/Pipfile.lock') }}
+          path: |
+            ~/.cache/pipenv
+            api/.venv
+          key: ${{ runner.os }}-${{ matrix.python-version }}-pipenv-${{ hashFiles('api/Pipfile.lock') }}
       - name: install dependencies
         working-directory: ./api
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
@@ -159,7 +164,9 @@ jobs:
       - id: cache-pipenv
         uses: actions/cache@v2
         with:
-          path: test/api/.venv
+          path: |
+            ~/.cache/pipenv
+            test/api/.venv
           key: ${{ runner.os }}-test-api-${{ hashFiles('test/api/Pipfile.lock') }}
       - name: install dependencies
         working-directory: ./test/api/
