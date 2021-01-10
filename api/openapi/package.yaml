@@ -280,6 +280,7 @@ components:
       description: The id of an OpenAPI specification (it is the canonical version of the spec name)
       type: string
       pattern: ^([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$
+      readOnly: true
     SpecValue:
       description: The value of an OpenAPI specification
       type: string
@@ -290,6 +291,7 @@ components:
     SpecUpdatedAt:
       description: The last time the OpenAPI specification was updated
       type: integer
+      readOnly: true
     SpecTitle:
       description: The title of an OpenAPI specification
       type: string
@@ -299,6 +301,7 @@ components:
     SpecModelCount:
       description: The number of models in an OpenAPI specification
       type: integer
+      readOnly: true
     SpecInfo:
       description: Information about a an OpenAPI specification
       type: object
