@@ -134,7 +134,7 @@ def test_specs_spec_name_get(client, _clean_specs_table):
     package_database.get().create_update_spec(
         sub=sub, name=spec_name, version=version, model_count=1
     )
-    spec = {"key": "value"}
+    spec = {"components": {}}
     storage.get_storage_facade().create_update_spec(
         user=sub,
         name=spec_name,
@@ -155,7 +155,7 @@ def test_specs_spec_name_get(client, _clean_specs_table):
     )
 
     response_json = json.loads(response.data.decode())
-    assert "key: value" in response_json["value"]
+    assert "components: {}" in response_json["value"]
     assert response_json["name"] == spec_name
     assert response_json["version"] == version
 
@@ -307,7 +307,7 @@ def test_specs_spec_name_version_version_get(client, _clean_specs_table):
     sub = "sub 1"
     spec_name = "spec1"
     version = "1"
-    spec = {"key": "value"}
+    spec = {"components": {}}
     package_database.get().create_update_spec(
         sub=sub, name=spec_name, version=version, model_count=1
     )
@@ -332,7 +332,7 @@ def test_specs_spec_name_version_version_get(client, _clean_specs_table):
     )
 
     response_json = json.loads(response.data.decode())
-    assert "key: value" in response_json["value"]
+    assert "components: {}" in response_json["value"]
     assert response_json["name"] == spec_name
     assert response_json["version"] == version
 

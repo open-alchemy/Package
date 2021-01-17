@@ -89,7 +89,7 @@ def test_get(_clean_specs_table):
     user = "user 1"
     spec_name = "spec name 1"
     version = "1"
-    spec = {"key": "value"}
+    spec = {"components": {}}
     package_database.get().create_update_spec(
         sub=user, name=spec_name, version=version, model_count=1
     )
@@ -106,7 +106,7 @@ def test_get(_clean_specs_table):
     assert response.mimetype == "application/json"
     response_data_json = json.loads(response.data.decode())
     assert f"version: '{version}'" in response_data_json["value"]
-    assert "key: value" in response_data_json["value"]
+    assert "components: {}" in response_data_json["value"]
     assert response_data_json["name"] == spec_name
     assert response_data_json["version"] == version
 
@@ -121,7 +121,7 @@ def test_get_database_miss():
     user = "user 1"
     spec_name = "spec name 1"
     version = "1"
-    spec = {"key": "value"}
+    spec = {"components": {}}
     storage.get_storage_facade().create_update_spec(
         user=user,
         name=spec_name,

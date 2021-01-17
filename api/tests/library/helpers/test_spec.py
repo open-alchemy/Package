@@ -3,6 +3,7 @@
 import json
 
 import pytest
+import yaml
 from library import exceptions
 from library.helpers import spec
 
@@ -199,7 +200,7 @@ def test_process():
                     ]
                 },
             },
-            2,
+            1,
             id="single x-inherits",
         ),
         pytest.param(
@@ -246,7 +247,7 @@ def test_process():
                     ]
                 },
             },
-            3,
+            1,
             id="multiple x-inherits",
         ),
     ],
@@ -265,27 +266,43 @@ def test_process_model_count(schemas, expected_model_count):
     assert returned_result.model_count == expected_model_count
 
 
+@pytest.mark.parametrize(
+    "version, spec_dict, expected_version",
+    [
+        pytest.param(
+            "version 1",
+            {"components": {"schemas": {"Schema": {"key": "value"}}}},
+            "version 1",
+            id="no info",
+        ),
+        pytest.param(
+            "version 1",
+            {"info": {}, "components": {"schemas": {"Schema": {"key": "value"}}}},
+            "version 1",
+            id="with info no version",
+        ),
+        pytest.param(
+            "version 1",
+            {
+                "info": {"version": "version 2"},
+                "components": {"schemas": {"Schema": {"key": "value"}}},
+            },
+            "version 2",
+            id="with info with version",
+        ),
+    ],
+)
 @pytest.mark.helpers
-def test_prepare():
+def test_prepare(version, spec_dict, expected_version):
     """
     GIVEN spec string and version
     WHEN prepare is called with the spec and version
     THEN a nicely formatted spec is returned.
     """
-    spec_str = json.dumps(
-        {"components": {"schemas": {"Schema": {"key": "value"}}}}, separators=(",", ":")
-    )
-    version = "version 1"
+    spec_str = json.dumps(spec_dict, separators=(",", ":"))
 
     returned_spec_str = spec.prepare(spec_str=spec_str, version=version)
 
-    assert (
-        returned_spec_str
-        == f"""info:
-  version: {version}
-components:
-  schemas:
-    Schema:
-      key: value
-"""
-    )
+    assert yaml.dump({"components": spec_dict["components"]}) in returned_spec_str
+    assert expected_version in returned_spec_str
+    assert returned_spec_str.count("info:") == 1

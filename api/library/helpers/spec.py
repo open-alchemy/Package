@@ -101,9 +101,7 @@ def process(*, spec_str: str, language: str) -> TSpecInfo:
 
     version = calc_version(spec_info.version)
 
-    model_count = spec_info.spec_str.count('"x-tablename":') + spec_info.spec_str.count(
-        '"x-inherits":'
-    )
+    model_count = spec_info.spec_str.count('"x-tablename":')
 
     return TSpecInfo(
         spec_str=spec_info.spec_str,
@@ -129,4 +127,8 @@ def prepare(*, spec_str: str, version: str) -> str:
 
     """
     spec = json.loads(spec_str)
-    return yaml.dump({"info": {"version": version}}) + yaml.dump(spec)
+    info = {"info": {"version": version}}
+    if "info" in spec:
+        info = {**info, **spec["info"]}
+    components = spec["components"]
+    return yaml.dump(info) + yaml.dump({"components": components})
