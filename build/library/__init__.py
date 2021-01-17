@@ -58,6 +58,23 @@ class Package:
 PackageList = typing.List[Package]
 
 
+def calclate_package_name(*, storage_location: SpecStorageLocation) -> str:
+    """
+    Calculate the package name from the storage location.
+
+    Algorithm:
+    1. replace - with _.
+
+    Args:
+        storage_location: The location where the package needs to be stored
+
+    Returns:
+        The name of the package.
+
+    """
+    return storage_location.spec_id.replace("-", "_")
+
+
 def generate(spec_storage_location: str, spec_path: pathlib.Path) -> PackageList:
     """
     Generate the package for the spec.
@@ -73,9 +90,10 @@ def generate(spec_storage_location: str, spec_path: pathlib.Path) -> PackageList
     location = parse_spec_storage_location(spec_storage_location)
     dist_path = spec_path.parent
 
+    package_name = calclate_package_name(storage_location=location)
     open_alchemy.build_json(
         spec_path,
-        location.spec_id,
+        package_name,
         str(dist_path),
         open_alchemy.PackageFormat.SDIST,
     )

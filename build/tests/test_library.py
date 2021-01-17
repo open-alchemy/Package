@@ -4,6 +4,7 @@ import json
 import typing
 
 import library
+import pytest
 
 
 def test_parse_spec_storage_location():
@@ -24,6 +25,31 @@ def test_parse_spec_storage_location():
     assert returned_location.version == version
 
 
+@pytest.mark.parametrize(
+    "spec_id, expected_package_name",
+    [
+        pytest.param("test", "test", id="no -"),
+        pytest.param("test-name", "test_name", id="single -"),
+        pytest.param("the-test-name", "the_test_name", id="multiple -"),
+    ],
+)
+def test_calclate_package_name(spec_id, expected_package_name):
+    """
+    GIVEN storage location
+    WHEN calclate_package_name is called with the storage location
+    THEN the expected name is returned.
+    """
+    storage_location = library.SpecStorageLocation(
+        sub="user 1", spec_id=spec_id, version="version 1"
+    )
+
+    returned_package_name = library.calclate_package_name(
+        storage_location=storage_location
+    )
+
+    assert returned_package_name == expected_package_name
+
+
 def test_generate(tmp_path):
     """
     GIVEN spec storage location and spec path
@@ -31,7 +57,7 @@ def test_generate(tmp_path):
     THEN 2 packages are created with the spected storage locations.
     """
     sub = "sub 1"
-    spec_id = "spec id 1"
+    spec_id = "spec-id-1"
     version = "version1"
     spec_storage_location = f"{sub}/{spec_id}/{version}-spec.json"
 
@@ -64,6 +90,7 @@ def test_generate(tmp_path):
 
         assert package.storage_location.startswith(f"{sub}/{spec_id}/")
         assert version in package.storage_location
+        assert spec_id.replace("-", "_") in package.storage_location
 
         assert package.storage_location.endswith(package.path.suffix)
 
