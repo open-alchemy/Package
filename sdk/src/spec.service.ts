@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { from, Observable } from 'rxjs';
 
-import { SpecName, SpecValue, SpecInfo, SpecVersion } from './openapi/models';
+import { SpecName, SpecValue, SpecInfo, SpecVersion, Spec } from './types';
 
 import { SpecError } from './errors';
 import { decodeResponse } from './helpers';
@@ -53,11 +53,11 @@ export class SpecService {
    * @param params.name Display name of the spec
    * @param params.version (optional) Version for the spec
    */
-  async get(params: IGetParams): Promise<SpecValue> {
+  async get(params: IGetParams): Promise<Spec> {
     const url = calculateUrl(params);
 
     const response = await axios
-      .get<SpecValue>(url, {
+      .get<Spec>(url, {
         headers: { Authorization: `Bearer ${params.accessToken}` },
       })
       .catch((error) => {
@@ -67,7 +67,7 @@ export class SpecService {
     return response.data;
   }
 
-  get$(params: IGetParams): Observable<SpecValue> {
+  get$(params: IGetParams): Observable<Spec> {
     return from(this.get(params));
   }
 

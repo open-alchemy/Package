@@ -53,7 +53,7 @@ export interface operations {
        * The requested spec
        */
       '200': {
-        'text/plain': components['schemas']['SpecValue'];
+        'text/plain': components['schemas']['Spec'];
       };
       /**
        * Unauthorized
@@ -173,7 +173,7 @@ export interface operations {
        * The requested spec
        */
       '200': {
-        'text/plain': components['schemas']['SpecValue'];
+        'text/plain': components['schemas']['Spec'];
       };
       /**
        * Unauthorized
@@ -323,6 +323,12 @@ export interface components {
       title?: components['schemas']['SpecTitle'];
       description?: components['schemas']['SpecDescription'];
       model_count: components['schemas']['SpecModelCount'];
+    };
+    /**
+     * The spec
+     */
+    Spec: components['schemas']['SpecInfo'] & {
+      value: components['schemas']['SpecValue'];
     };
     /**
      * A public key for for machine to machine interactions.

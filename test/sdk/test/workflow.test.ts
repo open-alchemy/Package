@@ -97,16 +97,23 @@ describe('create spec', () => {
         expect(returnedSpecInfo.updated_at).toBeDefined();
 
         // Check that the spec can be retrieved
-        const returnedSpecValue = await specService.get({
+        const returnedSpec = await specService.get({
           ...paramsBase,
           accessToken,
         });
-        expect(returnedSpecValue).toContain(VERSION);
-        expect(returnedSpecValue).toContain(TITLE);
-        expect(returnedSpecValue).toContain(DESCRIPTION);
-        expect(returnedSpecValue).toContain('Schema:');
-        expect(returnedSpecValue).toContain('x-tablename:');
-        expect(returnedSpecValue).toContain(': schema');
+        expect(returnedSpec.value).toContain(VERSION);
+        expect(returnedSpec.value).toContain(TITLE);
+        expect(returnedSpec.value).toContain(DESCRIPTION);
+        expect(returnedSpec.value).toContain('Schema:');
+        expect(returnedSpec.value).toContain('x-tablename:');
+        expect(returnedSpec.value).toContain(': schema');
+        expect(returnedSpec.name).toEqual(specName);
+        expect(returnedSpec.id).toEqual(specName.toLowerCase());
+        expect(returnedSpec.version).toEqual(VERSION);
+        expect(returnedSpec.title).toEqual(TITLE);
+        expect(returnedSpec.description).toEqual(DESCRIPTION);
+        expect(returnedSpec.model_count).toEqual(1);
+        expect(returnedSpec.updated_at).toBeDefined();
 
         // Delete the spec
         await specService.delete({ name: specName, accessToken });
