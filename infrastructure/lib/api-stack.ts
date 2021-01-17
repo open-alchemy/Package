@@ -73,7 +73,7 @@ export class ApiStack extends cdk.Stack {
         ACCESS_CONTROL_ALLOW_HEADERS: 'x-language',
         PACKAGE_STORAGE_BUCKET_NAME: CONFIG.storage.bucketName,
         DEFAULT_CREDENTIALS_ID: CONFIG.api.defaultCredentialsId,
-        FREE_TIER_MODEL_COUNT: 10,
+        FREE_TIER_MODEL_COUNT: '10',
       },
       logRetention: logs.RetentionDays.ONE_WEEK,
       timeout: cdk.Duration.seconds(10),
