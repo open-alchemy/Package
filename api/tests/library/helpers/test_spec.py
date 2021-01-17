@@ -3,7 +3,6 @@
 import json
 
 import pytest
-import yaml
 from library import exceptions
 from library.helpers import spec
 
@@ -267,33 +266,50 @@ def test_process_model_count(schemas, expected_model_count):
 
 
 @pytest.mark.parametrize(
-    "version, spec_dict, expected_version",
+    "version, spec_dict, expected_spec_str",
     [
         pytest.param(
             "version 1",
-            {"components": {"schemas": {"Schema": {"key": "value"}}}},
-            "version 1",
+            {"components": {"key": "value"}},
+            """info:
+  version: version 1
+components:
+  key: value
+""",
             id="no info",
         ),
         pytest.param(
             "version 1",
-            {"info": {}, "components": {"schemas": {"Schema": {"key": "value"}}}},
-            "version 1",
+            {
+                "info": {"description": "description 1"},
+                "components": {"key": "value"},
+            },
+            """info:
+  description: description 1
+  version: version 1
+components:
+  key: value
+""",
             id="with info no version",
         ),
         pytest.param(
             "version 1",
             {
-                "info": {"version": "version 2"},
-                "components": {"schemas": {"Schema": {"key": "value"}}},
+                "info": {"version": "version 2", "description": "description 1"},
+                "components": {"key": "value"},
             },
-            "version 2",
+            """info:
+  description: description 1
+  version: version 2
+components:
+  key: value
+""",
             id="with info with version",
         ),
     ],
 )
 @pytest.mark.helpers
-def test_prepare(version, spec_dict, expected_version):
+def test_prepare(version, spec_dict, expected_spec_str):
     """
     GIVEN spec string and version
     WHEN prepare is called with the spec and version
@@ -303,6 +319,4 @@ def test_prepare(version, spec_dict, expected_version):
 
     returned_spec_str = spec.prepare(spec_str=spec_str, version=version)
 
-    assert yaml.dump({"components": spec_dict["components"]}) in returned_spec_str
-    assert expected_version in returned_spec_str
-    assert returned_spec_str.count("info:") == 1
+    assert returned_spec_str == expected_spec_str

@@ -127,8 +127,8 @@ def prepare(*, spec_str: str, version: str) -> str:
 
     """
     spec = json.loads(spec_str)
-    info = {"info": {"version": version}}
+    info = {"version": version}
     if "info" in spec:
         info = {**info, **spec["info"]}
     components = spec["components"]
-    return yaml.dump(info) + yaml.dump({"components": components})
+    return yaml.dump({"info": info}) + yaml.dump({"components": components})
