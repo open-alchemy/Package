@@ -156,7 +156,7 @@ def create_list_response_value(
 
     def package_name(version: str) -> str:
         """Calculate the name of the package."""
-        return f"{spec_id}-{version}.tar.gz"
+        return f"{spec_id.replace('-', '_')}-{version}.tar.gz"
 
     install_links = list(
         map(

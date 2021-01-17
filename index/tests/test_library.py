@@ -196,7 +196,7 @@ def test_create_list_response_value(_clean_specs_table, monkeypatch):
     mock_time = mock.MagicMock()
     monkeypatch.setattr(time, "time", mock_time)
     mock_time.return_value = 1000000
-    spec_id = "spec 1"
+    spec_id = "spec-id-1"
     version_1 = "version 1"
     uri = f"/{spec_id}/"
     sub = "sub 1"
@@ -214,13 +214,14 @@ def test_create_list_response_value(_clean_specs_table, monkeypatch):
         authorization=authorization, uri=uri, auth_info=auth_info
     )
 
+    package_name = spec_id.replace("-", "_")
     assert "<body>" in returned_value
     assert (
         '<a href="https://'
         f"{public_key}:{secret_key}"
         "@index.package.openalchemy.io/"
-        f'{spec_id}/{spec_id}-{version_1}.tar.gz">'
-        f"{spec_id}-{version_1}.tar.gz</a><br>"
+        f'{spec_id}/{package_name}-{version_1}.tar.gz">'
+        f"{package_name}-{version_1}.tar.gz</a><br>"
     ) in returned_value
     assert "</body>" in returned_value
 
@@ -238,15 +239,15 @@ def test_create_list_response_value(_clean_specs_table, monkeypatch):
         '<a href="https://'
         f"{public_key}:{secret_key}"
         "@index.package.openalchemy.io/"
-        f'{spec_id}/{spec_id}-{version_1}.tar.gz">'
-        f"{spec_id}-{version_1}.tar.gz</a><br>"
+        f'{spec_id}/{package_name}-{version_1}.tar.gz">'
+        f"{package_name}-{version_1}.tar.gz</a><br>"
     ) in returned_value
     assert (
         '<a href="https://'
         f"{public_key}:{secret_key}"
         "@index.package.openalchemy.io/"
-        f'{spec_id}/{spec_id}-{version_2}.tar.gz">'
-        f"{spec_id}-{version_2}.tar.gz</a><br>"
+        f'{spec_id}/{package_name}-{version_2}.tar.gz">'
+        f"{package_name}-{version_2}.tar.gz</a><br>"
     ) in returned_value
 
 
