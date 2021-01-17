@@ -66,6 +66,13 @@ def test_spec_create_count_models_get_latest_version_list_versions_delete(sub):
 
     assert database_instance.count_customer_models(sub=sub) == model_count
 
+    info = database_instance.get_spec(sub=sub, name=name)
+
+    assert info["name"] == name
+    assert info["id"] == name
+    assert info["version"] == version
+    assert info["model_count"] == model_count
+
     assert (
         database_instance.check_would_exceed_free_tier(sub=sub, model_count=0).result
         is False
