@@ -112,4 +112,4 @@ def test_index(access_token, spec_name):
         assert len(response_data) == 1
         spec_id = response_data[0]["id"]
 
-    importlib.import_module(spec_id)
+    importlib.import_module(spec_id.replace("-", "_"))
