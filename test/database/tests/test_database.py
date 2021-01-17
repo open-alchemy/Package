@@ -144,8 +144,9 @@ def test_credentials_create_get_get_user_delete(sub):
 
     assert len(database_instance.list_credentials(sub=sub)) == 0
 
-    with pytest.raises(package_database.exceptions.NotFoundError):
-        database_instance.get_credentials(sub=sub, id_=id_)
+    info = database_instance.get_credentials(sub=sub, id_=id_)
+
+    assert info is None
 
     auth_info = database_instance.get_user(public_key=public_key)
 
