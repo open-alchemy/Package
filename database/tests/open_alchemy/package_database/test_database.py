@@ -187,6 +187,34 @@ def test_list_delete_all_spec(_clean_specs_table):
     assert database_instance.list_specs(sub=sub) == []
 
 
+def test_get_spec(_clean_specs_table):
+    """
+    GIVEN sub, name, version and model count
+    WHEN create_update_spec is called with the spec info and get_spec is called
+    THEN the spec info is returned.
+    """
+    sub = "sub 1"
+    name = "name 1"
+    database_instance = package_database.get()
+
+    returned_info = database_instance.get_spec(sub=sub, name=name)
+
+    assert returned_info is None
+
+    version = "version 1"
+    model_count = 1
+    database_instance.create_update_spec(
+        sub=sub, name=name, version=version, model_count=model_count
+    )
+
+    returned_info = database_instance.get_spec(sub=sub, name=name)
+
+    assert returned_info["name"] == name
+    assert returned_info["id"] == name
+    assert returned_info["version"] == version
+    assert returned_info["model_count"] == model_count
+
+
 def test_delete_spec(_clean_specs_table):
     """
     GIVEN sub, name, version and model count
