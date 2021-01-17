@@ -26,6 +26,7 @@ class TConfig:
         package_storage_bucket_name: The name of the bucket with the specs.
         access_control_allow_origin: The CORS origin response.
         access_control_allow_headers: The CORS headers response.
+        free_tier_model_count: The number of models allowed in the free tier.
 
     """
 
@@ -34,6 +35,7 @@ class TConfig:
     _access_control_allow_origin: typing.Optional[str] = None
     _access_control_allow_headers: typing.Optional[str] = None
     _default_credentials_id: typing.Optional[str] = None
+    _free_tier_model_count: typing.Optional[int] = None
 
     @staticmethod
     def _get_env(key: str) -> str:
@@ -118,6 +120,27 @@ class TConfig:
     def default_credentials_id(self, value: str) -> None:
         """Set the default_credentials_id."""
         self._default_credentials_id = value
+
+    @property
+    def free_tier_model_count(self) -> int:
+        """Retrieve the free_tier_model_count configuration."""
+        if self._free_tier_model_count is None:
+            free_tier_model_count_key = "FREE_TIER_MODEL_COUNT"
+            free_tier_model_count_str = self._get_env(free_tier_model_count_key)
+            try:
+                self._free_tier_model_count = int(free_tier_model_count_str)
+            except ValueError as exc:
+                raise AssertionError(
+                    f"the {free_tier_model_count_key} environment variable value must "
+                    f"be an integer, {free_tier_model_count_str=}"
+                ) from exc
+
+        return self._free_tier_model_count
+
+    @free_tier_model_count.setter
+    def free_tier_model_count(self, value: int) -> None:
+        """Set the free_tier_model_count."""
+        self._free_tier_model_count = value
 
 
 def _construct() -> TConfig:

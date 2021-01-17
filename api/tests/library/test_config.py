@@ -28,6 +28,11 @@ from library import config
             "default_credentials_id",
             id="default_credentials_id",
         ),
+        pytest.param(
+            "FREE_TIER_MODEL_COUNT",
+            "free_tier_model_count",
+            id="free_tier_model_count",
+        ),
     ],
 )
 @pytest.mark.config
@@ -45,7 +50,15 @@ def test_config_env_missing(monkeypatch, env_name, config_name):
 
 @pytest.mark.parametrize(
     "env_name, env_value, config_name",
-    [pytest.param("STAGE", "invalid", "stage", id="stage invalid")],
+    [
+        pytest.param("STAGE", "invalid", "stage", id="stage invalid"),
+        pytest.param(
+            "FREE_TIER_MODEL_COUNT",
+            "invalid",
+            "free_tier_model_count",
+            id="free_tier_model_count invalid",
+        ),
+    ],
 )
 @pytest.mark.config
 def test_config_env_invalid(monkeypatch, env_name, env_value, config_name):
@@ -92,6 +105,13 @@ def test_config_env_invalid(monkeypatch, env_name, env_value, config_name):
             "credentials 1",
             id="default_credentials_id",
         ),
+        pytest.param(
+            "FREE_TIER_MODEL_COUNT",
+            "1",
+            "free_tier_model_count",
+            1,
+            id="free_tier_model_count",
+        ),
     ],
 )
 @pytest.mark.config
@@ -137,6 +157,12 @@ def test_config_env_set(monkeypatch, env_name, env_value, config_name, expected_
             "default_credentials_id",
             "credentials 1",
             id="default_credentials_id",
+        ),
+        pytest.param(
+            "FREE_TIER_MODEL_COUNT",
+            "free_tier_model_count",
+            1,
+            id="free_tier_model_count",
         ),
     ],
 )
