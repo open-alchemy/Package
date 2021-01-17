@@ -73,15 +73,6 @@ def test_spec_create_count_models_get_latest_version_list_versions_delete(sub):
     assert info["version"] == version
     assert info["model_count"] == model_count
 
-    assert (
-        database_instance.check_would_exceed_free_tier(sub=sub, model_count=0).result
-        is False
-    )
-    assert (
-        database_instance.check_would_exceed_free_tier(sub=sub, model_count=1000).result
-        is True
-    )
-
     assert database_instance.get_latest_spec_version(sub=sub, name=name) == version
 
     infos = database_instance.list_spec_versions(sub=sub, name=name)

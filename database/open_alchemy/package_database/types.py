@@ -50,20 +50,6 @@ class TSpecInfo(_TSpecInfoBase, total=True):
 TSpecInfoList = typing.List[TSpecInfo]
 
 
-class TCheckWouldExceedFreeTierReturn(typing.NamedTuple):
-    """
-    The return value of the free tier check.
-
-    Attrs:
-        result: Whether the free tier would be exceeded
-        reason: If the result is True, the reason that it would be
-
-    """
-
-    result: bool
-    reason: typing.Optional[str]
-
-
 class TCredentialsInfo(typing.TypedDict, total=True):
     """
     All information about particular credentials.
@@ -113,23 +99,6 @@ class TDatabase(typing.Protocol):
 
         Returns:
             The number of models the customer has stored.
-
-        """
-        ...
-
-    @staticmethod
-    def check_would_exceed_free_tier(
-        *, sub: TSub, model_count: TSpecModelCount
-    ) -> TCheckWouldExceedFreeTierReturn:
-        """
-        Check whether adding model_count additional models would exceed the free tier.
-
-        Args:
-            sub: Unique identifier for a cutsomer.
-            model_count: The number of models that would be added.
-
-        Returns:
-            Whether the free tier would be exceeded and a reason if so.
 
         """
         ...

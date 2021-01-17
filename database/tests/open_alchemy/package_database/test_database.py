@@ -38,60 +38,6 @@ def test_count_customer_models(_clean_specs_table):
     assert database_instance.count_customer_models(sub="sub 2") == 0
 
 
-@pytest.mark.parametrize(
-    "initial_count, additional_count, expected_result",
-    [
-        pytest.param(0, 0, False, id="zero initial count, zero additional"),
-        pytest.param(
-            0, 9, False, id="zero initial count, just less than limit additional"
-        ),
-        pytest.param(0, 10, False, id="zero initial count, equal to limit additional"),
-        pytest.param(
-            0, 11, True, id="zero initial count, just more than limit additional"
-        ),
-        pytest.param(0, 15, True, id="zero initial count, more than limit additional"),
-        pytest.param(
-            9, 0, False, id="just less than limit initial count, zero additional"
-        ),
-        pytest.param(10, 0, False, id="equal to limit initial count, zero additional"),
-        pytest.param(
-            11, 0, True, id="just more than limit initial count, zero additional"
-        ),
-        pytest.param(15, 0, True, id="more than limit initial count, zero additional"),
-        pytest.param(
-            5, 4, False, id="sum of initial and additional just less than limit"
-        ),
-        pytest.param(5, 5, False, id="sum of initial and additional equal to limit"),
-        pytest.param(
-            5, 6, True, id="sum of initial and additional just more than limit"
-        ),
-    ],
-)
-def test_check_would_exceed_free_tier(
-    initial_count, additional_count, expected_result, _clean_specs_table
-):
-    """
-    GIVEN initial count and additional count
-    WHEN create_update_spec is called with the initial count and
-        check_would_exceed_free_tier with the additional count
-    THEN the expected result is returned
-    """
-    sub = "sub 1"
-    name = "name 1"
-    version = "version 1"
-    database_instance = package_database.get()
-
-    database_instance.create_update_spec(
-        sub=sub, name=name, version=version, model_count=initial_count
-    )
-
-    returned_result = database_instance.check_would_exceed_free_tier(
-        sub=sub, model_count=additional_count
-    )
-
-    assert returned_result.result == expected_result
-
-
 def test_get_latest_spec_version(_clean_specs_table):
     """
     GIVEN sub, name, version and model count

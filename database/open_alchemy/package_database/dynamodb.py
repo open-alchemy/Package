@@ -2,7 +2,7 @@
 
 import typing
 
-from . import config, exceptions, models, types
+from . import exceptions, models, types
 
 
 class Database:
@@ -21,33 +21,6 @@ class Database:
 
         """
         return models.Spec.count_customer_models(sub=sub)
-
-    @classmethod
-    def check_would_exceed_free_tier(
-        cls, *, sub: types.TSub, model_count: types.TSpecModelCount
-    ) -> types.TCheckWouldExceedFreeTierReturn:
-        """
-        Check whether adding model_count additional models would exceed the free tier.
-
-        Args:
-            sub: Unique identifier for a cutsomer.
-            model_count: The number of models that would be added.
-
-        Returns:
-            Whether the free tier would be exceeded and a reason if so.
-
-        """
-        current_count = cls.count_customer_models(sub=sub)
-        if current_count + model_count > config.get().free_tier_model_count:
-            return types.TCheckWouldExceedFreeTierReturn(
-                result=True,
-                reason="with this spec the maximum number of "
-                f"{config.get().free_tier_model_count} models for the free "
-                f"tier would be exceeded, current models count: {current_count}, "
-                f"models in this spec: {model_count}",
-            )
-
-        return types.TCheckWouldExceedFreeTierReturn(result=False, reason=None)
 
     @staticmethod
     def create_update_spec(
