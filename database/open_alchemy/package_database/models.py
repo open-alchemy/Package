@@ -283,6 +283,31 @@ class Spec(models.Model):
         )
 
     @classmethod
+    def get_item(
+        cls, *, sub: types.TSub, name: types.TSpecName
+    ) -> typing.Optional[types.TSpecInfo]:
+        """
+        Retrieve a spec from the database.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+            name: The display name of the spec.
+
+        Returns:
+            Information about the spec
+
+        """
+        id_ = cls.calc_id(name)
+        updated_at_id = cls.calc_index_values(
+            updated_at=cls.UPDATED_AT_LATEST, id_=id_
+        ).updated_at_id
+        try:
+            item = cls.get(hash_key=sub, range_key=updated_at_id)
+            return cls.item_to_info(item)
+        except cls.DoesNotExist:
+            return None
+
+    @classmethod
     def delete_item(cls, *, sub: types.TSub, name: types.TSpecName) -> None:
         """
         Delete a spec from the database.

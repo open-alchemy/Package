@@ -190,6 +190,21 @@ class TDatabase(typing.Protocol):
         ...
 
     @staticmethod
+    def get_spec(*, sub: TSub, name: TSpecName) -> typing.Optional[TSpecInfo]:
+        """
+        Retrieve a spec from the database.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+            name: The display name of the spec.
+
+        Returns:
+            Information about the spec
+
+        """
+        ...
+
+    @staticmethod
     def delete_spec(*, sub: TSub, name: TSpecName) -> None:
         """
         Delete a spec from the database.

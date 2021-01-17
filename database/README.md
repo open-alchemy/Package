@@ -33,6 +33,7 @@ are expected:
 - create or update a spec record for a user,
 - get the latest version of a spec for a user,
 - list all specs for a user,
+- retrieve a particular spec for a user,
 - delete a particular spec for a user,
 - list all versions of a spec for a user and
 - delete all specs for a user.
@@ -122,6 +123,30 @@ Algorithm:
 1. filter items using the `sub` partition key and `updated_at_id` starting with
    `latest#` and
 1. convert the items to dictionaries.
+
+#### Get Spec
+
+Retrieve a particular spec for a user.
+
+Input:
+
+- `sub` and
+- `name`.
+
+Output:
+
+- dictionary with the `id`, `name`, `updated_at`, `version`, `model_count` and
+  `title` and `description` if they are defined
+
+Algorithm:
+
+1. calculate the `id` of the spec using
+   <https://packaging.pypa.io/en/latest/utils.html#packaging.utils.canonicalize_name>
+   based on the `name`,
+1. get the item based on `sub` and `updated_at_id` with the value
+   `latest#<id>`,
+1. handle the case where it is not found by returning `None` and
+1. convert the item to a dictionary.
 
 #### Delete Spec
 

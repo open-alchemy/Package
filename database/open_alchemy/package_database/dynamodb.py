@@ -114,6 +114,23 @@ class Database:
         return models.Spec.list_(sub=sub)
 
     @staticmethod
+    def get_spec(
+        *, sub: types.TSub, name: types.TSpecName
+    ) -> typing.Optional[types.TSpecInfo]:
+        """
+        Retrieve a spec from the database.
+
+        Args:
+            sub: Unique identifier for a cutsomer.
+            name: The display name of the spec.
+
+        Returns:
+            Information about the spec
+
+        """
+        return models.Spec.get_item(sub=sub, name=name)
+
+    @staticmethod
     def delete_spec(*, sub: types.TSub, name: types.TSpecId) -> None:
         """
         Delete a spec from the database.
