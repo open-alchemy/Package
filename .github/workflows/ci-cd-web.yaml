@@ -103,7 +103,6 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    if: false
     needs:
       - test
       - lint
