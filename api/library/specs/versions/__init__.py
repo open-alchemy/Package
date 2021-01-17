@@ -84,6 +84,12 @@ def get(
             status=500,
             mimetype="text/plain",
         )
+    except package_database.exceptions.BaseError:
+        return server.Response(
+            "something went wrong whilst reading from the database",
+            status=500,
+            mimetype="text/plain",
+        )
 
 
 def put(
@@ -163,7 +169,6 @@ def put(
             mimetype="text/plain",
         )
     except storage.exceptions.StorageError as exc:
-        print(exc)  # allow-print
         return server.Response(
             "something went wrong whilst storing the spec",
             status=500,

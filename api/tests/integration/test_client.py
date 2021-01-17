@@ -154,7 +154,10 @@ def test_specs_spec_name_get(client, _clean_specs_table):
         == config.get().access_control_allow_origin
     )
 
-    assert "key: value" in response.data.decode()
+    response_json = json.loads(response.data.decode())
+    assert "key: value" in response_json["value"]
+    assert response_json["name"] == spec_name
+    assert response_json["version"] == version
 
 
 @pytest.mark.integration
@@ -294,7 +297,7 @@ def test_specs_spec_name_versions_get(client, _clean_specs_table):
 
 
 @pytest.mark.integration
-def test_specs_spec_name_version_version_get(client):
+def test_specs_spec_name_version_version_get(client, _clean_specs_table):
     """
     GIVEN storage with a single spec
     WHEN GET /v1/specs/{spec_name}/versions/{version} is called with the Authorization
@@ -305,6 +308,9 @@ def test_specs_spec_name_version_version_get(client):
     spec_name = "spec1"
     version = "1"
     spec = {"key": "value"}
+    package_database.get().create_update_spec(
+        sub=sub, name=spec_name, version=version, model_count=1
+    )
     storage.get_storage_facade().create_update_spec(
         user=sub,
         name=spec_name,
@@ -325,7 +331,10 @@ def test_specs_spec_name_version_version_get(client):
         == config.get().access_control_allow_origin
     )
 
-    assert "key: value" in response.data.decode()
+    response_json = json.loads(response.data.decode())
+    assert "key: value" in response_json["value"]
+    assert response_json["name"] == spec_name
+    assert response_json["version"] == version
 
 
 @pytest.mark.integration

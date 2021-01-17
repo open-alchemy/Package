@@ -80,7 +80,7 @@ def test_list_database_error(monkeypatch):
 
 
 @pytest.mark.specs_versions
-def test_get():
+def test_get(_clean_specs_table):
     """
     GIVEN user and version and database and storage with a single spec
     WHEN get is called with the user and spec id
@@ -90,6 +90,9 @@ def test_get():
     spec_name = "spec name 1"
     version = "1"
     spec = {"key": "value"}
+    package_database.get().create_update_spec(
+        sub=user, name=spec_name, version=version, model_count=1
+    )
     storage.get_storage_facade().create_update_spec(
         user=user,
         name=spec_name,
@@ -106,6 +109,31 @@ def test_get():
     assert "key: value" in response_data_json["value"]
     assert response_data_json["name"] == spec_name
     assert response_data_json["version"] == version
+
+
+@pytest.mark.specs_versions
+def test_get_database_miss():
+    """
+    GIVEN user and version and databasewithout and storage with a single spec
+    WHEN get is called with the user and spec id
+    THEN 500 is returned.
+    """
+    user = "user 1"
+    spec_name = "spec name 1"
+    version = "1"
+    spec = {"key": "value"}
+    storage.get_storage_facade().create_update_spec(
+        user=user,
+        name=spec_name,
+        version=version,
+        spec_str=json.dumps(spec, separators=(",", ":")),
+    )
+
+    response = versions.get(user=user, spec_name=spec_name, version=version)
+
+    assert response.status_code == 500
+    assert response.mimetype == "text/plain"
+    assert "database" in response.data.decode()
 
 
 @pytest.mark.specs_versions

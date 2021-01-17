@@ -54,11 +54,14 @@ def get(spec_name: types.TSpecId, user: types.TUser) -> server.Response:
             user=user, name=spec_name, version=version
         )
         prepared_spec_str = spec.prepare(spec_str=spec_str, version=version)
+        spec_info = package_database.get().get_spec(sub=user, name=spec_name)
+
+        response_data = json.dumps({**spec_info, "value": prepared_spec_str})
 
         return server.Response(
-            prepared_spec_str,
+            response_data,
             status=200,
-            mimetype="text/plain",
+            mimetype="application/json",
         )
     except package_database.exceptions.NotFoundError:
         return server.Response(

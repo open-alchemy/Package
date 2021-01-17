@@ -28,11 +28,13 @@ def check_within_limit(
         The result and the reason if the result is true.
 
     """
-    spec_info = package_database.get().get_spec(sub=user, name=spec_name)
-    user_model_count = package_database.get().count_customer_models(sub=user)
     current_spec_model_count = 0
-    if spec_info is not None:
+    try:
+        spec_info = package_database.get().get_spec(sub=user, name=spec_name)
         current_spec_model_count = spec_info["model_count"]
+    except package_database.exceptions.BaseError:
+        pass
+    user_model_count = package_database.get().count_customer_models(sub=user)
 
     new_user_model_count = user_model_count + model_count - current_spec_model_count
 

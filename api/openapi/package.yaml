@@ -338,11 +338,11 @@ components:
     PublicKey:
       description: A public key for for machine to machine interactions.
       type: string
-      pattern: ^pk_[a-zA-Z0-9]+$
+      pattern: ^pk_[a-zA-Z0-9-_=]+$
     SecretKey:
       description: A secret key for machine to machine interactions.
       type: string
-      pattern: ^sk_[a-zA-Z0-9]+$
+      pattern: ^sk_[a-zA-Z0-9-_=]+$
     Credentials:
       description: Machine to machine credentials
       type: object

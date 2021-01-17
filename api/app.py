@@ -8,7 +8,7 @@ app = connexion.FlaskApp(
     __name__,
     specification_dir="openapi/",
 )
-app.add_api("package.yaml")
+app.add_api("package.yaml", validate_responses=True)
 flask_cors.CORS(
     app.app,
     resources="*",
