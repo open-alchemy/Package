@@ -143,9 +143,8 @@ def test_get_spec(_clean_specs_table):
     name = "name 1"
     database_instance = package_database.get()
 
-    returned_info = database_instance.get_spec(sub=sub, name=name)
-
-    assert returned_info is None
+    with pytest.raises(package_database.exceptions.NotFoundError):
+        database_instance.get_spec(sub=sub, name=name)
 
     version = "version 1"
     model_count = 1

@@ -153,13 +153,15 @@ Input:
 
 #### Get Spec
 
-Retrieves the value of the requested spec.
+Retrieves information, including the value, about the requested spec.
 
 Algorithm:
 
 1. retrieve the latest spec version from the database,
-1. retrieve the spec from storage and
-1. nicely format the spec and return it.
+1. retrieve information about the spec from the database,
+1. retrieve the spec from storage,
+1. nicely format the spec and
+1. mix the value into the information and return it.
 
 #### Put Spec
 
@@ -208,8 +210,10 @@ Retrieves the value of the requested spec.
 
 Algorithm:
 
-1. retrieve the spec from storage and
-1. nicely format the spec and return it.
+1. retrieve the spec from storage,
+1. retrieve information about the spec from the database,
+1. nicely format the spec and
+1. mix the value into the information and return it.
 
 #### Put Version of a Spec
 

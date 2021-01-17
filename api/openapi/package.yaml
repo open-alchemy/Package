@@ -43,7 +43,7 @@ paths:
           content:
             text/plain:
               schema:
-                $ref: "#/components/schemas/SpecValue"
+                $ref: "#/components/schemas/Spec"
         401:
           description: Unauthorized
           content:
@@ -158,7 +158,7 @@ paths:
           content:
             text/plain:
               schema:
-                $ref: "#/components/schemas/SpecValue"
+                $ref: "#/components/schemas/Spec"
         401:
           description: Unauthorized
           content:
@@ -325,6 +325,16 @@ components:
         - id
         - version
         - model_count
+    Spec:
+      description: The spec
+      allOf:
+        - $ref: "#/components/schemas/SpecInfo"
+        - type: object
+          properties:
+            value:
+              $ref: "#/components/schemas/SpecValue"
+          required:
+            - value
     PublicKey:
       description: A public key for for machine to machine interactions.
       type: string

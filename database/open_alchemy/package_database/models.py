@@ -289,6 +289,8 @@ class Spec(models.Model):
         """
         Retrieve a spec from the database.
 
+        Raises NotFoundError if the spec was not found.
+
         Args:
             sub: Unique identifier for a cutsomer.
             name: The display name of the spec.
@@ -304,8 +306,10 @@ class Spec(models.Model):
         try:
             item = cls.get(hash_key=sub, range_key=updated_at_id)
             return cls.item_to_info(item)
-        except cls.DoesNotExist:
-            return None
+        except cls.DoesNotExist as exc:
+            raise exceptions.NotFoundError(
+                f"could not find spec {name=} for user {sub=} in the database"
+            ) from exc
 
     @classmethod
     def delete_item(cls, *, sub: types.TSub, name: types.TSpecName) -> None:

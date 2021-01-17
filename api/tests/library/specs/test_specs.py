@@ -105,9 +105,12 @@ def test_get(_clean_specs_table):
     response = specs.get(user=user, spec_name=spec_name)
 
     assert response.status_code == 200
-    assert response.mimetype == "text/plain"
-    assert f"version: '{version}'" in response.data.decode()
-    assert "key: value" in response.data.decode()
+    assert response.mimetype == "application/json"
+    response_data_json = json.loads(response.data.decode())
+    assert f"version: '{version}'" in response_data_json["value"]
+    assert "key: value" in response_data_json["value"]
+    assert response_data_json["name"] == spec_name
+    assert response_data_json["version"] == version
 
 
 @pytest.mark.specs
