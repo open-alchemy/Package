@@ -65,13 +65,6 @@ def get(
         prepared_spec_str = spec.prepare(spec_str=spec_str, version=version)
         spec_info = package_database.get().get_spec(sub=user, name=spec_name)
 
-        if spec_info is None:
-            return server.Response(
-                "something went wrong whilst reading the spec",
-                status=500,
-                mimetype="text/plain",
-            )
-
         response_data = json.dumps({**spec_info, "value": prepared_spec_str})
 
         return server.Response(

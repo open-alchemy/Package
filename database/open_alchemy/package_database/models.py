@@ -283,9 +283,7 @@ class Spec(models.Model):
         )
 
     @classmethod
-    def get_item(
-        cls, *, sub: types.TSub, name: types.TSpecName
-    ) -> typing.Optional[types.TSpecInfo]:
+    def get_item(cls, *, sub: types.TSub, name: types.TSpecName) -> types.TSpecInfo:
         """
         Retrieve a spec from the database.
 

@@ -87,11 +87,11 @@ class Database:
         return models.Spec.list_(sub=sub)
 
     @staticmethod
-    def get_spec(
-        *, sub: types.TSub, name: types.TSpecName
-    ) -> typing.Optional[types.TSpecInfo]:
+    def get_spec(*, sub: types.TSub, name: types.TSpecName) -> types.TSpecInfo:
         """
         Retrieve a spec from the database.
+
+        Raises NotFoundError if the spec does not exist.
 
         Args:
             sub: Unique identifier for a cutsomer.

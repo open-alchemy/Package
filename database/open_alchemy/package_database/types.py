@@ -159,9 +159,11 @@ class TDatabase(typing.Protocol):
         ...
 
     @staticmethod
-    def get_spec(*, sub: TSub, name: TSpecName) -> typing.Optional[TSpecInfo]:
+    def get_spec(*, sub: TSub, name: TSpecName) -> TSpecInfo:
         """
         Retrieve a spec from the database.
+
+        Raises NotFoundError if the spec does not exist.
 
         Args:
             sub: Unique identifier for a cutsomer.
