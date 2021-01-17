@@ -1,4 +1,5 @@
 """Tests for the API."""
+# pylint: disable=too-many-statements
 
 import json
 from urllib import error, request
@@ -154,10 +155,17 @@ def test_specs_create_get_delete(access_token, spec_name):
 
     with request.urlopen(test_request) as response:
         assert response.status == 200
-        spec_str = response.read().decode()
+        response_json = json.loads(response.read().decode())
+        spec_str = response_json["value"]
         assert "Schema:" in spec_str
         assert "x-tablename:" in spec_str
         assert ": schema" in spec_str
+        assert response_json["name"] == spec_name
+        assert response_json["id"] == spec_name.lower()
+        assert response_json["version"] == version
+        assert response_json["title"] == title
+        assert response_json["description"] == description
+        assert "updated_at" in response_json
 
     # Delete the spec
     test_request = request.Request(
@@ -287,11 +295,16 @@ def test_specs_versions_create_get_delete(access_token, spec_name):
 
     with request.urlopen(test_request) as response:
         assert response.status == 200
-        spec_str = response.read().decode()
+        response_json = json.loads(response.read().decode())
+        spec_str = response_json["value"]
         assert version in spec_str
         assert "Schema:" in spec_str
         assert "x-tablename:" in spec_str
         assert ": schema" in spec_str
+        assert response_json["name"] == spec_name
+        assert response_json["id"] == spec_name.lower()
+        assert response_json["version"] == version
+        assert "updated_at" in response_json
 
 
 def test_credentials_default_get_delete_get(access_token, credentials_id):
