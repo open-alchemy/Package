@@ -14,6 +14,7 @@ def preset_config():
     config_instance.access_control_allow_origin = "*"
     config_instance.access_control_allow_headers = "x-language"
     config_instance.default_credentials_id = "default"
+    config_instance.free_tier_model_count = 10
 
 
 @pytest.fixture(autouse=True)

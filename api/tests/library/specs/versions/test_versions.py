@@ -285,14 +285,15 @@ def test_put_too_many_models_error(monkeypatch, _clean_specs_table):
     body = json.dumps(
         {"info": {"version": version}, "components": {"schemas": schemas}}
     )
-    spec_name = "id 1"
+    spec_name_1 = "id 1"
     user = "user 1"
     package_database.get().create_update_spec(
-        sub=user, name=spec_name, version="1", model_count=100
+        sub=user, name=spec_name_1, version="1", model_count=100
     )
 
+    spec_name_2 = "id 2"
     response = versions.put(
-        body=body.encode(), spec_name=spec_name, version=version, user=user
+        body=body.encode(), spec_name=spec_name_2, version=version, user=user
     )
 
     assert response.status_code == 402
@@ -326,14 +327,14 @@ def test_put_database_count_error(monkeypatch, _clean_specs_table):
     )
     spec_name = "id 1"
     user = "user 1"
-    mock_database_check_would_exceed_free_tier = mock.MagicMock()
-    mock_database_check_would_exceed_free_tier.side_effect = (
+    mock_database_count_customer_models = mock.MagicMock()
+    mock_database_count_customer_models.side_effect = (
         package_database.exceptions.BaseError
     )
     monkeypatch.setattr(
         package_database.get(),
-        "check_would_exceed_free_tier",
-        mock_database_check_would_exceed_free_tier,
+        "count_customer_models",
+        mock_database_count_customer_models,
     )
 
     response = versions.put(

@@ -6,7 +6,7 @@ from open_alchemy import package_database
 
 from .. import exceptions, types
 from ..facades import server, storage
-from ..helpers import spec
+from ..helpers import free_tier, spec
 
 
 def list_(user: types.TUser) -> server.Response:
@@ -112,12 +112,12 @@ def put(
         spec_info = spec.process(spec_str=body.decode(), language=language)
 
         # Check that the maximum number of models hasn't been exceeded
-        free_tier_check = package_database.get().check_would_exceed_free_tier(
-            sub=user, model_count=spec_info.model_count
+        within_free_tier_result = free_tier.check_within_limit(
+            user=user, spec_name=spec_name, model_count=spec_info.model_count
         )
-        if free_tier_check.result:
+        if not within_free_tier_result.value:
             return server.Response(
-                free_tier_check.reason,
+                within_free_tier_result.reason,
                 status=402,
                 mimetype="text/plain",
             )
