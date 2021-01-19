@@ -38,8 +38,6 @@ jobs:
         env:
           PYPI_MIRROR: ${{ matrix.PYPI_MIRROR }}
         run: |
-          echo $VERSION
-          # install dependencies
           pipenv install --dev
       - name: run tests
         working-directory: test/database
