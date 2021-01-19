@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "0 5 * * *"
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "test/database/**"
 
 jobs:
   database:
@@ -31,6 +36,7 @@ jobs:
           # Check that project version equal requested version
           cd ../../database
           VERSION=$(poetry version -s)
+          echo $VERSION
           cd -
           # install dependencies
           pipenv install --dev
