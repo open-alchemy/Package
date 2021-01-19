@@ -29,16 +29,16 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pipenv poetry
+      - name: get version
+        working-directory: database
+        run: |
+          echo "VERSION=$(poetry version -s)" >> $GITHUB_ENV
       - name: install dependencies
         working-directory: test/database
         env:
           PYPI_MIRROR: ${{ matrix.PYPI_MIRROR }}
         run: |
-          # Check that project version equal requested version
-          cd ../../database
-          VERSION=$(poetry version -s)
           echo $VERSION
-          cd -
           # install dependencies
           pipenv install --dev
       - name: run tests
