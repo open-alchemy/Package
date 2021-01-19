@@ -27,13 +27,11 @@ jobs:
         working-directory: test/security
         env:
           PYPI_MIRROR: ${{ matrix.PYPI_MIRROR }}
-          VERSION: "1.2.1"
         run: |
           # Check that project version equal requested version
           cd ../../security
-          PROJECT_VERSION=$(poetry version -s)
+          VERSION=$(poetry version -s)
           cd -
-          [[ "$VERSION" == "$PROJECT_VERSION" ]]
           # install dependencies
           pipenv install --dev
       - name: run tests
