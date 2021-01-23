@@ -47,7 +47,7 @@ jobs:
         env:
           PIPENV_VENV_IN_PROJECT: 1
         run: |
-          pipenv run test || pipenv --rm && pipenv install --dev && pipenv run test
+          pipenv run test || (pipenv --rm && pipenv install --dev && pipenv run test)
 
   build:
     runs-on: ubuntu-latest

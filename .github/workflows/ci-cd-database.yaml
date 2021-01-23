@@ -65,7 +65,7 @@ jobs:
           AWS_ACCESS_KEY_ID: invalid id
           AWS_SECRET_ACCESS_KEY: invalid key
         run: |
-          poetry run pytest
+          poetry run pytest || (poetry install --no-root && poetry run pytest)
 
   build:
     runs-on: ubuntu-latest
