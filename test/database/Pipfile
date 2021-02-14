@@ -12,7 +12,7 @@ name = "database-pypi"
 "open-alchemy.package-database" = { version="==${VERSION}", index="database-pypi" }
 
 [dev-packages]
-pytest = "6.2.1"
+pytest = "6.2.2"
 
 [requires]
 python_version = "3.9"

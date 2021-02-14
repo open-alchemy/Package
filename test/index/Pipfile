@@ -8,7 +8,7 @@ name = "pypi"
 openalchemy = "2.2.0"
 
 [dev-packages]
-pytest = "6.2.1"
+pytest = "6.2.2"
 black = "20.8b1"
 
 [requires]
