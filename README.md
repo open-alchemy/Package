@@ -1,5 +1,12 @@
 # OpenAlchemy Package
 
+---
+**NOTE**
+
+This service is no longer being operated.
+
+---
+
 Offers OpenAlchemy models packages to be installed via pip. For example:
 
 <!-- markdownlint-disable line-length -->
